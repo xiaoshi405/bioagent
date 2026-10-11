@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/controlled-repair-trace-v1.json",
+  "title": "BioAgent Controlled Repair Trace v1",
+  "x-version": "1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "experiment_id",
+    "case_id",
+    "family",
+    "condition",
+    "repeat_index",
+    "context",
+    "plan",
+    "execution",
+    "evaluation",
+    "latency_ms"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "case_id": {"type": "string", "pattern": "^crt_(fasta|pdb)_[0-9]{3}$"},
+    "family": {"enum": ["fasta_to_sequence", "pdb_chain_to_sequence"]},
+    "condition": {"enum": ["B1", "B2"]},
+    "repeat_index": {"type": "integer", "minimum": 0},
+    "context": {
+      "type": "object",
+      "required": ["dataset_version", "dataset_sha256", "git_commit", "python_version"],
+      "properties": {
+        "dataset_version": {"type": "string", "minLength": 1},
+        "dataset_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "git_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+        "python_version": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "plan": {
+      "type": "object",
+      "required": [
+        "injected_plan",
+        "initial_types",
+        "type_valid_before",
+        "issue_codes_before",
+        "repair_attempted",
+        "repair_applied",
+        "repaired_plan",
+        "type_valid_after",
+        "issue_codes_after",
+        "inserted_steps"
+      ],
+      "properties": {
+        "injected_plan": {"type": "array", "items": {"type": "string"}},
+        "initial_types": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "type_valid_before": {"type": "boolean"},
+        "issue_codes_before": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "repair_attempted": {"type": "boolean"},
+        "repair_applied": {"type": "boolean"},
+        "repaired_plan": {"type": "array", "items": {"type": "string"}},
+        "type_valid_after": {"type": "boolean"},
+        "issue_codes_after": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "inserted_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tool_name", "before_step_index"],
+            "properties": {
+              "tool_name": {"type": "string"},
+              "before_step_index": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution": {
+      "type": "object",
+      "required": ["completed", "attempted_steps", "successful_steps", "failed_steps", "error_type", "detail_code"],
+      "properties": {
+        "completed": {"type": "boolean"},
+        "attempted_steps": {"type": "integer", "minimum": 0},
+        "successful_steps": {"type": "integer", "minimum": 0},
+        "failed_steps": {"type": "integer", "minimum": 0},
+        "error_type": {"type": ["string", "null"]},
+        "detail_code": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "evaluation": {
+      "type": "object",
+      "required": ["repair_opportunity", "repair_correct", "recovery_success"],
+      "properties": {
+        "repair_opportunity": {"type": "boolean"},
+        "repair_correct": {"type": ["boolean", "null"]},
+        "recovery_success": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "latency_ms": {"type": "number", "minimum": 0}
+  },
+  "additionalProperties": false
+}

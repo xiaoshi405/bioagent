@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/controlled-repair-dataset-v1.json",
+  "title": "BioAgent Controlled Repair Dataset v1",
+  "x-version": "1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "version",
+    "status",
+    "evidence_scope",
+    "created_from_commit",
+    "conditions",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "artifact_id": {"const": "BIOAGENT-CONTROLLED-REPAIR-V1"},
+    "version": {"const": "controlled-repair-v1.0"},
+    "status": {"const": "frozen_development_microbenchmark"},
+    "evidence_scope": {"const": "controlled_repair_component_only"},
+    "created_from_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "conditions": {
+      "const": ["B1", "B2"]
+    },
+    "items": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["id", "family", "input", "injected_plan", "gold"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^crt_(fasta|pdb)_[0-9]{3}$"},
+          "family": {"enum": ["fasta_to_sequence", "pdb_chain_to_sequence"]},
+          "input": {
+            "type": "object",
+            "required": ["input_type", "fixture", "fixture_sha256"],
+            "properties": {
+              "input_type": {"enum": ["protein_fasta_file", "pdb_file"]},
+              "fixture": {"type": "string", "minLength": 1},
+              "fixture_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+              "chain_id": {"type": "string", "minLength": 1, "maxLength": 1}
+            },
+            "additionalProperties": false
+          },
+          "injected_plan": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "gold": {
+            "type": "object",
+            "required": [
+              "expected_issue_code",
+              "expected_bridge",
+              "expected_repaired_plan",
+              "expected_behavior"
+            ],
+            "properties": {
+              "expected_issue_code": {"const": "MISSING_INPUT_TYPE"},
+              "expected_bridge": {"enum": ["parse_protein_fasta", "select_pdb_chain"]},
+              "expected_repaired_plan": {
+                "type": "array",
+                "minItems": 2,
+                "items": {"type": "string", "minLength": 1}
+              },
+              "expected_behavior": {"const": "repair_then_execute"}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {"properties": {"family": {"const": "pdb_chain_to_sequence"}}},
+            "then": {"properties": {"input": {"required": ["chain_id"]}}}
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}

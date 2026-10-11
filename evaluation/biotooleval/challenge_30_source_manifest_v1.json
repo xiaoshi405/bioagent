@@ -1,0 +1,78 @@
+{
+  "manifest_name": "BioToolEval Challenge-Dev 30 Fixture Manifest",
+  "version": "1.0",
+  "status": "development_fixture_manifest",
+  "created_at": "2026-08-05",
+  "entries": [
+    {
+      "resource_id": "challenge-balanced-fasta",
+      "resource_type": "protein_fasta",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/fasta/challenge_balanced.fasta",
+      "sha256": "e71f8f505ff8d3c258ca5b98071f216477264903e695939835a54e2433044746",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "覆盖20种标准氨基酸，用于FASTA桥接和多属性回归。"
+    },
+    {
+      "resource_id": "challenge-hydrophobic-fasta",
+      "resource_type": "protein_fasta",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/fasta/challenge_hydrophobic.fasta",
+      "sha256": "b2954282f35f52e295f25e2855e4d2b01603e6e9d1ba3055ef32fb217aa16eeb",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "构造强疏水窗口，用于跨膜规则和信号肽边界回归。"
+    },
+    {
+      "resource_id": "challenge-multirecord-fasta",
+      "resource_type": "protein_fasta",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/fasta/challenge_multirecord.fasta",
+      "sha256": "d1f10e97226847ea125ec8e9c40e71ffe7c871bd8c5a420b6ffade655ae8217c",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "构造多记录歧义，验证系统拒绝擅自选择第一条序列。"
+    },
+    {
+      "resource_id": "challenge-signal-fasta",
+      "resource_type": "protein_fasta",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/fasta/challenge_signal.fasta",
+      "sha256": "b30c6802a4ed7b6d770c06cb2a5f2b9646688bf1599a5382d58e252394dd94de",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "构造N端疏水区，用于本地信号肽规则与FASTA桥接回归。"
+    },
+    {
+      "resource_id": "challenge-toxin-fasta",
+      "resource_type": "protein_fasta",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/fasta/challenge_toxin.fasta",
+      "sha256": "d018723d0cc8e0a7b3738a80d75fd0e103ed6c5433f0bef50f4e4867a7603950",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "使用本地毒性库阳性模式，验证毒性筛查和多属性工具链。"
+    },
+    {
+      "resource_id": "mini-single-chain-pdb",
+      "resource_type": "pdb",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/pdb/mini_single_chain.pdb",
+      "sha256": "d04da8163a3b723cd02843f886ed65a489ac90b2fdc9889ed6dfee2010fb4c5e",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "最小单链Cα坐标夹具，用于结构解析与链序列映射回归。"
+    },
+    {
+      "resource_id": "mini-two-chain-pdb",
+      "resource_type": "pdb",
+      "source_type": "synthetic",
+      "local_fixture": "fixtures/pdb/mini_two_chain.pdb",
+      "sha256": "020a56b1f42861629c59f7fdcfee0521360a1a5b09594e806f12df119ec46a2c",
+      "evidence_type": "synthetic_test_fixture",
+      "generated_by": "team-A-codex-assisted",
+      "design_purpose": "最小双链Cα坐标夹具，用于显式选链、序列桥接和ANM回归。"
+    }
+  ]
+}

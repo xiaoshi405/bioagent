@@ -1,0 +1,228 @@
+{
+  "schema_version": "observed-interface-output-fields/1",
+  "source_scope": "local_20_tool_interface_preflight_not_benchmark_gold",
+  "source_trace": "evaluation/results/codeact-dev-preflight-20261001-v1/preflight_events.jsonl",
+  "source_trace_sha256": "b688f729dc7865e965609e232aab8a5a4d554db3f2521fde2f45b53eda6b4365",
+  "note": "Observed top-level keys, not exhaustive response schemas or guaranteed required fields. No scientific values, identifiers or runtime-binding rules are included.",
+  "tools": {
+    "compute_pI_mw": {
+      "observed_success_output_fields": [
+        "molecular_weight",
+        "pI",
+        "sequence_length",
+        "status"
+      ]
+    },
+    "compute_gravy": {
+      "observed_success_output_fields": [
+        "gravy",
+        "method",
+        "sequence_length",
+        "status"
+      ]
+    },
+    "compute_secondary_structure_fraction": {
+      "observed_success_output_fields": [
+        "helix_fraction",
+        "method",
+        "note",
+        "sequence_length",
+        "sheet_fraction",
+        "status",
+        "turn_fraction"
+      ]
+    },
+    "compute_amino_acid_composition": {
+      "observed_success_output_fields": [
+        "counts",
+        "method",
+        "percentages",
+        "sequence_length",
+        "status",
+        "units"
+      ]
+    },
+    "compute_instability_index": {
+      "observed_success_output_fields": [
+        "instability_index",
+        "is_stable",
+        "method",
+        "sequence_length",
+        "status",
+        "threshold"
+      ]
+    },
+    "compute_extinction_coefficient": {
+      "observed_success_output_fields": [
+        "method",
+        "oxidized_molar_extinction_coefficient",
+        "reduced_molar_extinction_coefficient",
+        "sequence_length",
+        "status",
+        "units",
+        "wavelength_nm"
+      ]
+    },
+    "predict_signalpeptide": {
+      "observed_success_output_fields": [
+        "confidence",
+        "has_signal_peptide",
+        "note",
+        "status"
+      ]
+    },
+    "predict_transmembrane": {
+      "observed_success_output_fields": [
+        "count",
+        "method",
+        "note",
+        "status",
+        "transmembrane_regions"
+      ]
+    },
+    "predict_solubility": {
+      "observed_success_output_fields": [
+        "method",
+        "pI",
+        "parameters",
+        "solubility_level",
+        "solubility_score",
+        "soluble",
+        "status"
+      ]
+    },
+    "check_protein_toxicity": {
+      "observed_success_output_fields": [
+        "alignment_candidates",
+        "coverage_percent",
+        "database_size",
+        "estimated_alignment_cells",
+        "high_similarity_to_known_toxin",
+        "identity_percent",
+        "matched_protein",
+        "method",
+        "query_coverage_percent",
+        "similarity_percent",
+        "status",
+        "target_coverage_percent",
+        "threshold_percent"
+      ]
+    },
+    "protein_analysis": {
+      "observed_success_output_fields": [
+        "basic_info",
+        "signal_peptide",
+        "solubility",
+        "status",
+        "transmembrane"
+      ]
+    },
+    "parse_protein_fasta": {
+      "observed_success_output_fields": [
+        "description",
+        "file_name",
+        "method",
+        "record_id",
+        "sequence",
+        "sequence_length",
+        "status"
+      ]
+    },
+    "parse_multi_protein_fasta": {
+      "observed_success_output_fields": [
+        "collection",
+        "file_name",
+        "method",
+        "record_count",
+        "record_ids",
+        "status"
+      ]
+    },
+    "select_fasta_record": {
+      "observed_success_output_fields": [
+        "available_record_ids",
+        "description",
+        "record_id",
+        "selection_method",
+        "sequence",
+        "sequence_length",
+        "status"
+      ]
+    },
+    "align_fasta_records": {
+      "observed_success_output_fields": [
+        "alignment",
+        "alignment_length",
+        "record_ids",
+        "score",
+        "status"
+      ]
+    },
+    "summarize_pairwise_alignment": {
+      "observed_success_output_fields": [
+        "record_ids",
+        "statistics",
+        "status"
+      ]
+    },
+    "analyze_pdb_structure": {
+      "observed_success_output_fields": [
+        "bounding_box_angstrom",
+        "center_of_geometry_angstrom",
+        "chain_count",
+        "chains",
+        "file_name",
+        "hetero_residue_count",
+        "method",
+        "model_count",
+        "model_used",
+        "protein_atom_count",
+        "protein_residue_count",
+        "radius_of_gyration_angstrom",
+        "secondary_structure_annotation",
+        "status",
+        "water_count"
+      ]
+    },
+    "extract_pdb_sequences": {
+      "observed_success_output_fields": [
+        "chain_count",
+        "chains",
+        "file_name",
+        "method",
+        "model_used",
+        "status",
+        "total_residue_count"
+      ]
+    },
+    "select_pdb_chain": {
+      "observed_success_output_fields": [
+        "available_chain_ids",
+        "chain_id",
+        "file_name",
+        "method",
+        "model_used",
+        "sequence",
+        "sequence_length",
+        "status",
+        "unknown_residue_count"
+      ]
+    },
+    "calculate_protein_anm": {
+      "observed_success_output_fields": [
+        "ca_atom_count",
+        "chain_id",
+        "contact_count",
+        "cutoff_angstrom",
+        "eigenvalues",
+        "file_name",
+        "method",
+        "requested_mode_count",
+        "residue_count",
+        "returned_mode_count",
+        "status",
+        "zero_or_near_zero_mode_count"
+      ]
+    }
+  }
+}

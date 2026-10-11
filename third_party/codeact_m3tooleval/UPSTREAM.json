@@ -1,0 +1,28 @@
+{
+  "repository": "https://github.com/xingyaoww/code-act",
+  "commit": "d607f56c9cfe9e8632ebaf65dcaf2b4b7fe1c6f8",
+  "license": "MIT",
+  "files": [
+    {
+      "upstream_path": "LICENSE",
+      "local_path": "LICENSE",
+      "sha256": "44afa334cc381eba5a4e44f4cd782971a718267e3be1f6eb199a8a14d70db24a"
+    },
+    {
+      "upstream_path": "scripts/eval/m3tooleval/main.py",
+      "local_path": "main.py",
+      "sha256": "c085f034f70770a4318ec1d8590c3a559230869c17c673bc3be1267754889b0d"
+    },
+    {
+      "upstream_path": "scripts/eval/m3tooleval/tasks/base.py",
+      "local_path": "tasks/base.py",
+      "sha256": "b39de50ba7183dbaae719bde546850e2fa472707b6a9d1a37102556247f9ce96"
+    },
+    {
+      "upstream_path": "scripts/eval/m3tooleval/tasks/repl.py",
+      "local_path": "tasks/repl.py",
+      "sha256": "6b4d7ea6c5643ef8a72578534adff6a778a11bdcdfb92e08415f4140a7ab0832"
+    }
+  ],
+  "core_sources_modified": false
+}

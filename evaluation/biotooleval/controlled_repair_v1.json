@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "artifact_id": "BIOAGENT-CONTROLLED-REPAIR-V1",
+  "version": "controlled-repair-v1.0",
+  "status": "frozen_development_microbenchmark",
+  "evidence_scope": "controlled_repair_component_only",
+  "created_from_commit": "5c984c2",
+  "conditions": ["B1", "B2"],
+  "items": [
+    {
+      "id": "crt_fasta_001",
+      "family": "fasta_to_sequence",
+      "input": {
+        "input_type": "protein_fasta_file",
+        "fixture": "fixtures/fasta/challenge_balanced.fasta",
+        "fixture_sha256": "e71f8f505ff8d3c258ca5b98071f216477264903e695939835a54e2433044746"
+      },
+      "injected_plan": ["compute_gravy"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "parse_protein_fasta",
+        "expected_repaired_plan": ["parse_protein_fasta", "compute_gravy"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_fasta_002",
+      "family": "fasta_to_sequence",
+      "input": {
+        "input_type": "protein_fasta_file",
+        "fixture": "fixtures/fasta/challenge_hydrophobic.fasta",
+        "fixture_sha256": "b2954282f35f52e295f25e2855e4d2b01603e6e9d1ba3055ef32fb217aa16eeb"
+      },
+      "injected_plan": ["compute_instability_index"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "parse_protein_fasta",
+        "expected_repaired_plan": ["parse_protein_fasta", "compute_instability_index"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_fasta_003",
+      "family": "fasta_to_sequence",
+      "input": {
+        "input_type": "protein_fasta_file",
+        "fixture": "fixtures/fasta/challenge_signal.fasta",
+        "fixture_sha256": "b30c6802a4ed7b6d770c06cb2a5f2b9646688bf1599a5382d58e252394dd94de"
+      },
+      "injected_plan": ["predict_signalpeptide"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "parse_protein_fasta",
+        "expected_repaired_plan": ["parse_protein_fasta", "predict_signalpeptide"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_fasta_004",
+      "family": "fasta_to_sequence",
+      "input": {
+        "input_type": "protein_fasta_file",
+        "fixture": "fixtures/real/fasta/P69905.fasta",
+        "fixture_sha256": "aecc3cb75f840f242f6b4489d501384d0c50cf0d61a8dab5a1dab81a80aa4bae"
+      },
+      "injected_plan": ["compute_extinction_coefficient"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "parse_protein_fasta",
+        "expected_repaired_plan": ["parse_protein_fasta", "compute_extinction_coefficient"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_pdb_001",
+      "family": "pdb_chain_to_sequence",
+      "input": {
+        "input_type": "pdb_file",
+        "fixture": "fixtures/pdb/mini_two_chain.pdb",
+        "fixture_sha256": "020a56b1f42861629c59f7fdcfee0521360a1a5b09594e806f12df119ec46a2c",
+        "chain_id": "A"
+      },
+      "injected_plan": ["compute_gravy"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "select_pdb_chain",
+        "expected_repaired_plan": ["select_pdb_chain", "compute_gravy"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_pdb_002",
+      "family": "pdb_chain_to_sequence",
+      "input": {
+        "input_type": "pdb_file",
+        "fixture": "fixtures/real/pdb/4HHB.pdb",
+        "fixture_sha256": "c62774ac679a220a493aab5d177ab34248ab700235dc6d941f5f3cbefde334ed",
+        "chain_id": "A"
+      },
+      "injected_plan": ["compute_pI_mw"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "select_pdb_chain",
+        "expected_repaired_plan": ["select_pdb_chain", "compute_pI_mw"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_pdb_003",
+      "family": "pdb_chain_to_sequence",
+      "input": {
+        "input_type": "pdb_file",
+        "fixture": "fixtures/real/pdb/1BRS.pdb",
+        "fixture_sha256": "0076aae54252706a8c8c02f7b1e71ce2394b0e928b413590b4ac12aade9e8f6c",
+        "chain_id": "C"
+      },
+      "injected_plan": ["compute_instability_index"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "select_pdb_chain",
+        "expected_repaired_plan": ["select_pdb_chain", "compute_instability_index"],
+        "expected_behavior": "repair_then_execute"
+      }
+    },
+    {
+      "id": "crt_pdb_004",
+      "family": "pdb_chain_to_sequence",
+      "input": {
+        "input_type": "pdb_file",
+        "fixture": "fixtures/real/pdb/2PTC.pdb",
+        "fixture_sha256": "0b3880b05cfba506159267e7e2f3c851b89ea736e9ce822e0c0102d720e26ee9",
+        "chain_id": "I"
+      },
+      "injected_plan": ["predict_solubility"],
+      "gold": {
+        "expected_issue_code": "MISSING_INPUT_TYPE",
+        "expected_bridge": "select_pdb_chain",
+        "expected_repaired_plan": ["select_pdb_chain", "predict_solubility"],
+        "expected_behavior": "repair_then_execute"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schema_version": "external-baselines-dev-canary/1",
+  "scope": "development_only_not_for_final_metrics",
+  "selection_rule": "Cover all 20 registered tools, sequence/FASTA/PDB inputs, explicit record/chain selection, alignment dependencies and missing-identifier rejection; fixed before live ReAct runs.",
+  "dataset": "evaluation/biotooleval/dev70_complex_v2_candidate.json",
+  "dataset_canonical_sha256": "a990786925b45214cc5d02baa8d33cd708e2d568acdb77229fb605d96f8b0435",
+  "canonical_hash_policy": "sha256-utf8-lf",
+  "item_count": 12,
+  "metadata_preferred_chain_tool_coverage": 20,
+  "tasks": [
+    {"id": "bte_107", "purpose": "Direct sequence: signal peptide, transmembrane and solubility"},
+    {"id": "bte_108", "purpose": "Direct sequence: toxin screening, composition and GRAVY"},
+    {"id": "bte_109", "purpose": "Single FASTA: sequence extraction then GRAVY and instability"},
+    {"id": "bte_114", "purpose": "Single FASTA: one-stop analysis plus an additional requested result"},
+    {"id": "bte_116", "purpose": "PDB structure and all-chain sequence extraction"},
+    {"id": "bte_117", "purpose": "PDB structure then authorized largest-chain ANM"},
+    {"id": "bte_120", "purpose": "Explicit PDB chain B then sequence analyses"},
+    {"id": "bte_128", "purpose": "Multi-record FASTA without target identifier"},
+    {"id": "bte_129", "purpose": "Multi-chain PDB without target identifier"},
+    {"id": "bte_213", "purpose": "Real sequence: composition, secondary fractions and extinction"},
+    {"id": "bte_701", "purpose": "Multi-record FASTA with explicit record identifier"},
+    {"id": "bte_705", "purpose": "Two explicit FASTA records, alignment and statistics"}
+  ]
+}

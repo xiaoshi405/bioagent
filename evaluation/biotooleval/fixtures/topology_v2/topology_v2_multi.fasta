@@ -1,0 +1,8 @@
+>alpha_reference balanced synthetic protein
+ACDEFGHIKLMNPQRSTVWY
+>beta_variant single-substitution synthetic protein
+ACDEYGHIKLMNPQRSAVWY
+>gamma_signal_like hydrophobic synthetic protein
+MKWVTFISLLFLFSSAYSRGVFRR
+>delta_low_complexity low-complexity synthetic protein
+GGGGGSSSSSTTTTTAAAAAVVVVV

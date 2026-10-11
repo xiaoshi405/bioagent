@@ -1,0 +1,3 @@
+# The research freeze and official-source verifiers use exact bytes.
+# Preserve all published source/data bytes across platforms.
+* -text

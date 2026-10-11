@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/biotooleval-source-manifest-v1.json",
+  "title": "BioToolEval Source Manifest v1.0",
+  "type": "object",
+  "required": ["manifest_name", "version", "status", "created_at", "entries"],
+  "properties": {
+    "manifest_name": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "status": {
+      "enum": ["development_fixture_manifest", "candidate", "frozen", "released"]
+    },
+    "created_at": {"type": "string", "format": "date"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "resource_id",
+          "resource_type",
+          "source_type",
+          "local_fixture",
+          "sha256",
+          "evidence_type"
+        ],
+        "properties": {
+          "resource_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"},
+          "resource_type": {"enum": ["protein_fasta", "pdb"]},
+          "source_type": {"enum": ["synthetic", "real"]},
+          "local_fixture": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "evidence_type": {
+            "enum": [
+              "synthetic_test_fixture",
+              "reviewed_sequence",
+              "unreviewed_sequence",
+              "experimental_structure",
+              "predicted_structure"
+            ]
+          },
+          "database": {"type": ["string", "null"]},
+          "accession": {"type": ["string", "null"]},
+          "source_url": {"type": ["string", "null"], "format": "uri"},
+          "record_url": {"type": ["string", "null"], "format": "uri"},
+          "retrieved_at": {"type": ["string", "null"], "format": "date"},
+          "license": {"type": ["string", "null"]},
+          "license_url": {"type": ["string", "null"], "format": "uri"},
+          "chain_ids": {
+            "type": ["array", "null"],
+            "items": {"type": "string", "pattern": "^[A-Za-z0-9]$"},
+            "uniqueItems": true
+          },
+          "source_release": {"type": ["string", "null"]},
+          "max_question_reuse": {"type": ["integer", "null"], "minimum": 1},
+          "experimental_method": {"type": ["string", "null"]},
+          "generated_by": {"type": ["string", "null"]},
+          "design_purpose": {"type": ["string", "null"]}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"source_type": {"const": "real"}}},
+            "then": {
+              "required": [
+                "database",
+                "accession",
+                "source_url",
+                "record_url",
+                "retrieved_at",
+                "license",
+                "license_url"
+              ],
+              "properties": {
+                "evidence_type": {
+                  "enum": [
+                    "reviewed_sequence",
+                    "unreviewed_sequence",
+                    "experimental_structure",
+                    "predicted_structure"
+                  ]
+                },
+                "database": {"type": "string", "minLength": 1},
+                "accession": {"type": "string", "minLength": 1},
+                "source_url": {"type": "string", "format": "uri"},
+                "record_url": {"type": "string", "format": "uri"},
+                "retrieved_at": {"type": "string", "format": "date"},
+                "license": {"type": "string", "minLength": 1},
+                "license_url": {"type": "string", "format": "uri"}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "source_type": {"const": "real"},
+                "resource_type": {"const": "pdb"}
+              },
+              "required": ["source_type", "resource_type"]
+            },
+            "then": {
+              "required": ["chain_ids", "experimental_method"],
+              "properties": {
+                "chain_ids": {"type": "array", "minItems": 1},
+                "experimental_method": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          {
+            "if": {"properties": {"source_type": {"const": "synthetic"}}},
+            "then": {
+              "required": ["generated_by", "design_purpose"],
+              "properties": {
+                "evidence_type": {"const": "synthetic_test_fixture"},
+                "generated_by": {"type": "string", "minLength": 1},
+                "design_purpose": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

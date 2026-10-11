@@ -1,0 +1,5 @@
+﻿model,condition,records,executable_plan_rate_numerator,executable_plan_rate_denominator,safe_rejection_rate_numerator,safe_rejection_rate_denominator
+Qwen 3.7 Plus,E3,450,360,375,61,75
+Qwen 3.7 Plus,F1,450,360,375,61,75
+DeepSeek V4 Flash,E3,450,355,375,57,75
+DeepSeek V4 Flash,F1,450,357,375,57,75

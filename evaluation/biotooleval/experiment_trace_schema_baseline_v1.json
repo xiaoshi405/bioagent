@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schema-profiles/experiment-trace-baseline-v1.2.json",
+  "title": "BioAgent External Baseline Trace Schema Extension v1.2",
+  "x-version": "1.2",
+  "base_schema": "experiment_trace_schema_v1.json",
+  "condition_enum": ["S1", "L1"],
+  "plan_properties": {
+    "baseline_kind": {
+      "enum": ["schema_runtime_validation", "matched_budget_llm_replan"]
+    },
+    "schema_valid_before": {"type": "boolean"},
+    "original_plan_preserved": {"const": true},
+    "original_plan_sample_id": {
+      "type": ["string", "null"],
+      "pattern": "^plan_[a-f0-9]{24}$"
+    },
+    "replan_triggered": {"type": "boolean"},
+    "replan_applied": {"type": "boolean"},
+    "replan_plan_sample_id": {
+      "type": ["string", "null"],
+      "pattern": "^plan_[a-f0-9]{24}$"
+    },
+    "extra_llm_calls": {"type": "integer", "minimum": 0, "maximum": 1},
+    "extra_llm_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "extra_llm_output_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "extra_llm_total_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "replan_latency_ms": {"type": "number", "minimum": 0},
+    "replan_outcome": {
+      "enum": [
+        "not_triggered",
+        "captured",
+        "unparseable_plan",
+        "unknown_tool_plan",
+        "infrastructure_failure",
+        "type_invalid_replan"
+      ]
+    }
+  }
+}

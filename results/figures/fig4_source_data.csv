@@ -1,0 +1,121 @@
+figure,model,method,metric,repeat,value,denominator,numerator,unclassified,upper_bound,aggregate_value,unit
+framework,qwen3.7-plus-2026-05-26,ReAct,execute_task_completion,0,93.6,125,117,0,93.6,93.60000000000001,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,execute_task_completion,1,93.6,125,117,1,94.4,93.60000000000001,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,execute_task_completion,2,93.6,125,117,0,93.6,93.60000000000001,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,safe_rejection,0,36.0,25,9,0,36.0,36.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,safe_rejection,1,36.0,25,9,0,36.0,36.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,safe_rejection,2,36.0,25,9,0,36.0,36.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,expected_behavior_outcome,0,84.0,150,126,0,84.0,84.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,expected_behavior_outcome,1,84.0,150,126,1,84.66666666666667,84.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,expected_behavior_outcome,2,84.0,150,126,0,84.0,84.0,percent
+framework,qwen3.7-plus-2026-05-26,ReAct,observed_mean_total,0,20.884193333333332,150,3132629,,,19.511153674832965,thousand tokens
+framework,qwen3.7-plus-2026-05-26,ReAct,observed_mean_total,1,18.40139597315436,149,2741808,,,19.511153674832965,thousand tokens
+framework,qwen3.7-plus-2026-05-26,ReAct,observed_mean_total,2,19.24047333333333,150,2886071,,,19.511153674832965,thousand tokens
+framework,qwen3.7-plus-2026-05-26,CodeAct,execute_task_completion,0,89.6,125,112,0,89.6,88.26666666666667,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,execute_task_completion,1,88.0,125,110,0,88.0,88.26666666666667,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,execute_task_completion,2,87.2,125,109,0,87.2,88.26666666666667,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,safe_rejection,0,36.0,25,9,0,36.0,37.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,safe_rejection,1,36.0,25,9,0,36.0,37.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,safe_rejection,2,40.0,25,10,0,40.0,37.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,expected_behavior_outcome,0,80.66666666666667,150,121,0,80.66666666666667,79.77777777777779,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,expected_behavior_outcome,1,79.33333333333333,150,119,0,79.33333333333333,79.77777777777779,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,expected_behavior_outcome,2,79.33333333333333,150,119,0,79.33333333333333,79.77777777777779,percent
+framework,qwen3.7-plus-2026-05-26,CodeAct,observed_mean_total,0,20.92958,150,3139437,,,21.22879777777778,thousand tokens
+framework,qwen3.7-plus-2026-05-26,CodeAct,observed_mean_total,1,21.35368,150,3203052,,,21.22879777777778,thousand tokens
+framework,qwen3.7-plus-2026-05-26,CodeAct,observed_mean_total,2,21.403133333333336,150,3210470,,,21.22879777777778,thousand tokens
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,execute_task_completion,0,74.4,125,93,0,74.4,74.93333333333332,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,execute_task_completion,1,74.4,125,93,0,74.4,74.93333333333332,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,execute_task_completion,2,76.0,125,95,0,76.0,74.93333333333332,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,safe_rejection,0,28.0,25,7,1,32.0,25.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,safe_rejection,1,24.0,25,6,0,24.0,25.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,safe_rejection,2,24.0,25,6,0,24.0,25.333333333333336,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,expected_behavior_outcome,0,66.66666666666667,150,100,1,67.33333333333333,66.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,expected_behavior_outcome,1,66.0,150,99,0,66.0,66.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,expected_behavior_outcome,2,67.33333333333333,150,101,0,67.33333333333333,66.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,observed_mean_total,0,9.812865771812081,149,1462117,,,9.830124721603562,thousand tokens
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,observed_mean_total,1,9.8278,150,1474170,,,9.830124721603562,thousand tokens
+framework,qwen3.7-plus-2026-05-26,SciToolAgent,observed_mean_total,2,9.849593333333335,150,1477439,,,9.830124721603562,thousand tokens
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,execute_task_completion,0,90.4,125,113,0,90.4,88.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,execute_task_completion,1,89.6,125,112,0,89.6,88.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,execute_task_completion,2,85.6,125,107,0,85.6,88.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,safe_rejection,0,28.0,25,7,1,32.0,29.333333333333332,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,safe_rejection,1,36.0,25,9,0,36.0,29.333333333333332,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,safe_rejection,2,24.0,25,6,0,24.0,29.333333333333332,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,expected_behavior_outcome,0,80.0,150,120,1,80.66666666666667,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,expected_behavior_outcome,1,80.66666666666667,150,121,0,80.66666666666667,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,expected_behavior_outcome,2,75.33333333333333,150,113,0,75.33333333333333,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,observed_mean_total,0,17.65642953020134,149,2630808,,,18.253890868596883,thousand tokens
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,observed_mean_total,1,18.043446666666668,150,2706517,,,18.253890868596883,thousand tokens
+framework,qwen3.7-plus-2026-05-26,Biomni-A1,observed_mean_total,2,19.057813333333332,150,2858672,,,18.253890868596883,thousand tokens
+framework,qwen3.7-plus-2026-05-26,F1,execute_task_completion,0,92.0,125,115,0,92.0,92.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,F1,execute_task_completion,1,92.8,125,116,0,92.8,92.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,F1,execute_task_completion,2,92.8,125,116,0,92.8,92.53333333333333,percent
+framework,qwen3.7-plus-2026-05-26,F1,safe_rejection,0,80.0,25,20,0,80.0,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,F1,safe_rejection,1,72.0,25,18,0,72.0,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,F1,safe_rejection,2,84.0,25,21,0,84.0,78.66666666666666,percent
+framework,qwen3.7-plus-2026-05-26,F1,expected_behavior_outcome,0,90.0,150,135,0,90.0,90.22222222222223,percent
+framework,qwen3.7-plus-2026-05-26,F1,expected_behavior_outcome,1,89.33333333333333,150,134,0,89.33333333333333,90.22222222222223,percent
+framework,qwen3.7-plus-2026-05-26,F1,expected_behavior_outcome,2,91.33333333333333,150,137,0,91.33333333333333,90.22222222222223,percent
+framework,qwen3.7-plus-2026-05-26,F1,observed_mean_total,0,4.003393333333333,150,600509,,,4.027742222222222,thousand tokens
+framework,qwen3.7-plus-2026-05-26,F1,observed_mean_total,1,4.04224,150,606336,,,4.027742222222222,thousand tokens
+framework,qwen3.7-plus-2026-05-26,F1,observed_mean_total,2,4.037593333333334,150,605639,,,4.027742222222222,thousand tokens
+framework,deepseek-v4-flash-0731,ReAct,execute_task_completion,0,88.8,125,111,0,88.8,89.06666666666668,percent
+framework,deepseek-v4-flash-0731,ReAct,execute_task_completion,1,93.6,125,117,0,93.6,89.06666666666668,percent
+framework,deepseek-v4-flash-0731,ReAct,execute_task_completion,2,84.8,125,106,0,84.8,89.06666666666668,percent
+framework,deepseek-v4-flash-0731,ReAct,safe_rejection,0,36.0,25,9,1,40.0,36.0,percent
+framework,deepseek-v4-flash-0731,ReAct,safe_rejection,1,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,ReAct,safe_rejection,2,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,ReAct,expected_behavior_outcome,0,80.0,150,120,1,80.66666666666667,80.22222222222221,percent
+framework,deepseek-v4-flash-0731,ReAct,expected_behavior_outcome,1,84.0,150,126,0,84.0,80.22222222222221,percent
+framework,deepseek-v4-flash-0731,ReAct,expected_behavior_outcome,2,76.66666666666667,150,115,0,76.66666666666667,80.22222222222221,percent
+framework,deepseek-v4-flash-0731,ReAct,observed_mean_total,0,26.269080536912753,149,3914093,,,25.892741648106906,thousand tokens
+framework,deepseek-v4-flash-0731,ReAct,observed_mean_total,1,22.946346666666667,150,3441952,,,25.892741648106906,thousand tokens
+framework,deepseek-v4-flash-0731,ReAct,observed_mean_total,2,28.465306666666667,150,4269796,,,25.892741648106906,thousand tokens
+framework,deepseek-v4-flash-0731,CodeAct,execute_task_completion,0,79.2,125,99,0,79.2,79.73333333333333,percent
+framework,deepseek-v4-flash-0731,CodeAct,execute_task_completion,1,77.6,125,97,1,78.4,79.73333333333333,percent
+framework,deepseek-v4-flash-0731,CodeAct,execute_task_completion,2,82.4,125,103,0,82.4,79.73333333333333,percent
+framework,deepseek-v4-flash-0731,CodeAct,safe_rejection,0,36.0,25,9,1,40.0,36.0,percent
+framework,deepseek-v4-flash-0731,CodeAct,safe_rejection,1,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,CodeAct,safe_rejection,2,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,CodeAct,expected_behavior_outcome,0,72.0,150,108,1,72.66666666666667,72.44444444444444,percent
+framework,deepseek-v4-flash-0731,CodeAct,expected_behavior_outcome,1,70.66666666666667,150,106,1,71.33333333333333,72.44444444444444,percent
+framework,deepseek-v4-flash-0731,CodeAct,expected_behavior_outcome,2,74.66666666666667,150,112,0,74.66666666666667,72.44444444444444,percent
+framework,deepseek-v4-flash-0731,CodeAct,observed_mean_total,0,29.417040268456375,149,4383139,,,29.31115625,thousand tokens
+framework,deepseek-v4-flash-0731,CodeAct,observed_mean_total,1,29.46181879194631,149,4389811,,,29.31115625,thousand tokens
+framework,deepseek-v4-flash-0731,CodeAct,observed_mean_total,2,29.05632,150,4358448,,,29.31115625,thousand tokens
+framework,deepseek-v4-flash-0731,SciToolAgent,execute_task_completion,0,76.0,125,95,0,76.0,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,execute_task_completion,1,75.2,125,94,1,76.0,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,execute_task_completion,2,78.4,125,98,0,78.4,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,safe_rejection,0,24.0,25,6,0,24.0,22.666666666666664,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,safe_rejection,1,24.0,25,6,0,24.0,22.666666666666664,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,safe_rejection,2,20.0,25,5,0,20.0,22.666666666666664,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,expected_behavior_outcome,0,67.33333333333333,150,101,0,67.33333333333333,67.55555555555556,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,expected_behavior_outcome,1,66.66666666666667,150,100,1,67.33333333333333,67.55555555555556,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,expected_behavior_outcome,2,68.66666666666667,150,103,0,68.66666666666667,67.55555555555556,percent
+framework,deepseek-v4-flash-0731,SciToolAgent,observed_mean_total,0,11.473799999999999,150,1721070,,,11.454062360801782,thousand tokens
+framework,deepseek-v4-flash-0731,SciToolAgent,observed_mean_total,1,11.329288590604026,149,1688064,,,11.454062360801782,thousand tokens
+framework,deepseek-v4-flash-0731,SciToolAgent,observed_mean_total,2,11.558266666666666,150,1733740,,,11.454062360801782,thousand tokens
+framework,deepseek-v4-flash-0731,Biomni-A1,execute_task_completion,0,75.2,125,94,0,75.2,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,execute_task_completion,1,74.4,125,93,0,74.4,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,execute_task_completion,2,80.0,125,100,1,80.8,76.53333333333333,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,safe_rejection,0,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,safe_rejection,1,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,safe_rejection,2,36.0,25,9,0,36.0,36.0,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,expected_behavior_outcome,0,68.66666666666667,150,103,0,68.66666666666667,69.77777777777779,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,expected_behavior_outcome,1,68.0,150,102,0,68.0,69.77777777777779,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,expected_behavior_outcome,2,72.66666666666667,150,109,1,73.33333333333333,69.77777777777779,percent
+framework,deepseek-v4-flash-0731,Biomni-A1,observed_mean_total,0,24.782506666666666,150,3717376,,,25.771623608017816,thousand tokens
+framework,deepseek-v4-flash-0731,Biomni-A1,observed_mean_total,1,27.077086666666666,150,4061563,,,25.771623608017816,thousand tokens
+framework,deepseek-v4-flash-0731,Biomni-A1,observed_mean_total,2,25.453154362416107,149,3792520,,,25.771623608017816,thousand tokens
+framework,deepseek-v4-flash-0731,F1,execute_task_completion,0,88.8,125,111,0,88.8,90.4,percent
+framework,deepseek-v4-flash-0731,F1,execute_task_completion,1,91.2,125,114,0,91.2,90.4,percent
+framework,deepseek-v4-flash-0731,F1,execute_task_completion,2,91.2,125,114,0,91.2,90.4,percent
+framework,deepseek-v4-flash-0731,F1,safe_rejection,0,84.0,25,21,0,84.0,82.66666666666667,percent
+framework,deepseek-v4-flash-0731,F1,safe_rejection,1,84.0,25,21,0,84.0,82.66666666666667,percent
+framework,deepseek-v4-flash-0731,F1,safe_rejection,2,80.0,25,20,0,80.0,82.66666666666667,percent
+framework,deepseek-v4-flash-0731,F1,expected_behavior_outcome,0,88.0,150,132,0,88.0,89.11111111111111,percent
+framework,deepseek-v4-flash-0731,F1,expected_behavior_outcome,1,90.0,150,135,0,90.0,89.11111111111111,percent
+framework,deepseek-v4-flash-0731,F1,expected_behavior_outcome,2,89.33333333333333,150,134,0,89.33333333333333,89.11111111111111,percent
+framework,deepseek-v4-flash-0731,F1,observed_mean_total,0,3.8729933333333335,150,580949,,,3.913988888888889,thousand tokens
+framework,deepseek-v4-flash-0731,F1,observed_mean_total,1,3.9226533333333333,150,588398,,,3.913988888888889,thousand tokens
+framework,deepseek-v4-flash-0731,F1,observed_mean_total,2,3.94632,150,591948,,,3.913988888888889,thousand tokens

@@ -1,0 +1,331 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/experiment-trace-v1.0.json",
+  "title": "BioAgent B0-B2 Experiment Trace v1.0",
+  "x-version": "1.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "question_id",
+    "split",
+    "category",
+    "difficulty",
+    "input_type",
+    "condition",
+    "repeat_index",
+    "context",
+    "gold",
+    "observation",
+    "evaluation"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "question_id": {"type": "string", "pattern": "^bte_[0-9]{3}$"},
+    "split": {"enum": ["pilot", "dev", "test"]},
+    "category": {"enum": ["single_tool", "multi_tool", "boundary", "trap"]},
+    "difficulty": {"enum": ["easy", "medium", "hard"]},
+    "input_type": {
+      "enum": [
+        "amino_acid_sequence",
+        "protein_fasta_file",
+        "pdb_file",
+        "none"
+      ]
+    },
+    "condition": {"enum": ["B0", "B1", "B2"]},
+    "repeat_index": {"type": "integer", "minimum": 0},
+    "context": {
+      "type": "object",
+      "required": [
+        "model",
+        "temperature",
+        "git_commit",
+        "dataset_version"
+      ],
+      "properties": {
+        "model": {"type": "string", "minLength": 1},
+        "temperature": {"type": "number"},
+        "seed": {"type": ["integer", "null"]},
+        "git_commit": {"type": "string", "minLength": 7},
+        "dataset_version": {"type": "string", "minLength": 1},
+        "kg_snapshot": {"type": ["string", "null"]},
+        "python_version": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "gold": {
+      "type": "object",
+      "required": [
+        "preferred_tool_chain",
+        "acceptable_tool_chains",
+        "order_sensitive",
+        "expected_status",
+        "expected_behavior"
+      ],
+      "properties": {
+        "preferred_tool_chain": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "acceptable_tool_chains": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "order_sensitive": {"type": "boolean"},
+        "expected_status": {"enum": ["success", "error"]},
+        "expected_behavior": {
+          "enum": ["execute", "repair_then_execute", "reject"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "observation": {
+      "type": "object",
+      "required": ["plan", "execution", "latency"],
+      "properties": {
+        "plan": {
+          "type": "object",
+          "required": [
+            "planned_chain",
+            "executed_chain",
+            "type_valid_before",
+            "type_valid_after",
+            "repair_attempted",
+            "repair_applied",
+            "issue_codes_before",
+            "issue_codes_after"
+          ],
+          "properties": {
+            "planned_chain": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "executed_chain": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "initial_types": {
+              "type": "array",
+              "items": {"type": "string"},
+              "uniqueItems": true
+            },
+            "initial_artifact_issue_codes": {
+              "type": "array",
+              "items": {"type": "string"},
+              "uniqueItems": true
+            },
+            "type_valid_before": {"type": ["boolean", "null"]},
+            "type_valid_after": {"type": ["boolean", "null"]},
+            "repair_attempted": {"type": "boolean"},
+            "repair_applied": {"type": "boolean"},
+            "repair_strategy": {
+              "enum": [
+                "none",
+                "deterministic_bridge_insertion",
+                "duplicate_invalid_step_pruning"
+              ]
+            },
+            "repair_operations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "operation",
+                  "tool_name",
+                  "original_step_index",
+                  "before_step_index",
+                  "issue_code",
+                  "input_types",
+                  "output_types",
+                  "downstream_required_types",
+                  "registry_opt_in",
+                  "duplicate_group_size",
+                  "output_consumed_downstream",
+                  "candidate_plan_type_valid",
+                  "bridge_path_length"
+                ],
+                "properties": {
+                  "operation": {
+                    "enum": [
+                      "deterministic_bridge_insert",
+                      "redundant_step_prune"
+                    ]
+                  },
+                  "tool_name": {"type": "string", "minLength": 1},
+                  "original_step_index": {
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                  },
+                  "before_step_index": {
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                  },
+                  "issue_code": {"type": ["string", "null"]},
+                  "input_types": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "uniqueItems": true
+                  },
+                  "output_types": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "uniqueItems": true
+                  },
+                  "downstream_required_types": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "uniqueItems": true
+                  },
+                  "registry_opt_in": {"type": "boolean"},
+                  "duplicate_group_size": {
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                  },
+                  "output_consumed_downstream": {
+                    "type": ["boolean", "null"]
+                  },
+                  "candidate_plan_type_valid": {"type": "boolean"},
+                  "bridge_path_length": {
+                    "type": ["integer", "null"],
+                    "minimum": 0
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "issue_codes_before": {
+              "type": "array",
+              "items": {"type": "string"},
+              "uniqueItems": true
+            },
+            "issue_codes_after": {
+              "type": "array",
+              "items": {"type": "string"},
+              "uniqueItems": true
+            },
+            "plan_sample_id": {
+              "type": ["string", "null"],
+              "pattern": "^plan_[a-f0-9]{24}$"
+            },
+            "shared_plan_replay": {"type": "boolean"},
+            "capture_outcome": {
+              "type": ["string", "null"],
+              "enum": [
+                "captured",
+                "unparseable_plan",
+                "unknown_tool_plan",
+                "request_guard_reject",
+                null
+              ]
+            },
+            "selected_attempt_index": {
+              "type": ["integer", "null"],
+              "minimum": 1
+            },
+            "plan_attempt_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "plan_response_sha256": {
+              "type": ["string", "null"],
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "plan_attempts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "attempt_index",
+                  "attempt_kind",
+                  "outcome",
+                  "exception_type",
+                  "response_sha256",
+                  "latency_ms"
+                ],
+                "properties": {
+                  "attempt_index": {"type": "integer", "minimum": 1},
+                  "attempt_kind": {
+                    "enum": ["content", "infrastructure"]
+                  },
+                  "outcome": {
+                    "enum": [
+                      "captured",
+                      "unparseable_plan",
+                      "unknown_tool_plan",
+                      "request_guard_reject",
+                      "network_error",
+                      "network_timeout",
+                      "planner_exception",
+                      "retrieval_failure"
+                    ]
+                  },
+                  "exception_type": {"type": ["string", "null"]},
+                  "response_sha256": {
+                    "type": ["string", "null"],
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "latency_ms": {"type": "number", "minimum": 0}
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "execution": {
+          "type": "object",
+          "required": [
+            "completed",
+            "attempted_steps",
+            "successful_steps",
+            "failed_steps",
+            "error_type"
+          ],
+          "properties": {
+            "completed": {"type": "boolean"},
+            "attempted_steps": {"type": "integer", "minimum": 0},
+            "successful_steps": {"type": "integer", "minimum": 0},
+              "failed_steps": {"type": "integer", "minimum": 0},
+              "error_type": {"type": ["string", "null"]},
+              "detail_code": {"type": ["string", "null"]}
+          },
+          "additionalProperties": false
+        },
+        "latency": {
+          "type": "object",
+          "required": ["total_ms", "typed_runtime_ms"],
+          "properties": {
+            "total_ms": {"type": "number", "minimum": 0},
+            "typed_runtime_ms": {"type": ["number", "null"], "minimum": 0}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "evaluation": {
+      "type": "object",
+      "required": [
+        "final_answer_correct",
+        "repair_correct",
+        "result_hallucination",
+        "original_plan_executable",
+        "correct_rejection"
+      ],
+      "properties": {
+        "final_answer_correct": {"type": ["boolean", "null"]},
+        "repair_correct": {"type": ["boolean", "null"]},
+        "result_hallucination": {"type": ["boolean", "null"]},
+        "original_plan_executable": {"type": ["boolean", "null"]},
+        "correct_rejection": {"type": ["boolean", "null"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

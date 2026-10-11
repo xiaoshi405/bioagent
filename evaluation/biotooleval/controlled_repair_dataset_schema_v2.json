@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/controlled-repair-dataset-v2.json",
+  "title": "BioAgent Controlled Repair Dataset v2",
+  "x-version": "2.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "artifact_id",
+    "version",
+    "status",
+    "evidence_scope",
+    "created_from_commit",
+    "conditions",
+    "family_contracts",
+    "fixtures",
+    "cases"
+  ],
+  "properties": {
+    "schema_version": {"const": "2.0"},
+    "artifact_id": {"const": "BIOAGENT-CONTROLLED-REPAIR-V2"},
+    "version": {"const": "controlled-repair-v2.0"},
+    "status": {"const": "frozen_development_microbenchmark"},
+    "evidence_scope": {"const": "controlled_repair_component_only"},
+    "created_from_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "conditions": {"const": ["E2", "E3"]},
+    "family_contracts": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 6,
+      "items": {"$ref": "#/$defs/familyContract"}
+    },
+    "fixtures": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/fixture"}
+    },
+    "cases": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 40,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "toolPlanTemplate": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "familyContract": {
+      "type": "object",
+      "required": [
+        "family",
+        "topology_signature",
+        "input_type",
+        "repair_strategy",
+        "injected_plan_template",
+        "repaired_plan_template",
+        "expected_inserted_steps",
+        "expected_removed_steps"
+      ],
+      "properties": {
+        "family": {
+          "enum": [
+            "single_fasta_source_bridge",
+            "pdb_chain_composite_bridge",
+            "multi_fasta_parser_omission",
+            "multi_fasta_selector_omission",
+            "multi_fasta_two_hop_alignment",
+            "duplicate_invalid_branch_pruning"
+          ]
+        },
+        "topology_signature": {"type": "string", "minLength": 1},
+        "input_type": {
+          "enum": [
+            "single_protein_fasta_file",
+            "pdb_file",
+            "multi_protein_fasta_file"
+          ]
+        },
+        "repair_strategy": {
+          "enum": [
+            "deterministic_bridge_insertion",
+            "duplicate_invalid_step_pruning"
+          ]
+        },
+        "injected_plan_template": {"$ref": "#/$defs/toolPlanTemplate"},
+        "repaired_plan_template": {"$ref": "#/$defs/toolPlanTemplate"},
+        "expected_inserted_steps": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "expected_removed_steps": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    },
+    "fixture": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "case": {
+      "type": "object",
+      "required": ["id", "family", "fixture_ref", "terminal_tool"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^crv2_[0-9]{3}$"},
+        "family": {
+          "enum": [
+            "single_fasta_source_bridge",
+            "pdb_chain_composite_bridge",
+            "multi_fasta_parser_omission",
+            "multi_fasta_selector_omission",
+            "multi_fasta_two_hop_alignment",
+            "duplicate_invalid_branch_pruning"
+          ]
+        },
+        "fixture_ref": {"type": "string", "minLength": 1},
+        "terminal_tool": {"type": "string", "minLength": 1},
+        "chain_id": {"type": "string", "minLength": 1, "maxLength": 1},
+        "record_id": {"type": "string", "minLength": 1},
+        "record_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

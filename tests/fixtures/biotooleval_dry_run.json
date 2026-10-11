@@ -1,0 +1,97 @@
+{
+  "dataset_name": "BioToolEval",
+  "version": "dry-run-1.0",
+  "status": "dry_run_fixture",
+  "summary": {
+    "item_count": 2,
+    "benchmark_ready_count": 2
+  },
+  "items": [
+    {
+      "id": "bte_901",
+      "split": "pilot",
+      "category": "single_tool",
+      "difficulty": "easy",
+      "question_zh": "[DRY_GRAVY] 计算该离线合成蛋白质序列的GRAVY值。",
+      "question_en": "[DRY_GRAVY] Calculate the GRAVY score.",
+      "input": {
+        "input_type": "amino_acid_sequence",
+        "sequence": "MKWVTFISLLLLFSSAYSRGVFRR",
+        "source_type": "synthetic"
+      },
+      "gold": {
+        "preferred_tool_chain": ["compute_gravy"],
+        "acceptable_tool_chains": [],
+        "order_sensitive": false,
+        "expected_status": "success",
+        "expected_behavior": "execute",
+        "expected_output": {
+          "gravy": 0.1
+        },
+        "tolerance": {
+          "gravy": 0.0001
+        }
+      },
+      "provenance": {
+        "gold_generator": "offline_fixture",
+        "verified_by": "automated_test",
+        "verified_at": "2026-07-30"
+      },
+      "governance": {
+        "question_source": "locally_constructed",
+        "question_author": "automated-test",
+        "source_reference": null,
+        "template_group": "dry-gravy-single",
+        "exposure_status": "seen_by_method_developer",
+        "gold_status": "auto_verified",
+        "reviewed_by": [],
+        "reviewed_at": null,
+        "method_freeze_commit": null
+      }
+    },
+    {
+      "id": "bte_902",
+      "split": "pilot",
+      "category": "single_tool",
+      "difficulty": "easy",
+      "question_zh": "[DRY_PI_MW] 计算该离线合成蛋白质序列的等电点和分子量。",
+      "question_en": "[DRY_PI_MW] Calculate pI and molecular weight.",
+      "input": {
+        "input_type": "amino_acid_sequence",
+        "sequence": "ACDEFGHIKLMNPQRSTVWY",
+        "source_type": "synthetic"
+      },
+      "gold": {
+        "preferred_tool_chain": ["compute_pI_mw"],
+        "acceptable_tool_chains": [],
+        "order_sensitive": false,
+        "expected_status": "success",
+        "expected_behavior": "execute",
+        "expected_output": {
+          "pI": 6.5,
+          "molecular_weight": 1234.5
+        },
+        "tolerance": {
+          "pI": 0.0001,
+          "molecular_weight": 0.0001
+        }
+      },
+      "provenance": {
+        "gold_generator": "offline_fixture",
+        "verified_by": "automated_test",
+        "verified_at": "2026-07-30"
+      },
+      "governance": {
+        "question_source": "locally_constructed",
+        "question_author": "automated-test",
+        "source_reference": null,
+        "template_group": "dry-pi-mw-single",
+        "exposure_status": "seen_by_method_developer",
+        "gold_status": "auto_verified",
+        "reviewed_by": [],
+        "reviewed_at": null,
+        "method_freeze_commit": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "schema_version": "gate3-dual-model-experiment-freeze/1.0",
+  "artifact_id": "BIOAGENT-GATE3-DUAL-MODEL-FREEZE-V1",
+  "status": "FROZEN_BEFORE_HELD_OUT_EXECUTION",
+  "frozen_at": "2026-09-08T21:45:00+08:00",
+  "hash_policy": "sha256-utf8-lf-v1",
+  "supersedes": null,
+  "scope": "Add one full three-repeat cross-family replication without changing the frozen method, prompts, dataset, scoring, or primary Qwen hypotheses.",
+  "prior_gate2_closure": {
+    "path": "evaluation/biotooleval/gate2_closure_v2.json",
+    "sha256": "6b54903c1933f939509f0b283cb877199adde567a7f2784843837d6a35435005",
+    "status": "CLOSED"
+  },
+  "operational_adapter_amendment": {
+    "commit": "b7b58721d05a9586b97c78bdec3f530fdc77bfc5",
+    "tree": "e46d92da7137ed07de52f0a8ff5c7814fa9167ff",
+    "changed_runtime_file": "app/llms/api_clients/openai_api.py",
+    "sha256": "a8ba03443e890501da4aca0585bddad2cc0a4414a903dba4f6538c077f3981c8",
+    "purpose": "Send the already frozen LLM_ENABLE_THINKING value to Bailian DeepSeek-V4 hybrid-thinking models instead of accepting the provider default.",
+    "method_prompt_registry_scoring_statistics_changed": false,
+    "qwen_request_behavior_changed": false,
+    "deepseek_required_behavior": {
+      "enable_thinking": false,
+      "temperature": 0.0,
+      "timeout_seconds": 120
+    }
+  },
+  "held_out_dataset": {
+    "path": "evaluation/biotooleval/test_150_frozen_v5_3.json",
+    "version": "v5.3-final-frozen",
+    "sha256": "cd4ce071e26c6e555e2e8d965b970a1123561dd32e1aad8f0f60193961c54ae1",
+    "manifest_path": "evaluation/biotooleval/test_150_freeze_manifest_v5_3.json",
+    "manifest_sha256": "8d5033ee8368eb5771c1eb0d33d07dab0f034ca4f370582b68eb6c36cfd8caf6",
+    "item_count": 150,
+    "content_or_gold_changed": false
+  },
+  "models": [
+    {
+      "role": "primary_confirmatory",
+      "provider": "Alibaba Cloud Model Studio (Bailian)",
+      "model": "qwen3.7-plus-2026-05-26",
+      "fixed_snapshot": true
+    },
+    {
+      "role": "cross_family_replication",
+      "provider": "Alibaba Cloud Model Studio (Bailian)",
+      "model": "deepseek-v4-flash-0731",
+      "fixed_snapshot": true
+    }
+  ],
+  "runtime_controls_per_model": {
+    "conditions": ["E0", "E1", "E2", "E3", "S1", "L1", "F1"],
+    "repeats": 3,
+    "question_count": 150,
+    "planned_condition_units": 3150,
+    "shared_initial_plan_groups": 450,
+    "temperature": 0.0,
+    "thinking_enabled": false,
+    "seed": 20260902,
+    "question_timeout_seconds": 120,
+    "retry_failures": false,
+    "content_response_resampling_forbidden": true,
+    "condition_order": "cyclic_counterbalanced_within_question",
+    "shared_plan_replay": true
+  },
+  "total_design": {
+    "model_count": 2,
+    "planned_condition_units": 6300,
+    "shared_initial_plan_groups": 900,
+    "cross_model_plan_sharing": false,
+    "reason": "Each model must generate its own initial plan; conditions within the same question-repeat-model group share that plan."
+  },
+  "analysis_contract": {
+    "qwen_role": "Retain the frozen H1/H2/H3 family and Holm correction from Gate2.",
+    "deepseek_role": "Report the same endpoints as a separately analyzed replication with effects, confidence intervals, repair opportunities, safety outcomes, and cost.",
+    "pool_models_as_independent_samples": false,
+    "select_model_or_condition_by_observed_test_result": false,
+    "natural_and_controlled_repair_reported_separately": true,
+    "human_semantic_review_required": true
+  },
+  "development_smoke_test": {
+    "dataset": "evaluation/biotooleval/dev_70_candidate_v1.json",
+    "dataset_sha256": "e1975881aab6fd46b5e1266e8fd4382303214a2f4052a86d892d95192ee08935",
+    "question_ids": ["bte_101", "bte_109", "bte_122"],
+    "conditions": ["E0", "E1", "E2", "E3", "S1", "L1", "F1"],
+    "repeats": 1,
+    "planned_condition_units": 21,
+    "purpose": "Validate API reachability, non-thinking mode, text-plan parsing, sequence, FASTA, PDB, repair, and final-answer paths without accessing Test-150."
+  },
+  "frozen_runtime_files": {
+    "scripts/run_biotooleval.py": "4b94ea7c0f966b57a117f66f377d57f4873f1dbfade46c3eb8b1c03b4b3de965",
+    "app/llms/api_clients/openai_api.py": "a8ba03443e890501da4aca0585bddad2cc0a4414a903dba4f6538c077f3981c8"
+  },
+  "execution_order": [
+    "offline_regression",
+    "deepseek_dev_smoke_21_units",
+    "restart_biology_and_agent_from_frozen_commit",
+    "formal_live_preflight_24_of_24",
+    "qwen_full_3150_units",
+    "deepseek_full_3150_units",
+    "machine_integrity_audit",
+    "blind_human_review",
+    "frozen_analysis"
+  ],
+  "prohibitions": [
+    "Do not access or send Test-100.",
+    "Do not change Test-150 questions, Gold, fixtures, prompts, tools, repair rules, scoring, or statistics.",
+    "Do not replace either frozen model after observing Test-150 results.",
+    "Do not overwrite historical traces or resume with a different model, parameter, commit, dataset, or output path.",
+    "Do not present the two model runs as independent samples from one population."
+  ]
+}

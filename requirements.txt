@@ -1,0 +1,17 @@
+# Versions from the inspected local environment; historical experiment record is separate.
+aiohttp==3.13.3
+beautifulsoup4==4.14.3
+biopython==1.87
+fastapi==0.135.1
+httpx==0.28.1
+jsonschema==4.26.0
+matplotlib==3.11.1
+networkx==3.6.1
+numpy==2.4.3
+pandas==2.3.3
+pillow==12.3.0
+pydantic==2.12.4
+python-dotenv==1.2.1
+requests==2.32.5
+scipy==1.17.1
+uvicorn==0.42.0

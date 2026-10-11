@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schemas/biotooleval-question-v1.2.json",
+  "title": "BioToolEval Question v1.2",
+  "x-version": "1.2",
+  "type": "object",
+  "required": [
+    "id",
+    "split",
+    "category",
+    "difficulty",
+    "question_zh",
+    "question_en",
+    "input",
+    "gold",
+    "provenance",
+    "governance"
+  ],
+  "properties": {
+    "id": {"type": "string", "pattern": "^bte_[0-9]{3}$"},
+    "split": {"enum": ["pilot", "dev", "test"]},
+    "category": {"enum": ["single_tool", "multi_tool", "boundary", "trap"]},
+    "difficulty": {"enum": ["easy", "medium", "hard"]},
+    "question_zh": {"type": "string", "minLength": 5},
+    "question_en": {"type": "string", "minLength": 5},
+    "input": {
+      "type": "object",
+      "required": ["input_type", "source_type"],
+      "properties": {
+        "input_type": {
+          "enum": [
+            "amino_acid_sequence",
+            "protein_fasta_file",
+            "pdb_file",
+            "none"
+          ]
+        },
+        "sequence": {"type": "string"},
+        "fixture": {"type": ["string", "null"]},
+        "chain_id": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Za-z0-9]$"
+        },
+        "source_type": {"enum": ["synthetic", "real", "none"]},
+        "database": {"type": ["string", "null"]},
+        "accession": {"type": ["string", "null"]},
+        "reference_url": {"type": ["string", "null"]},
+        "note": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "input_type": {"const": "amino_acid_sequence"}
+            }
+          },
+          "then": {
+            "required": ["sequence"],
+            "properties": {
+              "sequence": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "input_type": {"const": "protein_fasta_file"}
+            }
+          },
+          "then": {
+            "required": ["fixture"],
+            "properties": {
+              "fixture": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "input_type": {"const": "pdb_file"}
+            }
+          },
+          "then": {
+            "required": ["fixture"],
+            "properties": {
+              "fixture": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ],
+      "additionalProperties": true
+    },
+    "gold": {
+      "type": "object",
+      "required": [
+        "preferred_tool_chain",
+        "acceptable_tool_chains",
+        "order_sensitive",
+        "expected_status",
+        "expected_behavior"
+      ],
+      "properties": {
+        "preferred_tool_chain": {"type": "array", "items": {"type": "string"}},
+        "acceptable_tool_chains": {
+          "type": "array",
+          "items": {"type": "array", "items": {"type": "string"}}
+        },
+        "order_sensitive": {"type": "boolean"},
+        "expected_status": {"enum": ["success", "error"]},
+        "expected_output": {"type": "object"},
+        "tolerance": {"type": "object"},
+        "required_claims": {"type": "array", "items": {"type": "string"}},
+        "forbidden_claims": {"type": "array", "items": {"type": "string"}},
+        "expected_behavior": {
+          "enum": ["execute", "repair_then_execute", "reject"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["gold_generator", "verified_by", "verified_at"],
+      "properties": {
+        "gold_generator": {"type": "string"},
+        "verified_by": {"type": "string"},
+        "verified_at": {"type": "string", "format": "date"},
+        "python_version": {"type": "string"},
+        "biopython_version": {"type": "string"},
+        "git_commit": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "question_source",
+        "question_author",
+        "template_group",
+        "exposure_status",
+        "gold_status",
+        "reviewed_by",
+        "reviewed_at"
+      ],
+      "properties": {
+        "question_source": {
+          "enum": [
+            "locally_constructed",
+            "adapted_from_source",
+            "external_submission",
+            "parametric_generated"
+          ]
+        },
+        "question_author": {"type": "string", "minLength": 1},
+        "source_reference": {"type": ["string", "null"]},
+        "template_group": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{2,63}$"
+        },
+        "exposure_status": {
+          "enum": [
+            "seen_by_method_developer",
+            "blind_to_method_developer",
+            "released_after_freeze"
+          ]
+        },
+        "gold_status": {
+          "enum": [
+            "draft",
+            "auto_verified",
+            "human_verified",
+            "adjudicated"
+          ]
+        },
+        "reviewed_by": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "reviewed_at": {"type": ["string", "null"], "format": "date"},
+        "method_freeze_commit": {"type": ["string", "null"]},
+        "note": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

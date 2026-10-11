@@ -1,0 +1,52 @@
+{
+  "repository": "https://github.com/HICAI-ZJU/SciToolAgent",
+  "commit": "ac1cf19fcef84e69f149db6da424afe4e9b2f11f",
+  "license": "MIT",
+  "files": [
+    {
+      "local_path": "LICENSE",
+      "upstream_path": "LICENSE",
+      "sha256": "e37451fb16abfaa1132c657cb37cb6a0a030158d9fb20f2b39b86c293ae25ac7"
+    },
+    {
+      "local_path": "app/llms/planning/tool_plan_executor.py",
+      "upstream_path": "app/llms/planning/tool_plan_executor.py",
+      "sha256": "19a5eea857342e39cf41b6d45359b319e75ebb7d42c993b36b27d5ae5ddeab2d"
+    },
+    {
+      "local_path": "app/llms/planning/prompt_templates.py",
+      "upstream_path": "app/llms/planning/prompt_templates.py",
+      "sha256": "4da3265b3477cc60a1210f72842c5fa508fa487bcd8e62da8f7065d9ee461b43"
+    },
+    {
+      "local_path": "app/llms/extraction/extract_tool.py",
+      "upstream_path": "app/llms/extraction/extract_tool.py",
+      "sha256": "77b1a988a158b9ac50281a5d4c624c8e800495866b01fdc5ebab017b5750b3c5"
+    },
+    {
+      "local_path": "scripts/retrieve_tool_info.py",
+      "upstream_path": "scripts/retrieve_tool_info.py",
+      "sha256": "e924aa5cdfef38901923c6c40a9825cf5c337b3545cb73fabde3b10d8ff43cbe"
+    },
+    {
+      "local_path": "scripts/custom_kg_retrievers.py",
+      "upstream_path": "scripts/custom_kg_retrievers.py",
+      "sha256": "34fb07815fa2def022dd7e7a45025de399926dda46d59d06bc6d2e501d118028"
+    },
+    {
+      "local_path": "scripts/utils.py",
+      "upstream_path": "scripts/utils.py",
+      "sha256": "1f41b193156f6ff3986dd9ffa418cfd5607a42697b3bd05cc72dc70809ae0903"
+    },
+    {
+      "local_path": "scripts/generate_kg_index.py",
+      "upstream_path": "scripts/generate_kg_index.py",
+      "sha256": "dd58313b0c2f37d3c24949c44c7a2952b6cef6baa20ea584f8671e80c35baa1f"
+    },
+    {
+      "local_path": "app/llms/api_clients/openai_api.py",
+      "upstream_path": "app/llms/api_clients/openai_api.py",
+      "sha256": "1b8b0e0e305933945bf1b3c8bbf0504bdad73bc5c70d6dfa8b8d5c4e615483c7"
+    }
+  ]
+}

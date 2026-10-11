@@ -1,0 +1,9 @@
+﻿unit_id,question_id,question_index,model,condition,repeat,expected_behavior,archive_path,claim_exists,result_exists,event_file_exists,analysis_label
+q040|deepseek-v4-flash-0731|1|SciToolAgent,bte_041,40,deepseek-v4-flash-0731,SciToolAgent,1,repair_then_execute,evaluation\results\external-formal-test150-20261002-v1\units\6df368a13c6a414080637c19,True,False,True,
+q040|deepseek-v4-flash-0731|1|CodeAct,bte_041,40,deepseek-v4-flash-0731,CodeAct,1,repair_then_execute,evaluation\results\external-formal-test150-20261002-v1\units\608f34ded23eb74a297a0525,True,False,True,
+q040|qwen3.7-plus-2026-05-26|1|ReAct,bte_041,40,qwen3.7-plus-2026-05-26,ReAct,1,repair_then_execute,evaluation\results\external-formal-test150-20261002-v1\units\644ca440ad12f35eaa58eda4,True,False,True,
+q040|deepseek-v4-flash-0731|2|Biomni-A1,bte_041,40,deepseek-v4-flash-0731,Biomni-A1,2,repair_then_execute,evaluation\results\external-formal-test150-20261002-v1\units\9c69d6df46714116a600f30d,True,False,True,
+q042|qwen3.7-plus-2026-05-26|0|SciToolAgent,bte_043,42,qwen3.7-plus-2026-05-26,SciToolAgent,0,reject,evaluation\results\external-formal-test150-20261002-v1\units\64e270ecfca7230810b22b57,True,False,True,
+q042|qwen3.7-plus-2026-05-26|0|Biomni-A1,bte_043,42,qwen3.7-plus-2026-05-26,Biomni-A1,0,reject,evaluation\results\external-formal-test150-20261002-v1\units\7fef95d4e36178419f116b24,True,False,True,
+q042|deepseek-v4-flash-0731|0|ReAct,bte_043,42,deepseek-v4-flash-0731,ReAct,0,reject,evaluation\results\external-formal-test150-20261002-v1\units\0b2abadefccc62f2f3cafc25,True,False,True,
+q042|deepseek-v4-flash-0731|0|CodeAct,bte_043,42,deepseek-v4-flash-0731,CodeAct,0,reject,evaluation\results\external-formal-test150-20261002-v1\units\5509bc70043eba44d48fdbc0,True,False,True,

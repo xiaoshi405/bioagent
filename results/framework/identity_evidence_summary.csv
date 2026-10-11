@@ -1,0 +1,11 @@
+﻿model,method,archived_actual_tool_returns,identity_supported,identity_mismatch,identity_unclassified,runs_with_mismatch,successful_tool_returns,successful_returns_with_mismatch,successful_execute_task_returns_with_mismatch,completed_execute_runs_with_successful_identity_mismatch
+qwen3.7-plus-2026-05-26,ReAct,934,885,6,43,5,909,6,2,2
+qwen3.7-plus-2026-05-26,CodeAct,1203,1066,9,128,9,1119,8,3,2
+qwen3.7-plus-2026-05-26,SciToolAgent,1176,981,82,113,12,840,3,0,0
+qwen3.7-plus-2026-05-26,Biomni-A1,1237,961,65,211,17,1031,63,4,2
+qwen3.7-plus-2026-05-26,F1,876,837,0,39,0,870,0,0,0
+deepseek-v4-flash-0731,ReAct,994,935,13,46,2,964,13,13,0
+deepseek-v4-flash-0731,CodeAct,1743,1509,37,197,13,1546,34,27,9
+deepseek-v4-flash-0731,SciToolAgent,1658,1374,71,213,10,1113,3,0,0
+deepseek-v4-flash-0731,Biomni-A1,1919,1458,33,428,19,1520,26,12,1
+deepseek-v4-flash-0731,F1,917,880,0,37,0,913,0,0,0

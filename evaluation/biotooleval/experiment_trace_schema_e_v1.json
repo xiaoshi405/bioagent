@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bioagent.local/schema-profiles/experiment-trace-e-v1.1.json",
+  "title": "BioAgent E0-E3 Trace Schema Extension v1.1",
+  "x-version": "1.1",
+  "base_schema": "experiment_trace_schema_v1.json",
+  "condition_enum": ["E0", "E1", "E2", "E3"],
+  "plan_properties": {
+    "typed_runtime_enabled": {"type": "boolean"},
+    "validation_enabled": {"type": "boolean"}
+  }
+}

@@ -1,0 +1,559 @@
+{
+  "status": "frozen_benchmark_ready",
+  "version": "v5.3-final-frozen",
+  "frozen_at": "2026-09-07",
+  "dataset_file": "evaluation/biotooleval/test_150_frozen_v5_3.json",
+  "dataset_sha256": "sha256:cd4ce071e26c6e555e2e8d965b970a1123561dd32e1aad8f0f60193961c54ae1",
+  "first_half_source_file": "evaluation/biotooleval/test_150_candidate_v5_first75_reviewed.json",
+  "first_half_source_sha256": "sha256:7d4084630bbdc3e8c6373a5add2dcd4441c8d6e5a6920ba80a5f05dac226aa57",
+  "second_half_source_file": "test_150_candidate_v5.json",
+  "second_half_source_locator": "git:9e1fbeeb452462a0b44af2d50e45247de8661da7:evaluation/biotooleval/test_150_candidate_v5.json",
+  "second_half_source_sha256": "sha256:9239cb7634f5de16dd2549c4cdb7429c398f7c2b2d0151359994558f9d2b6b90",
+  "second_half_source_commit": "9e1fbeeb452462a0b44af2d50e45247de8661da7",
+  "method_freeze_commit": "14a3d1b41a0987cb79220898fcf704f68c842c47",
+  "reviewers": [
+    "D",
+    "project_owner"
+  ],
+  "item_count": 150,
+  "behavior_counts": {
+    "execute": 95,
+    "reject": 25,
+    "repair_then_execute": 30
+  },
+  "input_type_counts": {
+    "amino_acid_sequence": 20,
+    "none": 9,
+    "pdb_file": 41,
+    "protein_fasta_file": 80
+  },
+  "source_type_counts": {
+    "none": 9,
+    "real": 106,
+    "synthetic": 35
+  },
+  "fixture_count": 90,
+  "fixtures": [
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00338.fasta",
+      "sha256": "sha256:4641c3a6826f5a31c919e37e4732fe02d8a8e89416131d9f7eeffbdd8b4593fb",
+      "size_bytes": 434
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00441.fasta",
+      "sha256": "sha256:e37efca5bb96a42335302bbb3771bc4f9fa79197bd323a20d80f54d128656c43",
+      "size_bytes": 250
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00698.fasta",
+      "sha256": "sha256:a2919b66501aec6b03bc821537e24eee649e3a7d7c9a854588f2338c992e0bb4",
+      "size_bytes": 225
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00734.fasta",
+      "sha256": "sha256:71ddca88eb8ac4959cfb29b68a94973118f9ff47a8e91f357a83e089987e0415",
+      "size_bytes": 707
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00760.fasta",
+      "sha256": "sha256:9d4c9db34a4a50d93df67c9b43abe927f74bc1b89370a756c4ca470768009890",
+      "size_bytes": 332
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00918.fasta",
+      "sha256": "sha256:74cc1e0de5c8488d747471c3b3f4d2c219bc0afbd3d324cc65e017a65209bf8b",
+      "size_bytes": 349
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P00974.fasta",
+      "sha256": "sha256:a6cea435429729e281f68e087cf247d0bf067b5acae745e091ac5db13a18490d",
+      "size_bytes": 185
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P01009.fasta",
+      "sha256": "sha256:1bc2b4ccd26ebeeef8aaf8ea83b4f8d79b6457400283f3725c83cd18bd337be2",
+      "size_bytes": 513
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P01112.fasta",
+      "sha256": "sha256:76d71004d95cf7f61a3de87c49eaa8560372f3ee8804d4f61597884a8af869aa",
+      "size_bytes": 269
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P01116.fasta",
+      "sha256": "sha256:be58c42a464baafed08805898078839b0b47b559cec93fdb3cd7f8d95ab95ea6",
+      "size_bytes": 269
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P02647.fasta",
+      "sha256": "sha256:402075d9dc75377534d8ec1a5ee6291413357c81a69c1a6e67d2cf95a7c48377",
+      "size_bytes": 357
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P02920.fasta",
+      "sha256": "sha256:7aa348fb38b34e6820708edcf3dcb2c9d73996f0be2f317838af3332cf5b3de5",
+      "size_bytes": 523
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P02931.fasta",
+      "sha256": "sha256:83ea3ddf7edabf48bbd8e56caab157d6f0720d315241e368607a4070eec1a52d",
+      "size_bytes": 474
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P06401.fasta",
+      "sha256": "sha256:adf52631e44e0b69723ebfa149383237046b8e438e37151253443930b6898020",
+      "size_bytes": 1034
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P07339.fasta",
+      "sha256": "sha256:7577e75336569f5b63420087cec94878a233e6179d68af6fabbb3b17a3360658",
+      "size_bytes": 495
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P08069.fasta",
+      "sha256": "sha256:375dc4626a631ab194903ebca897a6e8038d98f44f8951030afde58b1f8619bc",
+      "size_bytes": 1494
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P0CG47.fasta",
+      "sha256": "sha256:c1991fb05ea412c54246f18cd0b08c6cfb92c744c3e83c6d70a899b7430009d0",
+      "size_bytes": 311
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P0DP23.fasta",
+      "sha256": "sha256:b718184bb435725b2836c29604d1b3553b8788f15f4bd07d7cc507531c0302e4",
+      "size_bytes": 231
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P10275.fasta",
+      "sha256": "sha256:f0cc0c77da9152b48120d9f463dc465366b9187cfaa98165580f47f7b5a11a3b",
+      "size_bytes": 1016
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P10636.fasta",
+      "sha256": "sha256:69f13dc0999b96c05921b24baa86ae84e7bdaf932c561924179f303f58e6ff4b",
+      "size_bytes": 869
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P38398.fasta",
+      "sha256": "sha256:76e29e4e2e1310c227ed32ce2eb030a273eea456592015f9d4080f1d86750b82",
+      "size_bytes": 2005
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P42212.fasta",
+      "sha256": "sha256:f2d3db12225dafa41aefacb1cd5280f9b7ab7a62784054a4f82278593b1ee124",
+      "size_bytes": 335
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P61769.fasta",
+      "sha256": "sha256:0e4ee90a5d0e1bde555a5c13345e83f81d17429ce56764c661693bfc80cbd0dd",
+      "size_bytes": 205
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P61823.fasta",
+      "sha256": "sha256:f3eb3a1bf88b29471c80d09d388eb22147f326a7cc6a15525eb1c8fbefe7de23",
+      "size_bytes": 242
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/P68082.fasta",
+      "sha256": "sha256:bcb13ed16e638c43408986694cd6603a5240a4510e4b15416cb908891bcdafe8",
+      "size_bytes": 230
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/duplicate_id_045.fasta",
+      "sha256": "sha256:96513d2da3fefc6cbcbaac43b9a8c9c46576f7fda678f8e7cc729cad59ae832f",
+      "size_bytes": 63
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/empty_record_044.fasta",
+      "sha256": "sha256:45be5f2cbe9b8250ad8684b7dd8ecea776a02885e9553506861cf870791c65f5",
+      "size_bytes": 18
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/malformed_043.fasta",
+      "sha256": "sha256:bb8011b8501db9d9be95f250467997d07cd2f947a522f53cbbb42999fd79d5f9",
+      "size_bytes": 116
+    },
+    {
+      "fixture": "fixtures/test150_v5/fasta/record_limit_046.fasta",
+      "sha256": "sha256:87db207816dab0fd071a44954df3ed2f52aeac88a568061dd6498cdfd3d5bce6",
+      "size_bytes": 23023
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_001.fasta",
+      "sha256": "sha256:43a62e441ea2b597135619921db4038e616b21dea59ed4e6a07f5326f8633be5",
+      "size_bytes": 302
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_002.fasta",
+      "sha256": "sha256:4dddca9c42cefee47656518139746bc450976e41a28557f14ef9cff03eeccfba",
+      "size_bytes": 264
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_003.fasta",
+      "sha256": "sha256:8f0eafd09c557a5ccc3df13da06474aa32d03918c52a4fafc5b249660a9e3246",
+      "size_bytes": 339
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_004.fasta",
+      "sha256": "sha256:2f5c1c48cf06e4e11a22e5489b94f9995fe47a8a3a562a3aaaee9b8231037191",
+      "size_bytes": 294
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_005.fasta",
+      "sha256": "sha256:e5a78ef884e62021146a98d369a9da0f40fa402855c349758110e7ba6cb57905",
+      "size_bytes": 328
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_006.fasta",
+      "sha256": "sha256:ae7c40706382144a81c1767a6515de463f68cf07fb440fa1da0ef35696868fd6",
+      "size_bytes": 288
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_007.fasta",
+      "sha256": "sha256:ba75cdf7de10bb3ad829eda5111229aabfe851c96e94e2d8032364077e48d2dd",
+      "size_bytes": 343
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_008.fasta",
+      "sha256": "sha256:e27a86daaf3b07c298d56522c496b5f8d20b03fe413e915d8b6299c9df7fc840",
+      "size_bytes": 307
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_009.fasta",
+      "sha256": "sha256:5c54825d26a22a64495bd4d146c3f864f0d7555943700ad0f6ab4b2e500b5b19",
+      "size_bytes": 344
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_010.fasta",
+      "sha256": "sha256:e1b8d6ee613132dd49274edd30ec27064e027c639534015c711d1860fdf3cf53",
+      "size_bytes": 214
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_012.fasta",
+      "sha256": "sha256:f151ee13467c96802efdf279c48fb3488a841b50c0b42a825bcbaab9435b7336",
+      "size_bytes": 308
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_013.fasta",
+      "sha256": "sha256:531dee3d70ff3d13173b8073f0ff9d543fba46a42582c6d363d3570921298687",
+      "size_bytes": 257
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_014.fasta",
+      "sha256": "sha256:e97f7c335cd8253bc1a75fcae5a8c506a01b23d2091caaefa6ed42d057d32ae1",
+      "size_bytes": 260
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_015.fasta",
+      "sha256": "sha256:60d4cd0e39b2502dc5ae551892c4c9e7e237d40764764630797474e7f161ebbe",
+      "size_bytes": 296
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_016.fasta",
+      "sha256": "sha256:943f9d08908f8ee55d0e0e39b6fe45c978aadd059ca4c4317990dd1507097db2",
+      "size_bytes": 353
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/fixture_017.fasta",
+      "sha256": "sha256:b41ebaa530cec176b0c99805401259014e6dd8c4e68ee26a592a92857d81de0e",
+      "size_bytes": 287
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_001.fasta",
+      "sha256": "sha256:56b748ddb71323e9f95cea09ded7d3833228db94ce420a739646177dbfabbd52",
+      "size_bytes": 2748
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_002.fasta",
+      "sha256": "sha256:7485500ad92e357a29b9f999a1babb2c0a4836378a83857c5783a6c1a62a530a",
+      "size_bytes": 2330
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_003.fasta",
+      "sha256": "sha256:d4338b16761cb9cf73a5e90330dcf8226e9fe130acf97dd8f971609b4a847181",
+      "size_bytes": 2454
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_004.fasta",
+      "sha256": "sha256:344056be8312b7063ea89540fa04ce891572809bba265532c91df345606d24ba",
+      "size_bytes": 2135
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_005.fasta",
+      "sha256": "sha256:c3336f19cc27bb0bff1ba2afd4cefb022dcdc851bc1ea3a1f242c586c74beaef",
+      "size_bytes": 1960
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_006.fasta",
+      "sha256": "sha256:8fc68e7e78832baf373de9b2f67b7c17fd73820037b93c3c18bb141b6158ac94",
+      "size_bytes": 2407
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_007.fasta",
+      "sha256": "sha256:0753d58c5cd89d4cc759b1625f0d96695a7333c99bcc88433ae2cf9f132a49cc",
+      "size_bytes": 1638
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_008.fasta",
+      "sha256": "sha256:f96cad69a1ddaee625c345032bd7439a4b141911586478d8429979ce0b41f2a9",
+      "size_bytes": 1338
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_009.fasta",
+      "sha256": "sha256:d114af7f0b4d8350458174b0faa765c9acb09f27358a9f8b7ca9b9d3d6321732",
+      "size_bytes": 2339
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_010.fasta",
+      "sha256": "sha256:df1d7a4c4321171dc22ccdaab6dc6cfe00b0256629bac1a777eda1d45149a1f8",
+      "size_bytes": 2136
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_011.fasta",
+      "sha256": "sha256:e96b4464e44ad56ae5e06ad2fc1cd88a69689a9fc0fa7363d6edb652942174cb",
+      "size_bytes": 1604
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_012.fasta",
+      "sha256": "sha256:9458e29385eacaab93fa8e320f6eb95b360b5aef880ed172c97e847f929b149a",
+      "size_bytes": 2638
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_013.fasta",
+      "sha256": "sha256:992ff235e2c46df65451e4fbe25eef9c35bbb53d648148f0e72026485adcf204",
+      "size_bytes": 2788
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_014.fasta",
+      "sha256": "sha256:77ef6132e1ccd6f91fbc085296016220d7ba8e9dc047d5886a4707bd67773391",
+      "size_bytes": 1714
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_015.fasta",
+      "sha256": "sha256:41431c009dd2eb859a6b5df59a5e6d1129d9d7ddb3c34c345976ae311513978c",
+      "size_bytes": 1598
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_016.fasta",
+      "sha256": "sha256:5b9b36bce174bbcae73d8a68db14246be0cd03b486fd1955149b72c1159ec2df",
+      "size_bytes": 1722
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_017.fasta",
+      "sha256": "sha256:5c691285d58376a15ce89c60a16ffce526fa3a4574140424f4c81486db6c5235",
+      "size_bytes": 885
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_018.fasta",
+      "sha256": "sha256:c7ba572f5e7ac20b5c7cf2a5a9fba8e09468b5327b484ee1bde4b844fac91298",
+      "size_bytes": 4069
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_019.fasta",
+      "sha256": "sha256:1932c77bbf14e2be71cde7cfd185bccfe8c308d400c32d7fde94666896df8feb",
+      "size_bytes": 809
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_020.fasta",
+      "sha256": "sha256:ec46eee037098f4885e6c0b16e17768dfea6a8b8c079861fae338616b5b6425f",
+      "size_bytes": 1785
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_021.fasta",
+      "sha256": "sha256:67d44a428dff6cdeb6eff8c51562db3255e92b63db8c6c53962c470c5ed2253c",
+      "size_bytes": 3265
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_022.fasta",
+      "sha256": "sha256:cdba400bec91baa9262716e5570baafab553ed647b5eb4a7e571b4e967e9d885",
+      "size_bytes": 3088
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_023.fasta",
+      "sha256": "sha256:525e2f3fc240182fda79fa05c9690f2af35f729a8a50416a4052fc875aaa45fd",
+      "size_bytes": 747
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_024.fasta",
+      "sha256": "sha256:bdc85d4ce10916b3d9574f2e648427e3410fd1b93df9ab7b3bdc789deee8612a",
+      "size_bytes": 940
+    },
+    {
+      "fixture": "fixtures/test150_v5/multi_fasta/real_multi_025.fasta",
+      "sha256": "sha256:e865fd456b593eb80e65ab003e84d8c722367e3f682ccc04f2b0c58246fe3bb5",
+      "size_bytes": 2338
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1AKE.pdb",
+      "sha256": "sha256:651e952f55f1317f50f4e82b7f0e99053397032cd8da5b2896f79d0af9f619a9",
+      "size_bytes": 357777
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1AON.pdb",
+      "sha256": "sha256:5cddcf0ebe222238073f73f4fcc0f579a090389f9c3d152399b4e41ca4a0ed3e",
+      "size_bytes": 4973076
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1ATP.pdb",
+      "sha256": "sha256:5ee1528569a18ad723092ec8b1cd7776af23fd3c5028f0e4074546d4a91e36a2",
+      "size_bytes": 299538
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1CAG.pdb",
+      "sha256": "sha256:d49c21b5e754b8ed2eb0355aa04d7895201b9358502657d923999b714aa9883f",
+      "size_bytes": 119151
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1FAT.pdb",
+      "sha256": "sha256:3d1578a8a6fab96971e10bd8706d42115aaf02c34d6e8fc3a0bfb68d76593b34",
+      "size_bytes": 662904
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1GFL.pdb",
+      "sha256": "sha256:60eb370ad1a2c7c63382399d8655e0448fc29acc2a436e1a6112a5d599390d6f",
+      "size_bytes": 360126
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1HEL.pdb",
+      "sha256": "sha256:edd7eed84a38099b8df7b80d13b51d0fc6c524e0ed12d5cb74424d5cd1540252",
+      "size_bytes": 123849
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1L2Y.pdb",
+      "sha256": "sha256:5d1bbb545a312dfff1ae1e64b6d8addecb2f561ddc4011aeb5bee9d1dfcd4438",
+      "size_bytes": 959202
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1LYZ.pdb",
+      "sha256": "sha256:28e95e819d4e0fc48acdf44209e37ba06f5c9d5d93d9950d67a760b32964326e",
+      "size_bytes": 145962
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1MBO.pdb",
+      "sha256": "sha256:a38d887a17192281e4c8aabe79ce5736b3e08a2eea938717ddfb5037937cd469",
+      "size_bytes": 160704
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1OHO.pdb",
+      "sha256": "sha256:370788085857bd0fa1af307f0da69216986903947374ec6de4ffc392c537ce1d",
+      "size_bytes": 116478
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1TEN.pdb",
+      "sha256": "sha256:5b2165e4e495d05e230c6438a8585966578fc70006ec228ac0a0d8b65d06c73c",
+      "size_bytes": 114858
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/1TIM.pdb",
+      "sha256": "sha256:79b35b419696a1e368aad2121ae2712e46444b5978de1e86bdc286f482222cdc",
+      "size_bytes": 351783
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/2LZM.pdb",
+      "sha256": "sha256:a305932376e1e45428c956164117bd3ab1bbc59cdab6b2ae38b7974c0e83ce6f",
+      "size_bytes": 149526
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/3CLN.pdb",
+      "sha256": "sha256:2b4439989edf7620b283be3cc34461a30a290b1488922556f95ddec917558274",
+      "size_bytes": 139401
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/3HHR.pdb",
+      "sha256": "sha256:9b1cc5f726cf5681b0e0c58faf1967585012003028d27d2c21feabe805a13693",
+      "size_bytes": 423306
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/4AKE.pdb",
+      "sha256": "sha256:ff798ee8791878eb58bac1c6bed32042f51b455512ac93b50bda8fa0ff0e7f78",
+      "size_bytes": 309339
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/4INS.pdb",
+      "sha256": "sha256:6262681a54c0184b988243fdcacd778e988818bcfe6fdec258ef22272d6d89f9",
+      "size_bytes": 144585
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/6M0J.pdb",
+      "sha256": "sha256:51f27a495c0c12fa87f459a2510a9268d4d48a34b63ba3e5db5ae7c672a26af5",
+      "size_bytes": 583929
+    },
+    {
+      "fixture": "fixtures/test150_v5/pdb/6VXX.pdb",
+      "sha256": "sha256:0de64835498d4e8b52e35b59685a284b65e38c3e32bd14c769b05352ea87ee72",
+      "size_bytes": 2175660
+    }
+  ],
+  "quality_question_fix_ids": [
+    "bte_079",
+    "bte_090",
+    "bte_111"
+  ],
+  "record_id_contract_adjustment_ids": [
+    "bte_076",
+    "bte_077",
+    "bte_078",
+    "bte_079",
+    "bte_080",
+    "bte_081",
+    "bte_082",
+    "bte_083",
+    "bte_084",
+    "bte_085",
+    "bte_086",
+    "bte_087",
+    "bte_088",
+    "bte_089",
+    "bte_090",
+    "bte_092",
+    "bte_093",
+    "bte_094",
+    "bte_095",
+    "bte_096",
+    "bte_097",
+    "bte_098",
+    "bte_099",
+    "bte_100",
+    "bte_111",
+    "bte_112",
+    "bte_113",
+    "bte_114",
+    "bte_115",
+    "bte_116",
+    "bte_117",
+    "bte_118",
+    "bte_119",
+    "bte_120",
+    "bte_131",
+    "bte_132",
+    "bte_136",
+    "bte_137",
+    "bte_138",
+    "bte_139",
+    "bte_140",
+    "bte_141",
+    "bte_142",
+    "bte_143",
+    "bte_144",
+    "bte_145",
+    "bte_146"
+  ],
+  "validation": {
+    "profile": "final150",
+    "profile_amendment": "test150-v5.3-input-source-quota-only",
+    "verdict": "pass",
+    "benchmark_ready": true,
+    "issue_counts": {
+      "error": 0,
+      "warning": 0,
+      "info": 0
+    }
+  },
+  "runtime_input_audit": {
+    "checked_non_reject_items": 125,
+    "failures": 0,
+    "status": "pass"
+  },
+  "historical_trace_policy": "No historical experiment Trace was read or overwritten."
+}

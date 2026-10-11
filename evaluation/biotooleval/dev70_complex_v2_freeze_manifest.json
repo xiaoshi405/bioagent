@@ -1,0 +1,234 @@
+{
+  "schema_version": "biotooleval-freeze-manifest-v1",
+  "artifact_id": "BIOAGENT-DEV70-COMPLEX-V2-FREEZE-20260826",
+  "status": "FROZEN_DEVELOPMENT_PILOT",
+  "frozen_at": "2026-08-26T10:45:32.723197+00:00",
+  "scope": "development_only",
+  "not_for_final_metrics": true,
+  "test100_access_authorized": false,
+  "b3_enabled": false,
+  "hash_policy": "text_utf8_lf_sha256",
+  "dataset": {
+    "path": "evaluation/biotooleval/dev70_complex_v2_candidate.json",
+    "version": "dev70-complex-v2.0",
+    "sha256": "a990786925b45214cc5d02baa8d33cd708e2d568acdb77229fb605d96f8b0435",
+    "item_count": 70,
+    "question_ids": [
+      "bte_107",
+      "bte_108",
+      "bte_109",
+      "bte_110",
+      "bte_111",
+      "bte_112",
+      "bte_113",
+      "bte_114",
+      "bte_115",
+      "bte_116",
+      "bte_117",
+      "bte_118",
+      "bte_119",
+      "bte_120",
+      "bte_121",
+      "bte_122",
+      "bte_123",
+      "bte_124",
+      "bte_125",
+      "bte_126",
+      "bte_127",
+      "bte_128",
+      "bte_129",
+      "bte_130",
+      "bte_203",
+      "bte_204",
+      "bte_205",
+      "bte_206",
+      "bte_207",
+      "bte_208",
+      "bte_209",
+      "bte_210",
+      "bte_211",
+      "bte_212",
+      "bte_213",
+      "bte_214",
+      "bte_215",
+      "bte_216",
+      "bte_217",
+      "bte_218",
+      "bte_219",
+      "bte_220",
+      "bte_221",
+      "bte_222",
+      "bte_223",
+      "bte_224",
+      "bte_225",
+      "bte_226",
+      "bte_227",
+      "bte_228",
+      "bte_229",
+      "bte_230",
+      "bte_231",
+      "bte_232",
+      "bte_233",
+      "bte_234",
+      "bte_235",
+      "bte_236",
+      "bte_237",
+      "bte_238",
+      "bte_239",
+      "bte_240",
+      "bte_701",
+      "bte_702",
+      "bte_703",
+      "bte_704",
+      "bte_705",
+      "bte_706",
+      "bte_707",
+      "bte_708"
+    ]
+  },
+  "fixtures": [
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/challenge_balanced.fasta",
+      "sha256": "e71f8f505ff8d3c258ca5b98071f216477264903e695939835a54e2433044746"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/challenge_hydrophobic.fasta",
+      "sha256": "b2954282f35f52e295f25e2855e4d2b01603e6e9d1ba3055ef32fb217aa16eeb"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/challenge_multirecord.fasta",
+      "sha256": "d1f10e97226847ea125ec8e9c40e71ffe7c871bd8c5a420b6ffade655ae8217c"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/challenge_signal.fasta",
+      "sha256": "b30c6802a4ed7b6d770c06cb2a5f2b9646688bf1599a5382d58e252394dd94de"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/challenge_toxin.fasta",
+      "sha256": "d018723d0cc8e0a7b3738a80d75fd0e103ed6c5433f0bef50f4e4867a7603950"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/fasta/dev_invalid_sequence.fasta",
+      "sha256": "c3c601517fdb229754a0bc5d0fd2fdc66d41f6ccbd6b46eff534041afdba8497"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/pdb/mini_single_chain.pdb",
+      "sha256": "d04da8163a3b723cd02843f886ed65a489ac90b2fdc9889ed6dfee2010fb4c5e"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/pdb/mini_two_chain.pdb",
+      "sha256": "020a56b1f42861629c59f7fdcfee0521360a1a5b09594e806f12df119ec46a2c"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P00533.fasta",
+      "sha256": "684e2da1f3ef05d0ce90d0aefe9125c6f7e9cdcfeac27ae72ed35243b64a73e8"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P01308.fasta",
+      "sha256": "ec55929cdb69371f89213f4b08a19808c115fc8225ed92b09dd93d15571b5584"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P01442.fasta",
+      "sha256": "80342ca941aa6871210b9ea6e011dd7216f181e1eaaf37f44c32812bb6cbabd7"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P01579.fasta",
+      "sha256": "d444476b03451726f52bc058583b790355c84fe5437b932b2f9151ff2e3ccd92"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P02768.fasta",
+      "sha256": "a5176a6db2f87e6b4408dd50f6719cfb5acda37ef44d703a792b0a190cf455b6"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P0DTC2.fasta",
+      "sha256": "399308ca13674141add24eb388b1b4fc3a84330350075c18be0b4261166f8086"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P68871.fasta",
+      "sha256": "a976e8ef07b298781398d4a66d52ddf13b796e991baa7e4e499732ecc6689107"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/fasta/P69905.fasta",
+      "sha256": "aecc3cb75f840f242f6b4489d501384d0c50cf0d61a8dab5a1dab81a80aa4bae"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/1BRS.pdb",
+      "sha256": "0076aae54252706a8c8c02f7b1e71ce2394b0e928b413590b4ac12aade9e8f6c"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/1CRN.pdb",
+      "sha256": "42199a30a0701864a2a5cc76cd7f35cc544cd0e65fbcf63e03c166543249b811"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/1EMA.pdb",
+      "sha256": "f1b9fdc2b871cc41f21f645a21b4948ce12d79b29197256330b108c9b503b088"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/1UBQ.pdb",
+      "sha256": "d4a6812d8951cf6594e6a0763f089e35f5a80b62acb3c117b2c5565228a7b161"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/2PTC.pdb",
+      "sha256": "0b3880b05cfba506159267e7e2f3c851b89ea736e9ce822e0c0102d720e26ee9"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/real/pdb/4HHB.pdb",
+      "sha256": "c62774ac679a220a493aab5d177ab34248ab700235dc6d941f5f3cbefde334ed"
+    },
+    {
+      "path": "evaluation/biotooleval/fixtures/topology_v2/topology_v2_multi.fasta",
+      "sha256": "e29d09167dc16b90a0fb6fdc6614722bcabd56a34843e3144acea84bf0a3054a"
+    }
+  ],
+  "method_snapshot": {
+    "git_head": "b36bc4df6fe665ba73fc3c4e7007a4b2a6a9cc7e",
+    "git_dirty": true,
+    "tool_registry_sha256": "cd5bc375455e436bd9893e5d0594c32586b15a819fff32be1410883e34b06ac4",
+    "planning_prompt_sha256": "eda2f771da8301236f2e44443ccdddf8e9dd5520f854c9c2396d53d01721cd4d",
+    "llm_client_sha256": "2e4f9a1670a4bfc041283c93891c3203d46a7c9a28e19ee1990435565056546b",
+    "agent_runtime_sha256": "226d4beeeaee3b42eee847bba5b20eddf607e796adb7181a8d55e1da1352c241",
+    "plan_sampling_sha256": "3c828b72c6a5f3218ae9538ad7713e0021daaa6f10afb0531e8eb73fac19a2f7",
+    "type_checker_sha256": "80c27cb39d878ef575ed78107c25393f8ef138c7f84e162e581c83d71acddeb9",
+    "structured_plan_sha256": "c3c3dbc7455000b60582403fd661a3527261a1dd49aa0e7ca381e1ecf520ca5a",
+    "typed_runtime_sha256": "fd72aa672f9839404904adbb569474606edd6f7288267ddb7cbedda17c078169",
+    "fasta_input_parser_sha256": "d12924e7e57fe8739d192fe96cfdde4466f66c2683a7f9bd977f26672782a384",
+    "initial_artifacts_sha256": "0b4730a670c769388ab58981f822057cda621d928dfe4cf990ab4a014007ed6e",
+    "evaluation_trace_sha256": "e3f2d313df4628ea9523bff90900c8ab3b03d86e85f8f0c597ed4aa363615be3",
+    "trace_schema_sha256": "5e1d6d4961df2bfeeac0d254d9ca6a2bbcf66e7d28bbc43ef33061312a049b0a",
+    "config_sha256": "5dccee8815afde4dc41242a9e587824fea8b4a07a622256958257b1598162310",
+    "runner_sha256": "1e3b42ea1398360afd7bbc77ee4eb0aa5ccdc439159120b8264a29e39d3c9a2d",
+    "validator_sha256": "25807b9172a58160db851b975480ba588914b76b4c1db5d676eb3c156241b040",
+    "tool_registry_scope": "topology-v2-lite"
+  },
+  "model_control": {
+    "requested_model": "qwen3.7-plus-2026-05-26",
+    "dated_snapshot_required": true,
+    "mutable_alias_forbidden": true,
+    "single_model_for_plan_arguments_and_summary": true
+  },
+  "first_run": {
+    "experiment_id": "dev70-complex-v2-qwen37plus-r1",
+    "model": "qwen3.7-plus-2026-05-26",
+    "python_version": "3.13.12",
+    "temperature": 0.0,
+    "seed": 20260826,
+    "conditions": [
+      "B0",
+      "B1",
+      "B2"
+    ],
+    "repeats": 1,
+    "condition_order": "cyclic counterbalanced within question",
+    "timeout_seconds_per_question": 120,
+    "retry_failures": false,
+    "primary_attempt": "first content response",
+    "evaluation_label": "development_complex_planning_not_final_test",
+    "output": "evaluation/results/dev70-complex-v2-qwen37plus-r1.jsonl"
+  },
+  "preregistered_diagnostics": {
+    "target": "increase multi-tool planning density and expose topology-v2 repair opportunities",
+    "legacy_source_preserved": true,
+    "no_test100_access": true
+  },
+  "freeze_rule": "run only the declared single-repeat B0/B1/B2 development experiment; failures stay in the failure ledger"
+}

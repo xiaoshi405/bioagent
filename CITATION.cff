@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+message: "Please cite BioAgent and the upstream SciToolAgent work."
+title: "BioAgent: Type-Safe Execution for Protein Tool-Using Agents"
+type: software
+authors:
+  - family-names: Qi
+    given-names: Zihan
+  - family-names: Feng
+    given-names: Jiashi
+  - family-names: Wang
+    given-names: Yvqian
+  - family-names: Bai
+    given-names: Juerong
+  - family-names: Chen
+    given-names: Yuanlong
+repository-code: "https://github.com/xiaoshi405/bioagent"
+license: MIT
+version: "0.1.0-rc.1"
+keywords:
+  - scientific agents
+  - protein analysis
+  - artifact identity
+  - execution semantics
+references:
+  - type: article
+    title: "SciToolAgent: a knowledge-graph-driven scientific agent for multitool integration"
+    authors:
+      - family-names: Ding
+        given-names: Keyan
+      - family-names: Yu
+        given-names: Jing
+      - family-names: Huang
+        given-names: Junjie
+      - family-names: Yang
+        given-names: Yuchen
+      - family-names: Zhang
+        given-names: Qiang
+      - family-names: Chen
+        given-names: Huajun
+    journal: Nature Computational Science
+    volume: 5
+    start: 962
+    end: 972
+    year: 2025
+    doi: "10.1038/s43588-025-00849-y"
+  - type: software
+    title: "SciToolAgent"
+    authors:
+      - name: "HICAI-ZJU"
+    repository-code: "https://github.com/HICAI-ZJU/SciToolAgent"
+    license: MIT

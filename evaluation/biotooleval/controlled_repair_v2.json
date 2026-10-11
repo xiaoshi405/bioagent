@@ -1,0 +1,122 @@
+{
+  "schema_version": "2.0",
+  "artifact_id": "BIOAGENT-CONTROLLED-REPAIR-V2",
+  "version": "controlled-repair-v2.0",
+  "status": "frozen_development_microbenchmark",
+  "evidence_scope": "controlled_repair_component_only",
+  "created_from_commit": "0aca0dd",
+  "conditions": ["E2", "E3"],
+  "family_contracts": [
+    {
+      "family": "single_fasta_source_bridge",
+      "topology_signature": "single_file->sequence->terminal;missing_first_edge",
+      "input_type": "single_protein_fasta_file",
+      "repair_strategy": "deterministic_bridge_insertion",
+      "injected_plan_template": ["{terminal_tool}"],
+      "repaired_plan_template": ["parse_protein_fasta", "{terminal_tool}"],
+      "expected_inserted_steps": ["parse_protein_fasta"],
+      "expected_removed_steps": []
+    },
+    {
+      "family": "pdb_chain_composite_bridge",
+      "topology_signature": "pdb+chain_id->sequence->terminal;missing_hyperedge",
+      "input_type": "pdb_file",
+      "repair_strategy": "deterministic_bridge_insertion",
+      "injected_plan_template": ["{terminal_tool}"],
+      "repaired_plan_template": ["select_pdb_chain", "{terminal_tool}"],
+      "expected_inserted_steps": ["select_pdb_chain"],
+      "expected_removed_steps": []
+    },
+    {
+      "family": "multi_fasta_parser_omission",
+      "topology_signature": "multi_file->collection->selected_sequence->terminal;missing_parser",
+      "input_type": "multi_protein_fasta_file",
+      "repair_strategy": "deterministic_bridge_insertion",
+      "injected_plan_template": ["select_fasta_record", "{terminal_tool}"],
+      "repaired_plan_template": ["parse_multi_protein_fasta", "select_fasta_record", "{terminal_tool}"],
+      "expected_inserted_steps": ["parse_multi_protein_fasta"],
+      "expected_removed_steps": []
+    },
+    {
+      "family": "multi_fasta_selector_omission",
+      "topology_signature": "multi_file->collection->selected_sequence->terminal;missing_selector",
+      "input_type": "multi_protein_fasta_file",
+      "repair_strategy": "deterministic_bridge_insertion",
+      "injected_plan_template": ["parse_multi_protein_fasta", "{terminal_tool}"],
+      "repaired_plan_template": ["parse_multi_protein_fasta", "select_fasta_record", "{terminal_tool}"],
+      "expected_inserted_steps": ["select_fasta_record"],
+      "expected_removed_steps": []
+    },
+    {
+      "family": "multi_fasta_two_hop_alignment",
+      "topology_signature": "multi_file+record_pair->collection->alignment->statistics;missing_two_edges",
+      "input_type": "multi_protein_fasta_file",
+      "repair_strategy": "deterministic_bridge_insertion",
+      "injected_plan_template": ["{terminal_tool}"],
+      "repaired_plan_template": ["parse_multi_protein_fasta", "align_fasta_records", "{terminal_tool}"],
+      "expected_inserted_steps": ["parse_multi_protein_fasta", "align_fasta_records"],
+      "expected_removed_steps": []
+    },
+    {
+      "family": "duplicate_invalid_branch_pruning",
+      "topology_signature": "multi_file+record_pair->collection->[invalid_selection*2]->alignment->statistics;prune_dead_branch",
+      "input_type": "multi_protein_fasta_file",
+      "repair_strategy": "duplicate_invalid_step_pruning",
+      "injected_plan_template": ["parse_multi_protein_fasta", "select_fasta_record", "select_fasta_record", "align_fasta_records", "{terminal_tool}"],
+      "repaired_plan_template": ["parse_multi_protein_fasta", "align_fasta_records", "{terminal_tool}"],
+      "expected_inserted_steps": [],
+      "expected_removed_steps": ["select_fasta_record", "select_fasta_record"]
+    }
+  ],
+  "fixtures": {
+    "fasta_balanced": {"path": "fixtures/fasta/challenge_balanced.fasta", "sha256": "e71f8f505ff8d3c258ca5b98071f216477264903e695939835a54e2433044746"},
+    "fasta_hydrophobic": {"path": "fixtures/fasta/challenge_hydrophobic.fasta", "sha256": "b2954282f35f52e295f25e2855e4d2b01603e6e9d1ba3055ef32fb217aa16eeb"},
+    "fasta_signal": {"path": "fixtures/fasta/challenge_signal.fasta", "sha256": "b30c6802a4ed7b6d770c06cb2a5f2b9646688bf1599a5382d58e252394dd94de"},
+    "fasta_toxin": {"path": "fixtures/fasta/challenge_toxin.fasta", "sha256": "d018723d0cc8e0a7b3738a80d75fd0e103ed6c5433f0bef50f4e4867a7603950"},
+    "fasta_p69905": {"path": "fixtures/real/fasta/P69905.fasta", "sha256": "aecc3cb75f840f242f6b4489d501384d0c50cf0d61a8dab5a1dab81a80aa4bae"},
+    "pdb_mini_two_chain": {"path": "fixtures/pdb/mini_two_chain.pdb", "sha256": "020a56b1f42861629c59f7fdcfee0521360a1a5b09594e806f12df119ec46a2c"},
+    "pdb_4hhb": {"path": "fixtures/real/pdb/4HHB.pdb", "sha256": "c62774ac679a220a493aab5d177ab34248ab700235dc6d941f5f3cbefde334ed"},
+    "pdb_1brs": {"path": "fixtures/real/pdb/1BRS.pdb", "sha256": "0076aae54252706a8c8c02f7b1e71ce2394b0e928b413590b4ac12aade9e8f6c"},
+    "pdb_2ptc": {"path": "fixtures/real/pdb/2PTC.pdb", "sha256": "0b3880b05cfba506159267e7e2f3c851b89ea736e9ce822e0c0102d720e26ee9"},
+    "pdb_1crn": {"path": "fixtures/real/pdb/1CRN.pdb", "sha256": "42199a30a0701864a2a5cc76cd7f35cc544cd0e65fbcf63e03c166543249b811"},
+    "multi_challenge": {"path": "fixtures/fasta/challenge_multirecord.fasta", "sha256": "d1f10e97226847ea125ec8e9c40e71ffe7c871bd8c5a420b6ffade655ae8217c"},
+    "multi_topology": {"path": "fixtures/topology_v2/topology_v2_multi.fasta", "sha256": "e29d09167dc16b90a0fb6fdc6614722bcabd56a34843e3144acea84bf0a3054a"}
+  },
+  "cases": [
+    {"id": "crv2_001", "family": "single_fasta_source_bridge", "fixture_ref": "fasta_balanced", "terminal_tool": "compute_gravy"},
+    {"id": "crv2_002", "family": "single_fasta_source_bridge", "fixture_ref": "fasta_hydrophobic", "terminal_tool": "compute_instability_index"},
+    {"id": "crv2_003", "family": "single_fasta_source_bridge", "fixture_ref": "fasta_signal", "terminal_tool": "compute_extinction_coefficient"},
+    {"id": "crv2_004", "family": "single_fasta_source_bridge", "fixture_ref": "fasta_toxin", "terminal_tool": "compute_pI_mw"},
+    {"id": "crv2_005", "family": "single_fasta_source_bridge", "fixture_ref": "fasta_p69905", "terminal_tool": "predict_solubility"},
+
+    {"id": "crv2_006", "family": "pdb_chain_composite_bridge", "fixture_ref": "pdb_mini_two_chain", "terminal_tool": "compute_gravy", "chain_id": "A"},
+    {"id": "crv2_007", "family": "pdb_chain_composite_bridge", "fixture_ref": "pdb_4hhb", "terminal_tool": "compute_instability_index", "chain_id": "A"},
+    {"id": "crv2_008", "family": "pdb_chain_composite_bridge", "fixture_ref": "pdb_1brs", "terminal_tool": "compute_extinction_coefficient", "chain_id": "C"},
+    {"id": "crv2_009", "family": "pdb_chain_composite_bridge", "fixture_ref": "pdb_2ptc", "terminal_tool": "compute_pI_mw", "chain_id": "I"},
+    {"id": "crv2_010", "family": "pdb_chain_composite_bridge", "fixture_ref": "pdb_1crn", "terminal_tool": "predict_solubility", "chain_id": "A"},
+
+    {"id": "crv2_011", "family": "multi_fasta_parser_omission", "fixture_ref": "multi_challenge", "terminal_tool": "compute_gravy", "record_id": "challenge_record_one"},
+    {"id": "crv2_012", "family": "multi_fasta_parser_omission", "fixture_ref": "multi_challenge", "terminal_tool": "compute_instability_index", "record_id": "challenge_record_two"},
+    {"id": "crv2_013", "family": "multi_fasta_parser_omission", "fixture_ref": "multi_topology", "terminal_tool": "compute_extinction_coefficient", "record_id": "alpha_reference"},
+    {"id": "crv2_014", "family": "multi_fasta_parser_omission", "fixture_ref": "multi_topology", "terminal_tool": "compute_pI_mw", "record_id": "gamma_signal_like"},
+    {"id": "crv2_015", "family": "multi_fasta_parser_omission", "fixture_ref": "multi_topology", "terminal_tool": "predict_solubility", "record_id": "delta_low_complexity"},
+
+    {"id": "crv2_016", "family": "multi_fasta_selector_omission", "fixture_ref": "multi_challenge", "terminal_tool": "compute_gravy", "record_id": "challenge_record_two"},
+    {"id": "crv2_017", "family": "multi_fasta_selector_omission", "fixture_ref": "multi_topology", "terminal_tool": "compute_instability_index", "record_id": "alpha_reference"},
+    {"id": "crv2_018", "family": "multi_fasta_selector_omission", "fixture_ref": "multi_topology", "terminal_tool": "compute_extinction_coefficient", "record_id": "beta_variant"},
+    {"id": "crv2_019", "family": "multi_fasta_selector_omission", "fixture_ref": "multi_topology", "terminal_tool": "compute_pI_mw", "record_id": "gamma_signal_like"},
+    {"id": "crv2_020", "family": "multi_fasta_selector_omission", "fixture_ref": "multi_topology", "terminal_tool": "predict_solubility", "record_id": "delta_low_complexity"},
+
+    {"id": "crv2_021", "family": "multi_fasta_two_hop_alignment", "fixture_ref": "multi_challenge", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["challenge_record_one", "challenge_record_two"]},
+    {"id": "crv2_022", "family": "multi_fasta_two_hop_alignment", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["alpha_reference", "beta_variant"]},
+    {"id": "crv2_023", "family": "multi_fasta_two_hop_alignment", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["alpha_reference", "gamma_signal_like"]},
+    {"id": "crv2_024", "family": "multi_fasta_two_hop_alignment", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["beta_variant", "delta_low_complexity"]},
+    {"id": "crv2_025", "family": "multi_fasta_two_hop_alignment", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["gamma_signal_like", "delta_low_complexity"]},
+
+    {"id": "crv2_026", "family": "duplicate_invalid_branch_pruning", "fixture_ref": "multi_challenge", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["challenge_record_one", "challenge_record_two"]},
+    {"id": "crv2_027", "family": "duplicate_invalid_branch_pruning", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["alpha_reference", "beta_variant"]},
+    {"id": "crv2_028", "family": "duplicate_invalid_branch_pruning", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["alpha_reference", "gamma_signal_like"]},
+    {"id": "crv2_029", "family": "duplicate_invalid_branch_pruning", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["beta_variant", "delta_low_complexity"]},
+    {"id": "crv2_030", "family": "duplicate_invalid_branch_pruning", "fixture_ref": "multi_topology", "terminal_tool": "summarize_pairwise_alignment", "record_ids": ["gamma_signal_like", "delta_low_complexity"]}
+  ]
+}

@@ -1,0 +1,251 @@
+{
+  "dataset_name": "BioToolEval-Challenge-Dev",
+  "version": "challenge-dev-1.1",
+  "status": "candidate_not_for_final_metrics",
+  "summary": {
+    "item_count": 30,
+    "benchmark_ready_count": 0
+  },
+  "items": [
+    {
+      "id": "bte_101", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "计算给定蛋白质序列的等电点和分子量。", "question_en": "Calculate the isoelectric point and molecular weight of the protein sequence.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "ACDEFGHIKLMNPQRSTVWY", "source_type": "synthetic", "note": "20种标准氨基酸各出现一次，用于基础数值回归。"},
+      "gold": {"preferred_tool_chain": ["compute_pI_mw"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"pI": 6.78, "molecular_weight": 2395.71}, "tolerance": {"pI": 0.01, "molecular_weight": 0.01}},
+      "provenance": {"gold_generator": "compute_pI_mw", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-pi-mw-basic", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_102", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "报告该蛋白质序列的GRAVY平均疏水性。", "question_en": "Report the GRAVY hydropathy score for this protein sequence.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "MKWVTFISLLLLFSSAYSRGVFRR", "source_type": "synthetic", "note": "含明显疏水片段，用于GRAVY基础回归。"},
+      "gold": {"preferred_tool_chain": ["compute_gravy"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"gravy": 0.679}, "tolerance": {"gravy": 0.001}},
+      "provenance": {"gold_generator": "compute_gravy", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-gravy-basic", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_103", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "计算该序列基于残基组成的螺旋、转角和折叠倾向比例。", "question_en": "Compute the composition-based helix, turn, and sheet propensity fractions.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "ACDEFGHIKLMNPQRSTVWY", "source_type": "synthetic", "note": "平衡组成用于二级结构倾向函数回归。"},
+      "gold": {"preferred_tool_chain": ["compute_secondary_structure_fraction"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"helix_fraction": 0.25, "turn_fraction": 0.25, "sheet_fraction": 0.35}, "tolerance": {"helix_fraction": 0.0001, "turn_fraction": 0.0001, "sheet_fraction": 0.0001}},
+      "provenance": {"gold_generator": "compute_secondary_structure_fraction", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-secondary-propensity", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_104", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "统计该序列20种标准氨基酸的组成；说明每种氨基酸的计数。", "question_en": "Compute the amino-acid composition and report the count of every standard residue.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "ACDEFGHIKLMNPQRSTVWY", "source_type": "synthetic", "note": "每种标准氨基酸恰好一次，便于人工核验组成。"},
+      "gold": {"preferred_tool_chain": ["compute_amino_acid_composition"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {}, "tolerance": {}, "required_claims": ["序列长度为20", "20种标准氨基酸的计数均为1"], "forbidden_claims": ["存在计数大于1的氨基酸", "把百分比说成实验测量值"]},
+      "provenance": {"gold_generator": "compute_amino_acid_composition", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-composition-balanced", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_105", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "计算该蛋白质的不稳定性指数，并按40阈值判断经验稳定性。", "question_en": "Calculate the instability index and classify empirical stability using the threshold of 40.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "ACDEFGHIKLMNPQRSTVWY", "source_type": "synthetic", "note": "平衡短序列用于不稳定性指数回归。"},
+      "gold": {"preferred_tool_chain": ["compute_instability_index"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"instability_index": 84.74, "is_stable": false}, "tolerance": {"instability_index": 0.01}, "required_claims": ["不稳定性指数为84.74左右", "按40阈值判断为不稳定"], "forbidden_claims": ["将经验阈值描述为实验稳定性证明"]},
+      "provenance": {"gold_generator": "compute_instability_index", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-instability-basic", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_106", "split": "dev", "category": "single_tool", "difficulty": "easy",
+      "question_zh": "计算该蛋白质在280 nm处还原态和氧化态的摩尔消光系数。", "question_en": "Calculate the reduced and oxidized molar extinction coefficients at 280 nm.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "PDGRNAAAKAFDLITPTVRKGCCSNPACILNNPNQCG", "source_type": "synthetic", "note": "含4个半胱氨酸，用于区分还原态和氧化态消光系数。"},
+      "gold": {"preferred_tool_chain": ["compute_extinction_coefficient"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"reduced_molar_extinction_coefficient": 0, "oxidized_molar_extinction_coefficient": 250, "wavelength_nm": 280}, "tolerance": {"reduced_molar_extinction_coefficient": 0, "oxidized_molar_extinction_coefficient": 0, "wavelength_nm": 0}},
+      "provenance": {"gold_generator": "compute_extinction_coefficient", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-extinction-cysteine", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_107", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "同时筛查该序列的信号肽、跨膜区和溶解度，并分别报告结果。", "question_en": "Screen the sequence for a signal peptide, transmembrane regions, and solubility.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "MKWVTFISLLLLFSSAYSRGVFRR", "source_type": "synthetic", "note": "信号肽规则阳性但跨膜窗口阴性的合成序列。"},
+      "gold": {"preferred_tool_chain": ["predict_signalpeptide", "predict_transmembrane", "predict_solubility"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"has_signal_peptide": true, "cleavage_site": 16, "count": 0, "solubility_score": 55}, "tolerance": {"cleavage_site": 0, "count": 0, "solubility_score": 0}, "required_claims": ["规则筛查得到信号肽阳性", "候选切割位点为16", "跨膜区数量为0", "溶解度评分为55"], "forbidden_claims": ["声称结果来自SignalP或TMHMM", "把规则预测称为实验验证"]},
+      "provenance": {"gold_generator": "predict_signalpeptide+predict_transmembrane+predict_solubility", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-three-rule-screen", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_108", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "检查该序列是否与本地已知毒性蛋白高度相似，并同时给出氨基酸组成和GRAVY值。", "question_en": "Screen local toxin similarity and also report amino-acid composition and GRAVY.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "PDGRNAAAKAFDLITPTVRKGCCSNPACILNNPNQCG", "source_type": "synthetic", "note": "本地毒性数据库阳性对照，用于组合工具链。"},
+      "gold": {"preferred_tool_chain": ["check_protein_toxicity", "compute_amino_acid_composition", "compute_gravy"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"high_similarity_to_known_toxin": true, "similarity_percent": 100.0, "gravy": -0.324}, "tolerance": {"similarity_percent": 0.01, "gravy": 0.001}, "required_claims": ["与本地Conotoxin Bt1.8记录高度相似", "相似度为100%", "GRAVY为-0.324左右"], "forbidden_claims": ["直接宣称实验毒性", "把相似性筛查写成毒理学鉴定"]},
+      "provenance": {"gold_generator": "check_protein_toxicity+compute_amino_acid_composition+compute_gravy", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "sequence-toxin-composition-gravy", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_109", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "从单记录FASTA中读取蛋白质，然后计算GRAVY值和不稳定性指数。", "question_en": "Parse the single-record FASTA and calculate GRAVY and the instability index.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_signal.fasta", "source_type": "synthetic", "note": "验证FASTA到氨基酸序列的显式类型桥接。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "compute_gravy", "compute_instability_index"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 24, "gravy": 0.679, "instability_index": 44.03}, "tolerance": {"sequence_length": 0, "gravy": 0.001, "instability_index": 0.01}},
+      "provenance": {"gold_generator": "parse_protein_fasta+compute_gravy+compute_instability_index", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-gravy-instability", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_110", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "解析FASTA文件后，计算等电点、分子量和溶解度评分。", "question_en": "Parse the FASTA file, then compute pI, molecular weight, and solubility score.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_balanced.fasta", "source_type": "synthetic", "note": "平衡序列用于FASTA桥接后的多属性分析。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "compute_pI_mw", "predict_solubility"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 20, "pI": 6.78, "molecular_weight": 2395.71, "solubility_score": 55}, "tolerance": {"sequence_length": 0, "pI": 0.01, "molecular_weight": 0.01, "solubility_score": 0}},
+      "provenance": {"gold_generator": "parse_protein_fasta+compute_pI_mw+predict_solubility", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-pi-mw-solubility", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_111", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "读取FASTA中的蛋白质，计算二级结构倾向比例并统计氨基酸组成。", "question_en": "Read the FASTA protein, compute secondary-structure propensity fractions, and summarize composition.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_toxin.fasta", "source_type": "synthetic", "note": "富含半胱氨酸的序列用于FASTA桥接与复合组成分析。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "compute_secondary_structure_fraction", "compute_amino_acid_composition"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 37, "helix_fraction": 0.2432, "turn_fraction": 0.4054, "sheet_fraction": 0.2162}, "tolerance": {"sequence_length": 0, "helix_fraction": 0.0001, "turn_fraction": 0.0001, "sheet_fraction": 0.0001}},
+      "provenance": {"gold_generator": "parse_protein_fasta+compute_secondary_structure_fraction+compute_amino_acid_composition", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-secondary-composition", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_112", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "从FASTA读取这条高疏水蛋白，并分别进行信号肽和跨膜区规则筛查。", "question_en": "Parse the hydrophobic FASTA protein and run signal-peptide and transmembrane screens.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_hydrophobic.fasta", "source_type": "synthetic", "note": "长亮氨酸序列用于区分信号肽规则与跨膜窗口规则。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "predict_signalpeptide", "predict_transmembrane"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 36, "has_signal_peptide": false, "count": 1}, "tolerance": {"sequence_length": 0, "count": 0}, "required_claims": ["信号肽规则筛查为阴性", "检测到1个候选跨膜区域"], "forbidden_claims": ["声称结果来自外部SignalP或TMHMM服务", "把候选区称为实验确认跨膜螺旋"]},
+      "provenance": {"gold_generator": "parse_protein_fasta+predict_signalpeptide+predict_transmembrane", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-signal-transmembrane", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_113", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "解析该FASTA后，计算两种摩尔消光系数并进行本地毒性相似性筛查。", "question_en": "Parse the FASTA, calculate both extinction coefficients, and screen local toxin similarity.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_toxin.fasta", "source_type": "synthetic", "note": "毒性数据库阳性对照，同时包含多对半胱氨酸。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "compute_extinction_coefficient", "check_protein_toxicity"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"reduced_molar_extinction_coefficient": 0, "oxidized_molar_extinction_coefficient": 250, "high_similarity_to_known_toxin": true, "similarity_percent": 100.0, "matched_protein": "Conotoxin Bt1.8"}, "tolerance": {"reduced_molar_extinction_coefficient": 0, "oxidized_molar_extinction_coefficient": 0, "similarity_percent": 0.01}, "required_claims": ["本地数据库最佳匹配为Conotoxin Bt1.8", "毒性相似度为100%", "氧化态消光系数为250"], "forbidden_claims": ["将序列相似性等同于实验毒性结论"]},
+      "provenance": {"gold_generator": "parse_protein_fasta+compute_extinction_coefficient+check_protein_toxicity", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-extinction-toxicity", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_114", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "读取FASTA后进行一站式基础分析，并额外报告GRAVY值。", "question_en": "Parse the FASTA, run the integrated basic analysis, and additionally report GRAVY.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_balanced.fasta", "source_type": "synthetic", "note": "验证protein_analysis与独立GRAVY工具共享同一序列Artifact。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "protein_analysis", "compute_gravy"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 20, "pI": 6.78, "molecular_weight": 2395.71, "solubility_score": 55, "gravy": -0.49}, "tolerance": {"sequence_length": 0, "pI": 0.01, "molecular_weight": 0.01, "solubility_score": 0, "gravy": 0.001}},
+      "provenance": {"gold_generator": "parse_protein_fasta+protein_analysis+compute_gravy", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "fasta-integrated-plus-gravy", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_115", "split": "dev", "category": "multi_tool", "difficulty": "hard",
+      "question_zh": "该输入是FASTA文件。若初始计划直接做毒性筛查，请补齐确定性的文件解析步骤后执行。", "question_en": "The input is a FASTA file. If the initial plan screens toxicity directly, add the deterministic parsing bridge and execute.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_toxin.fasta", "source_type": "synthetic", "note": "显式考查FASTA到序列的保守修复。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "check_protein_toxicity"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "repair_then_execute", "expected_output": {"sequence_length": 37, "high_similarity_to_known_toxin": true, "similarity_percent": 100.0}, "tolerance": {"sequence_length": 0, "similarity_percent": 0.01}, "required_claims": ["先解析单记录FASTA再执行毒性相似性筛查", "本地相似度为100%"], "forbidden_claims": ["跳过FASTA解析", "宣称实验毒性已被证明"]},
+      "provenance": {"gold_generator": "parse_protein_fasta+check_protein_toxicity", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "repair-fasta-to-toxicity", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_116", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "分析该PDB的结构摘要，并提取所有蛋白质链序列。", "question_en": "Analyze the PDB structure summary and extract all protein-chain sequences.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_single_chain.pdb", "source_type": "synthetic", "note": "单链8残基Cα夹具用于结构摘要和链映射回归。"},
+      "gold": {"preferred_tool_chain": ["analyze_pdb_structure", "extract_pdb_sequences"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"chain_count": 1, "protein_residue_count": 8, "protein_atom_count": 8, "total_residue_count": 8}, "tolerance": {"chain_count": 0, "protein_residue_count": 0, "protein_atom_count": 0, "total_residue_count": 0}},
+      "provenance": {"gold_generator": "analyze_pdb_structure+extract_pdb_sequences", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-summary-chain-map", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_117", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "对双链PDB生成结构摘要，并对残基最多的链计算3个最低频非零ANM模态。", "question_en": "Summarize the two-chain PDB and calculate three lowest non-zero ANM modes for the largest chain.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "source_type": "synthetic", "note": "双链Cα夹具用于结构统计和ANM默认最大链选择。"},
+      "gold": {"preferred_tool_chain": ["analyze_pdb_structure", "calculate_protein_anm"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"chain_count": 2, "protein_residue_count": 22, "residue_count": 12, "contact_count": 30, "returned_mode_count": 3}, "tolerance": {"chain_count": 0, "protein_residue_count": 0, "residue_count": 0, "contact_count": 0, "returned_mode_count": 0}},
+      "provenance": {"gold_generator": "analyze_pdb_structure+calculate_protein_anm(n_modes=3)", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-summary-anm", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_118", "split": "dev", "category": "multi_tool", "difficulty": "medium",
+      "question_zh": "提取双链PDB的所有链序列，同时对最长链计算3个ANM非零模态。", "question_en": "Extract all PDB chain sequences and calculate three non-zero ANM modes for the longest chain.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "source_type": "synthetic", "note": "验证两个PDB工具共享原始结构Artifact而不错误串接链映射。"},
+      "gold": {"preferred_tool_chain": ["extract_pdb_sequences", "calculate_protein_anm"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"chain_count": 2, "total_residue_count": 22, "residue_count": 12, "returned_mode_count": 3}, "tolerance": {"chain_count": 0, "total_residue_count": 0, "residue_count": 0, "returned_mode_count": 0}},
+      "provenance": {"gold_generator": "extract_pdb_sequences+calculate_protein_anm(n_modes=3)", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-chain-map-anm", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_119", "split": "dev", "category": "multi_tool", "difficulty": "hard",
+      "question_zh": "从双链PDB中明确选择A链，然后计算该链的GRAVY和不稳定性指数。", "question_en": "Select chain A from the two-chain PDB, then compute GRAVY and the instability index.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "chain_id": "A", "source_type": "synthetic", "note": "显式链ID用于PDB到单序列桥接。"},
+      "gold": {"preferred_tool_chain": ["select_pdb_chain", "compute_gravy", "compute_instability_index"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 12, "gravy": 1.858, "instability_index": 5.3}, "tolerance": {"sequence_length": 0, "gravy": 0.001, "instability_index": 0.01}},
+      "provenance": {"gold_generator": "select_pdb_chain(A)+compute_gravy+compute_instability_index", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-chain-gravy-instability", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_120", "split": "dev", "category": "multi_tool", "difficulty": "hard",
+      "question_zh": "选择该PDB的B链，报告等电点、分子量和氨基酸组成。", "question_en": "Select PDB chain B and report pI, molecular weight, and amino-acid composition.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "chain_id": "B", "source_type": "synthetic", "note": "B链含10种各一次的氨基酸，用于链选择后复合分析。"},
+      "gold": {"preferred_tool_chain": ["select_pdb_chain", "compute_pI_mw", "compute_amino_acid_composition"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 10, "pI": 5.32, "molecular_weight": 1132.29}, "tolerance": {"sequence_length": 0, "pI": 0.01, "molecular_weight": 0.01}},
+      "provenance": {"gold_generator": "select_pdb_chain(B)+compute_pI_mw+compute_amino_acid_composition", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-chain-pi-composition", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_121", "split": "dev", "category": "multi_tool", "difficulty": "hard",
+      "question_zh": "从单链PDB选择A链，并检查该短链的信号肽和跨膜区规则输出。", "question_en": "Select chain A from the single-chain PDB and inspect signal-peptide and transmembrane outputs for the short chain.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_single_chain.pdb", "chain_id": "A", "source_type": "synthetic", "note": "8残基短链用于验证PDB桥接后的短序列边界提示。"},
+      "gold": {"preferred_tool_chain": ["select_pdb_chain", "predict_signalpeptide", "predict_transmembrane"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 8, "has_signal_peptide": false, "count": 0}, "tolerance": {"sequence_length": 0, "count": 0}, "required_claims": ["序列短于20个残基", "信号肽结果为false", "候选跨膜区数量为0"], "forbidden_claims": ["将短序列提示解释为高置信预测"]},
+      "provenance": {"gold_generator": "select_pdb_chain(A)+predict_signalpeptide+predict_transmembrane", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "pdb-short-chain-signal-tm", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_122", "split": "dev", "category": "multi_tool", "difficulty": "hard",
+      "question_zh": "该输入是双链PDB。若计划直接计算消光系数，请先补上选择A链的确定性步骤。", "question_en": "The input is a two-chain PDB. Before calculating extinction coefficients, add the deterministic chain-A selection step.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "chain_id": "A", "source_type": "synthetic", "note": "考查PDB与chain_id到单序列的保守修复。"},
+      "gold": {"preferred_tool_chain": ["select_pdb_chain", "compute_extinction_coefficient"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "repair_then_execute", "expected_output": {"sequence_length": 12, "reduced_molar_extinction_coefficient": 5500, "oxidized_molar_extinction_coefficient": 5500}, "tolerance": {"sequence_length": 0, "reduced_molar_extinction_coefficient": 0, "oxidized_molar_extinction_coefficient": 0}},
+      "provenance": {"gold_generator": "select_pdb_chain(A)+compute_extinction_coefficient", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "repair-pdb-chain-extinction", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_123", "split": "dev", "category": "boundary", "difficulty": "hard",
+      "question_zh": "输入是单记录FASTA；若计划直接计算GRAVY，请插入解析步骤后继续。", "question_en": "The input is a single-record FASTA; insert the parsing step before computing GRAVY.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_balanced.fasta", "source_type": "synthetic", "note": "边界题：缺失FASTA解析桥时允许确定性修复。"},
+      "gold": {"preferred_tool_chain": ["parse_protein_fasta", "compute_gravy"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "repair_then_execute", "expected_output": {"sequence_length": 20, "gravy": -0.49}, "tolerance": {"sequence_length": 0, "gravy": 0.001}},
+      "provenance": {"gold_generator": "parse_protein_fasta+compute_gravy", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "boundary-repair-fasta-gravy", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_124", "split": "dev", "category": "boundary", "difficulty": "hard",
+      "question_zh": "输入为双链PDB并明确指定B链；若计划直接预测溶解度，请先选择B链再执行。", "question_en": "The input is a two-chain PDB with chain B specified; select chain B before predicting solubility.",
+      "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "chain_id": "B", "source_type": "synthetic", "note": "边界题：PDB链选择后才能产生溶解度工具所需序列。"},
+      "gold": {"preferred_tool_chain": ["select_pdb_chain", "predict_solubility"], "acceptable_tool_chains": [], "order_sensitive": true, "expected_status": "success", "expected_behavior": "repair_then_execute", "expected_output": {"sequence_length": 10, "soluble": true, "solubility_score": 60, "pI": 5.32}, "tolerance": {"sequence_length": 0, "solubility_score": 0, "pI": 0.01}, "required_claims": ["显式选择B链", "溶解度评分为60"], "forbidden_claims": ["自动猜测未指定链"]},
+      "provenance": {"gold_generator": "select_pdb_chain(B)+predict_solubility", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "boundary-repair-pdb-solubility", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_125", "split": "dev", "category": "boundary", "difficulty": "easy",
+      "question_zh": "序列仅含一个丙氨酸A；计算其GRAVY并保留短序列事实。", "question_en": "The sequence is a single alanine; compute its GRAVY while noting the short length.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "A", "source_type": "synthetic", "note": "最短合法标准氨基酸序列，用于数值边界。"},
+      "gold": {"preferred_tool_chain": ["compute_gravy"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 1, "gravy": 1.8}, "tolerance": {"sequence_length": 0, "gravy": 0.001}},
+      "provenance": {"gold_generator": "compute_gravy", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "boundary-single-residue-gravy", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_126", "split": "dev", "category": "boundary", "difficulty": "medium",
+      "question_zh": "忽略大小写和空白，规范化该氨基酸序列后计算等电点和分子量。", "question_en": "Normalize case and whitespace in the amino-acid sequence, then calculate pI and molecular weight.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": " acdefg hik ", "source_type": "synthetic", "note": "验证合法字符的大小写与空白规范化边界。"},
+      "gold": {"preferred_tool_chain": ["compute_pI_mw"], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "success", "expected_behavior": "execute", "expected_output": {"sequence_length": 9, "pI": 5.32, "molecular_weight": 1019.13}, "tolerance": {"sequence_length": 0, "pI": 0.01, "molecular_weight": 0.01}},
+      "provenance": {"gold_generator": "compute_pI_mw", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "boundary-normalized-sequence-pi", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_127", "split": "dev", "category": "trap", "difficulty": "hard",
+      "question_zh": "请计算序列MKWVTFISLL123X的等电点和分子量。", "question_en": "Calculate pI and molecular weight for MKWVTFISLL123X.",
+      "input": {"input_type": "amino_acid_sequence", "sequence": "MKWVTFISLL123X", "source_type": "synthetic", "note": "包含数字和非标准X，必须拒绝而不能截断。"},
+      "gold": {"preferred_tool_chain": [], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "error", "expected_behavior": "reject", "expected_output": {}, "tolerance": {}, "required_claims": ["拒绝计算", "指出包含数字和非标准氨基酸字符X"], "forbidden_claims": ["返回pI或分子量数值", "静默删除非法字符后继续计算"]},
+      "provenance": {"gold_generator": "compute_pI_mw(error-path)", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "trap-invalid-sequence-characters", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_128", "split": "dev", "category": "trap", "difficulty": "hard",
+      "question_zh": "读取这个含两条记录的FASTA并直接计算一个GRAVY值。", "question_en": "Read this two-record FASTA and directly calculate one GRAVY value.",
+      "input": {"input_type": "protein_fasta_file", "fixture": "fixtures/fasta/challenge_multirecord.fasta", "source_type": "synthetic", "note": "多记录输入没有用户选择，禁止默认取第一条。"},
+      "gold": {"preferred_tool_chain": [], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "error", "expected_behavior": "reject", "expected_output": {}, "tolerance": {}, "required_claims": ["拒绝自动选择FASTA记录", "要求用户明确选择一条记录"], "forbidden_claims": ["默认使用第一条记录", "返回单一GRAVY数值"]},
+      "provenance": {"gold_generator": "parse_protein_fasta(error-path)", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "trap-multirecord-fasta-selection", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_129", "split": "dev", "category": "trap", "difficulty": "hard",
+        "question_zh": "这个PDB包含多条链，请报告目标蛋白链的GRAVY值。", "question_en": "This PDB contains multiple chains; report the GRAVY score of the target protein chain.",
+        "input": {"input_type": "pdb_file", "fixture": "fixtures/pdb/mini_two_chain.pdb", "source_type": "synthetic", "note": "未提供目标chain_id，系统必须拒绝猜测。"},
+        "gold": {"preferred_tool_chain": [], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "error", "expected_behavior": "reject", "expected_output": {}, "tolerance": {}, "required_claims": ["指出多链PDB缺少目标chain_id", "要求用户提供chain_id"], "forbidden_claims": ["默认选择A链", "默认选择最长链并计算GRAVY"]},
+      "provenance": {"gold_generator": "select_pdb_chain(missing-chain-error-path)", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "trap-ambiguous-pdb-chain", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    },
+    {
+      "id": "bte_130", "split": "dev", "category": "trap", "difficulty": "hard",
+      "question_zh": "请调用DNA翻译和在线BLAST工具分析一段未提供的核酸序列。", "question_en": "Call DNA translation and online BLAST tools for a nucleotide sequence that was not provided.",
+      "input": {"input_type": "none", "source_type": "none", "note": "请求超出蛋白质本地工具注册表且没有输入。"},
+      "gold": {"preferred_tool_chain": [], "acceptable_tool_chains": [], "order_sensitive": false, "expected_status": "error", "expected_behavior": "reject", "expected_output": {}, "tolerance": {}, "required_claims": ["说明当前没有注册DNA翻译或在线BLAST工具", "指出缺少核酸输入"], "forbidden_claims": ["编造DNA或BLAST结果", "伪造不存在的工具调用"]},
+      "provenance": {"gold_generator": "tool-registry-negative-check", "verified_by": "automated_local_verifier", "verified_at": "2026-08-05", "python_version": "3.14.4", "biopython_version": "1.87", "git_commit": "697206d"},
+      "governance": {"question_source": "locally_constructed", "question_author": "team-A-codex-assisted", "source_reference": null, "template_group": "trap-unsupported-dna-tools", "exposure_status": "seen_by_method_developer", "gold_status": "auto_verified", "reviewed_by": [], "reviewed_at": null, "method_freeze_commit": null}
+    }
+  ]
+}

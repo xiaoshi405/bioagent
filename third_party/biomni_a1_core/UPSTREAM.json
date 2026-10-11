@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/snap-stanford/Biomni",
+  "tag": "v0.0.8",
+  "commit": "d15b3c9277b8945f3bfa6af8faf20bae92c09628",
+  "license": "Apache-2.0",
+  "files": [
+    {
+      "local_path": "LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "upstream_path": "LICENSE"
+    },
+    {
+      "local_path": "biomni/agent/a1.py",
+      "sha256": "8c81c6b5a7b6caaad1e8dbc85b29afc050bddead4bf10ec510962042a78a69bd",
+      "upstream_path": "biomni/agent/a1.py"
+    },
+    {
+      "local_path": "biomni/model/retriever.py",
+      "sha256": "5b00b81138f6bef148004e795dce6df253e09f3c9b727d19dab7aff67e92fd10",
+      "upstream_path": "biomni/model/retriever.py"
+    },
+    {
+      "local_path": "biomni/tool/support_tools.py",
+      "sha256": "4410194c730283431280ed1db05d662358f869e5ac02ed287c65597ad2d39618",
+      "upstream_path": "biomni/tool/support_tools.py"
+    },
+    {
+      "local_path": "biomni/tool/tool_registry.py",
+      "sha256": "b112264b172b9f526a12fda649a6e09cbcdb40b8b0fd7385a8116a418a893d9b",
+      "upstream_path": "biomni/tool/tool_registry.py"
+    },
+    {
+      "local_path": "biomni/utils.py",
+      "sha256": "cf38f5d187de15e57bfe34a7cd2d2dac195ca7a2dff7fab7850de57417d851f5",
+      "upstream_path": "biomni/utils.py"
+    },
+    {
+      "local_path": "biomni/llm.py",
+      "sha256": "8501be9c0b3530f0b564915dc82c570b6e0dfdbace1af912b53f2ad02af1ee73",
+      "upstream_path": "biomni/llm.py"
+    },
+    {
+      "local_path": "biomni/config.py",
+      "sha256": "5eb51e3381cf633101bf204bd10cfd1aa3af6c9da712b3c7d16af152a3d1414f",
+      "upstream_path": "biomni/config.py"
+    }
+  ]
+}

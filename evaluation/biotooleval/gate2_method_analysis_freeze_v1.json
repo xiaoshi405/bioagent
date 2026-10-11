@@ -1,0 +1,130 @@
+{
+  "schema_version": "gate2-method-analysis-freeze/1.0",
+  "artifact_id": "BIOAGENT-GATE2-METHOD-ANALYSIS-FREEZE-V1",
+  "status": "FROZEN_METHOD_ANALYSIS_PENDING_HELD_OUT",
+  "gate2_closed": false,
+  "frozen_at": "2026-09-05T21:45:00+08:00",
+  "scope": "method_and_analysis_only_pending_test150_binding",
+  "method_snapshot": {
+    "base_commit": "84c9bb529799ed416f56f1507efbda30188ac557",
+    "base_tree": "96e46d313184dca0af87b895fa2972610c2fc952",
+    "algorithm_changes_after_base_forbidden": true
+  },
+  "held_out_dataset": {
+    "bound": false,
+    "content_accessed": false,
+    "expected_item_count": 150,
+    "required_review_rounds": 2,
+    "dataset_path": null,
+    "dataset_sha256": null,
+    "binding_rule": "Bind only after D round-1 review, author round-2 review, disagreement adjudication, machine validation, Gold recomputation audit, and Dev/Test fingerprint audit all pass."
+  },
+  "runtime_controls": {
+    "model": "qwen3.7-plus-2026-05-26",
+    "mutable_model_alias_forbidden": true,
+    "temperature": 0.0,
+    "thinking_enabled": false,
+    "conditions": ["E0", "E1", "E2", "E3", "S1", "L1", "F1"],
+    "primary_method_condition": "F1",
+    "deterministic_ablation_condition": "E3",
+    "replan_baseline_condition": "L1",
+    "repeats": 3,
+    "seed": 20260902,
+    "retry_failures": false,
+    "infrastructure_retry_max_attempts": 3,
+    "content_response_resampling_forbidden": true,
+    "question_timeout_seconds": 120,
+    "llm_replan_max_output_tokens": 256,
+    "b3_enabled": false,
+    "shared_plan_replay": true,
+    "condition_order": "cyclic_counterbalanced_within_question",
+    "secondary_model_run": "PARKED_NOT_PART_OF_GATE2_FREEZE"
+  },
+  "scoring_contract": {
+    "policy_version": "deterministic-v1.1",
+    "unknown_label_policy": "null_excluded_with_coverage",
+    "final_answer_correct": "Independent human semantic judgment against frozen rubric; execution completion alone is insufficient.",
+    "behavior_aware_task_success": "Requires correct execution behavior or strict correct rejection in addition to answer evidence.",
+    "safe_rejection_rate": "Correct rejection with no disallowed tool execution; answer-layer refusal after execution does not count.",
+    "actionable_rejection_accuracy": "Among strict correct rejections, the response must identify the reason and a concrete correction or next action.",
+    "result_hallucination_not_inferred_from_answer_correctness": true
+  },
+  "analysis_contract": {
+    "schema_version": "factorial-1.1",
+    "factorial_conditions": ["E0", "E1", "E2", "E3", "S1", "L1"],
+    "hybrid_comparison_conditions": ["E3", "L1", "F1"],
+    "hybrid_schema_version": "hybrid-recovery-1.0",
+    "hybrid_hypothesis_role": "secondary_frozen_comparison_outside_H1_H2_H3",
+    "bootstrap_resamples": 10000,
+    "analysis_seed": 20260905,
+    "holm_family": ["H1", "H2", "H3"],
+    "holm_alpha": 0.05,
+    "independence_unit": "question",
+    "repeat_aggregation": "mean_within_question_before_bootstrap",
+    "hybrid_primary_estimands": [
+      "F1_minus_E3_behavior_aware_task_success",
+      "F1_minus_L1_behavior_aware_task_success"
+    ],
+    "hybrid_significance_claim": "No new confirmatory p-value family; report paired effect, bootstrap 95% CI, label coverage, cost, and residual cases.",
+    "legacy_unsafe_type_ii_metric_boundary": "Do not interpret type-valid corrected execution as unresolved unsafe execution; use intervention execution classes."
+  },
+  "project_text_files": {
+    "ToolsAgent/ToolsFuns/Biology/tool_name_dict.py": "06134a647642b1ac1f2e9bb0c79156d6b43bb04f2d4a6d56dc8012d79532e69c",
+    "app/core/config.py": "ada1dc83485567612c877248cad6b6de974dafa1b614c84ed6dbe80772786e71",
+    "app/core/embedding_runtime.py": "4361bab6c8810bbce8b17ef6b958e2d62daadf9f0801eebc7d4cda1583804dc0",
+    "app/llms/api_clients/openai_api.py": "4d07118a61140a1d07899d339fb75e9a11c430e2d08b8b191a35f46049d82e7b",
+    "app/llms/planning/prompt_templates.py": "eda2f771da8301236f2e44443ccdddf8e9dd5520f854c9c2396d53d01721cd4d",
+    "app/tools/fasta_input_parser.py": "d12924e7e57fe8739d192fe96cfdde4466f66c2683a7f9bd977f26672782a384",
+    "app/tools/tool_parameters.py": "47c7319b054a5bae887f3968599dc67b0ecf389fdbfa6bffb7d52b44972842fa",
+    "app/tools/tool_runner.py": "23468025558b7eff27a52c99f067750485306ee06d7d3d9bda89075ababf2268",
+    "evaluation/biotooleval/experiment_trace_schema_baseline_v1.json": "cb3e9dfe1f7a8f6a6218f79cde67de0ab65753e1e09d001628eb4e8f01acb9d0",
+    "evaluation/biotooleval/experiment_trace_schema_e_v1.json": "a6103c01412a513ebbc5ec0767bdcd537590657aa1d36b7ebc406a19a57d2b38",
+    "evaluation/biotooleval/experiment_trace_schema_hybrid_v1.json": "54ccd1c238ad9df1ad939094a07e6cd86d212f7276cf71d5989b58653a3b061b",
+    "evaluation/biotooleval/experiment_trace_schema_v1.json": "5e1d6d4961df2bfeeac0d254d9ca6a2bbcf66e7d28bbc43ef33061312a049b0a",
+    "evaluation/biotooleval/question_schema_v1.json": "9e73e460529a8bbd4e0863bfbccc3a88f8f2c6ad916053ca25743e25b448d081",
+    "scripts/analyze_factorial_biotooleval.py": "b79ce872c12ccd292464d4a8f454e5d5e5aa65de9ad1f6c286d4a4232e28d0d7",
+    "scripts/analyze_hybrid_biotooleval.py": "7727bf056815e4fbd4e83dfb933323911ab077ab3b5ec42a256e56021177821e",
+    "scripts/baseline_audit.py": "7fe6c24fdd1fcc68155e905bac85a0c0020c9d144bacbdbb3572bc1c18ebcdb4",
+    "scripts/baseline_strategies.py": "76540b8697b3d01f03c6f0871512863a4a47849831b06ca3eb51cfcf6b48e639",
+    "scripts/evaluation_metrics.py": "142140f3b027c334a08430a2e08d1c04129aff7b6c536b9ed74a85261d2ec3c3",
+    "scripts/evaluation_trace.py": "04ebe0d8b2e4cf21facc14f78a72454caa7970b08b116b9d982460ae47bf4947",
+    "scripts/hierarchical_recovery.py": "326639ed21396e77b3204c9259d3cb7df6367e7212e68210abb625d15167d5c0",
+    "scripts/initial_artifacts.py": "127373618ed119e742890ee8b6deafbbe3a6001fc13ffe3081558309cf01eb0b",
+    "scripts/plan_sampling.py": "3c828b72c6a5f3218ae9538ad7713e0021daaa6f10afb0531e8eb73fac19a2f7",
+    "scripts/r3_environment_preflight.py": "a292aaefd1d9ca8557efc6ffd065637966620b5a59945167207053b537bccfcd",
+    "scripts/retrieve_tool_info.py": "1e9f10bbee2ddb748907f834d8951720331fb19d087a825b02b8dceb00dcf268",
+    "scripts/run_biotooleval.py": "4b94ea7c0f966b57a117f66f377d57f4873f1dbfade46c3eb8b1c03b4b3de965",
+    "scripts/structured_plan.py": "4525350f6ca0f1d0930c825e8b0abe049865a7afb12ace02c6e762e3e3167624",
+    "scripts/type_checker.py": "c15a55a0e376723adab0c715142a53609fc9b98bb217d54e3c78871614bdcda5",
+    "scripts/typed_executor.py": "bfe5735e6373ee644c1a10d3387050bf4cbcec8dcbb399b9b570a2699d8ffe95",
+    "scripts/typed_planning_runtime.py": "ad2e6ec537ee35ac4b51a7fd164262b6c61f904953e169b900c933930b7b705d",
+    "scripts/validate_biotooleval_dataset.py": "1f60bdb5c8d36ef56615e2bc3b036b164697a4363a141aafc5654fa8a655ddff",
+    "scripts/verify_gate2_freeze.py": "930895632dc89adf39fd8fd408b571698a4408baf0bc36d220621b9de2346b0a"
+  },
+  "assets": {
+    "project_binary_files": {
+      "data/toxin_protein.csv": "969421654d8eac80b608ed94b01c3d83ac373a963f3dad7da3b188e7cfa0c126",
+      "storage/graph_store.json": "43319b33b3ef3db97604d6b1938288214942058b90270afa262d677f3b23ee90",
+      "storage/index_store.json": "46d89a5c0fae66116511ec3fab96cd6d7ac32e3ccc489ed8100e8d34b027e40e"
+    },
+    "bge_model_files": {
+      "config.json": "3853a7979202c348751b753e36f579c41d8da7d36af617d3d907e1fc9b441f2a",
+      "model.safetensors": "354763b9b1357bc9c44f62c6be2276321081ed2567773608c0d0785b61d5a026",
+      "tokenizer.json": "48cea5d44424912a6fd1ea647bf4fe50b55ab8b1e5879c3275f80e339e8fae26"
+    }
+  },
+  "next_blockers": [
+    "TEST150_ROUND1_REVIEW_ARTIFACT_NOT_BOUND",
+    "TEST150_ROUND2_AUTHOR_REVIEW_ARTIFACT_NOT_BOUND",
+    "TEST150_DISAGREEMENT_AND_MACHINE_AUDITS_NOT_BOUND",
+    "HELD_OUT_DATASET_PATH_AND_SHA256_NOT_BOUND",
+    "FORMAL_SERVICES_NOT_RESTARTED_FROM_FREEZE_COMMIT",
+    "FORMAL_CLEAN_PREFLIGHT_NOT_CAPTURED"
+  ],
+  "prohibitions": [
+    "Do not access Test-100/Test-150 content or Gold before held-out binding is authorized.",
+    "Do not overwrite historical Trace, labels, review workbooks, manifests, or reports.",
+    "Do not implement B3, add tools, tune prompts, or change recovery after this method snapshot.",
+    "Do not treat Dev significance or the incomplete L1 answer-label coverage as final Test evidence."
+  ]
+}

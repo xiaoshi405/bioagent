@@ -1,0 +1,9 @@
+# Versions from the inspected local environment; historical experiment record is separate.
+-r requirements-agent.txt
+ipython==9.17.0
+tqdm==4.67.3
+langchain-core==1.2.20
+langchain-openai==1.1.11
+langgraph==1.1.3
+langgraph-checkpoint==4.0.1
+psutil==7.2.2
