@@ -2387,15 +2387,15 @@
     },
     "CONTRIBUTING.md": {
       "source": "docs/open_source_release/assets/CONTRIBUTING.md",
-      "source_sha256": "063edb8c20de9e3c54da66c7d14d287dea7dbf5164717cea4e63d4f1fefd5c98",
-      "sha256": "063edb8c20de9e3c54da66c7d14d287dea7dbf5164717cea4e63d4f1fefd5c98",
+      "source_sha256": "800122d1a239639af87b58179ab7167e47a52e73c4434a61757e5280ab26f436",
+      "sha256": "800122d1a239639af87b58179ab7167e47a52e73c4434a61757e5280ab26f436",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
     "README.md": {
       "source": "docs/open_source_release/assets/README.md",
-      "source_sha256": "170db85f9dbbb674952a96dacee7e79503ddb459ef6b30dc6e931b451ef979d6",
-      "sha256": "170db85f9dbbb674952a96dacee7e79503ddb459ef6b30dc6e931b451ef979d6",
+      "source_sha256": "46e78c261b22659e6ba23390930fb5e0214b5057220a96b43998f541fa955b4d",
+      "sha256": "46e78c261b22659e6ba23390930fb5e0214b5057220a96b43998f541fa955b4d",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2436,8 +2436,8 @@
     },
     "docs/INSTALLATION.md": {
       "source": "docs/open_source_release/assets/docs/INSTALLATION.md",
-      "source_sha256": "4ef432cc61be0b3f0fa0e9aaa6b4bcdb1049e9783b887b9720522968e61669ee",
-      "sha256": "4ef432cc61be0b3f0fa0e9aaa6b4bcdb1049e9783b887b9720522968e61669ee",
+      "source_sha256": "327e28e1d782f6602bd0282082ed71a554e9f86f993db125cf3de8c0ce23422e",
+      "sha256": "327e28e1d782f6602bd0282082ed71a554e9f86f993db125cf3de8c0ce23422e",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2471,8 +2471,8 @@
     },
     "scripts/verify_release_assets.py": {
       "source": "docs/open_source_release/assets/scripts/verify_release_assets.py",
-      "source_sha256": "6c564d5687debdf4b6c7eb7d3a00eb09fb3a543468809e7bbc77b86e7ec2110c",
-      "sha256": "6c564d5687debdf4b6c7eb7d3a00eb09fb3a543468809e7bbc77b86e7ec2110c",
+      "source_sha256": "d3498b857cfb06b614ee00ed9ca8063114ed359f59e8c201e6be752c84ab428a",
+      "sha256": "d3498b857cfb06b614ee00ed9ca8063114ed359f59e8c201e6be752c84ab428a",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2548,6 +2548,48 @@
       "sha256": "6bd13bf166605310285c54f97c15e1e594428e1bb4f865bf130e567e1656ff84",
       "mode": "byte_exact_copy",
       "reason": "static local-import closure of selected runtime/tests"
+    },
+    "CHANGELOG.md": {
+      "source": "docs/open_source_release/assets/CHANGELOG.md",
+      "source_sha256": "c7a8140a02b9803d4418b1a199bc7f456ea7a04ab20d435656cc64dd5f5c0b01",
+      "sha256": "c7a8140a02b9803d4418b1a199bc7f456ea7a04ab20d435656cc64dd5f5c0b01",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
+    },
+    "docs/RELEASE.md": {
+      "source": "docs/open_source_release/assets/docs/RELEASE.md",
+      "source_sha256": "2fd14e94841c490fd5083aec32e91a4a5fa124e9f0d4f554aea4ef7872742f40",
+      "sha256": "2fd14e94841c490fd5083aec32e91a4a5fa124e9f0d4f554aea4ef7872742f40",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
+    },
+    "examples/offline_api.py": {
+      "source": "docs/open_source_release/assets/examples/offline_api.py",
+      "source_sha256": "777be61587f5ee897d70d584544ce1ef68eaf4c61f8ed55e70996177c493f934",
+      "sha256": "777be61587f5ee897d70d584544ce1ef68eaf4c61f8ed55e70996177c493f934",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
+    },
+    "scripts/build_release_archive.py": {
+      "source": "docs/open_source_release/assets/scripts/build_release_archive.py",
+      "source_sha256": "64c8c790fe4ee360e381ab56c49cdb89eea94924a90262b4099ea4a6893593cf",
+      "sha256": "64c8c790fe4ee360e381ab56c49cdb89eea94924a90262b4099ea4a6893593cf",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
+    },
+    "scripts/start_agent.py": {
+      "source": "docs/open_source_release/assets/scripts/start_agent.py",
+      "source_sha256": "bad8bce97bd137e09bd7ad0ee128a755b25c83fcef36d0cdecfac4fd67f8ee19",
+      "sha256": "bad8bce97bd137e09bd7ad0ee128a755b25c83fcef36d0cdecfac4fd67f8ee19",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
+    },
+    ".github/workflows/offline-checks.yml": {
+      "source": "docs/open_source_release/assets/.github/workflows/offline-checks.yml",
+      "source_sha256": "46ef8eafc6c9a8cf39734373b89853203208fda24ce1da388c8aa349514d58eb",
+      "sha256": "46ef8eafc6c9a8cf39734373b89853203208fda24ce1da388c8aa349514d58eb",
+      "mode": "byte_exact_copy",
+      "reason": "public documentation/portable entry point"
     }
   },
   "frozen_methods_modified": false,

@@ -15,6 +15,7 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python scripts/verify_release_assets.py
 python examples/offline_identity.py
+python examples/offline_api.py
 python scripts/reproduce_paper_results.py --output outputs/reproduced
 ```
 
@@ -31,8 +32,8 @@ python -m uvicorn ToolsAgent.ToolsFuns.Biology.main:app --host 127.0.0.1 --port 
 For model-backed planning, install `requirements-agent.txt`, copy `example.env` to `.env`, supply your own model endpoint/key, and configure local embedding weights. Then build the index and start the optional interfaces:
 
 ```bash
-python scripts/fix_my_index.py
-python -m uvicorn app:app --host 127.0.0.1 --port 50005
+python -m scripts.fix_my_index
+python scripts/start_agent.py --host 127.0.0.1 --port 50005
 streamlit run web_demo.py
 ```
 
@@ -72,4 +73,4 @@ BioAgent derives from [SciToolAgent](https://github.com/HICAI-ZJU/SciToolAgent).
 
 The root MIT license retains the original copyright. Each vendored component retains its own license, including Biomni's Apache-2.0 license. Biological source data retain their recorded database terms; see [data sources](docs/DATA_SOURCES.md).
 
-Use `CITATION.cff` to cite the software and its upstream work. Manuscript metadata are not presented as an accepted or published journal article. The local release candidate has not yet been uploaded to GitHub.
+Use `CITATION.cff` to cite the software and its upstream work. Manuscript metadata are not presented as an accepted or published journal article. See [release checks](docs/RELEASE.md) and [changelog](CHANGELOG.md) for the packaged version and maintenance workflow.

@@ -10,6 +10,7 @@ The external experiment's recorded package versions are kept separately in `resu
 python -m pip install -r requirements.txt
 python scripts/verify_release_assets.py
 python examples/offline_identity.py
+python examples/offline_api.py
 ```
 
 The example executes the existing multi-record FASTA fixture with explicit record selection. No LLM, local embedding model or background service is required. Python's built-in unittest runner is used for the released tests:
@@ -32,7 +33,11 @@ Install `requirements-agent.txt`. Copy `example.env` to `.env`, set `API_KEY`, `
 
 Enable `TYPE_PLANNING_ENABLED`, `TYPE_VALIDATION_ENABLED` and `TYPE_REPAIR_ENABLED` for the deterministic-first BioAgent runtime. These are independent experimental switches; changing them creates a different experimental condition.
 
-`python scripts/fix_my_index.py` builds local knowledge-graph storage from the public tool descriptions. Agent-backed requests can send protein inputs and tool returns to the configured model provider and can incur API charges. The offline example and result reconstruction do neither.
+`python -m scripts.fix_my_index` builds local knowledge-graph storage from the public tool descriptions. The module form ensures that imports resolve from the repository root.
+
+Start the existing agent service with `python scripts/start_agent.py --host 127.0.0.1 --port 50005`, and use `streamlit run web_demo.py` for its optional web interface. The launcher loads the existing `app.py` by file path because the repository also contains the Python package `app/`; `uvicorn app:app` would resolve that package rather than the service file. `python scripts/start_agent.py --check-only` checks loading without starting a server or making a model request.
+
+Agent-backed requests can send protein inputs and tool returns to the configured model provider and can incur API charges. The offline examples and result reconstruction do neither.
 
 ## Baseline adapters
 
