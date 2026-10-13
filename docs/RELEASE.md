@@ -31,4 +31,4 @@ Local checks recorded for this candidate are Windows checks. The Linux job is co
 
 The bundled labels and metrics support offline result reconstruction. Full historical model/tool events are not included in this source archive. Their hashes are retained; independent event rescoring needs the original event archive. See [reproducibility](REPRODUCIBILITY.md).
 
-The review candidate is uploaded separately to `xiaoshi405/bioagent-release` as a private repository. The existing `xiaoshi405/bioagent` research repository and its development remotes remain unchanged. Public release requires maintainer approval. Publish only this clean candidate and verify its CI results before documenting a public release tag and download URL.
+The review candidate is hosted at `xiaoshi405/bioagent` as a private repository. At the maintainer's request, the original research repository was renamed to `xiaoshi405/bioagent-private`; its development remotes now point to that separate private repository. Public release requires maintainer approval. Publish only this clean candidate and verify its CI results before documenting a public release tag and download URL.

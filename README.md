@@ -4,7 +4,7 @@ BioAgent controls scientific object identity and provenance at runtime. A reques
 
 This repository contains the protein-tool execution layer, the frozen BioToolEval benchmark, adapters for ReAct, CodeAct, SciToolAgent and Biomni-A1, and an offline evidence package for the accompanying manuscript.
 
-The review candidate is hosted at [xiaoshi405/bioagent-release](https://github.com/xiaoshi405/bioagent-release). It remains private until the maintainer approves public release.
+The review candidate is hosted at [xiaoshi405/bioagent](https://github.com/xiaoshi405/bioagent). It remains private until the maintainer approves public release.
 
 ## Start offline
 

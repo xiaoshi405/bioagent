@@ -2394,8 +2394,8 @@
     },
     "README.md": {
       "source": "docs/open_source_release/assets/README.md",
-      "source_sha256": "0cdc49fcf5074149d8818ea14b8af45aff12b28a16709dd745055b2be12cb74a",
-      "sha256": "0cdc49fcf5074149d8818ea14b8af45aff12b28a16709dd745055b2be12cb74a",
+      "source_sha256": "e631b9dc21610d21238576ab3c6bdac3c6cdcb1414d85d16a228c87032961f34",
+      "sha256": "e631b9dc21610d21238576ab3c6bdac3c6cdcb1414d85d16a228c87032961f34",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2538,8 +2538,8 @@
     },
     "CITATION.cff": {
       "source": "docs/open_source_release/assets/CITATION.cff",
-      "source_sha256": "04fcba9bbedd89974faa83e2649f76b9c74dad9413d84d81aac51e6e3e2fcb8b",
-      "sha256": "04fcba9bbedd89974faa83e2649f76b9c74dad9413d84d81aac51e6e3e2fcb8b",
+      "source_sha256": "363d0b3ce7b8c0da80a3f3a4ab3a2498d0bb8a78a0e06e8f7ae6da6aaf82d04b",
+      "sha256": "363d0b3ce7b8c0da80a3f3a4ab3a2498d0bb8a78a0e06e8f7ae6da6aaf82d04b",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2559,8 +2559,8 @@
     },
     "docs/RELEASE.md": {
       "source": "docs/open_source_release/assets/docs/RELEASE.md",
-      "source_sha256": "7e73fe36f711e91301e355bd8ab098f9325dcd8d94fc6070838fca714be187c3",
-      "sha256": "7e73fe36f711e91301e355bd8ab098f9325dcd8d94fc6070838fca714be187c3",
+      "source_sha256": "d6d2111614ecd012d48ed6e7edc227efb7ca53eea58eda1ec662cf39aeee2de3",
+      "sha256": "d6d2111614ecd012d48ed6e7edc227efb7ca53eea58eda1ec662cf39aeee2de3",
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
@@ -2596,6 +2596,6 @@
   "frozen_methods_modified": false,
   "raw_events_bundled": false,
   "online_model_calls": 0,
-  "review_repository": "https://github.com/xiaoshi405/bioagent-release",
+  "review_repository": "https://github.com/xiaoshi405/bioagent",
   "public_release_approved": false
 }
