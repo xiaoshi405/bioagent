@@ -34,12 +34,13 @@ _SERVICE_RUNTIME_IDENTITY = capture_runtime_identity(
 )
 
 def create_app():
-    app = FastAPI(title="SciToolAgent API Service", version="1.0")
+    app = FastAPI(title="BioAgent API Service", version="1.0")
     
     class ChatQuery(BaseModel):
         question: str
-        api_key: str
-        api_base: str
+        # Legacy client fields are accepted for compatibility; configuration is server-side.
+        api_key: str | None = None
+        api_base: str | None = None
         is_add_filename: bool = False
         file_path_list: list
 
@@ -81,5 +82,5 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    logger.info(f"Starting SciToolAgent API Service on port {_cfg.SERVER_PORT}...")
+    logger.info(f"Starting BioAgent API Service on port {_cfg.SERVER_PORT}...")
     uvicorn.run(app, host="0.0.0.0", port=_cfg.SERVER_PORT)

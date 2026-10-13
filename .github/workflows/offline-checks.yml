@@ -32,6 +32,7 @@ jobs:
           cache-dependency-path: requirements.txt
       - run: python -m pip install -r requirements.txt
       - run: python -m pip check
+      - run: python scripts/check_environment.py --mode core
       - run: python scripts/verify_release_assets.py
       - run: python scripts/run_release_tests.py --group core --report outputs/core-tests.json
       - run: python examples/offline_identity.py

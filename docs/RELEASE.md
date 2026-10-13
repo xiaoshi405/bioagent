@@ -6,6 +6,7 @@ Run from the repository root in the documented Python 3.13 environment:
 
 ```bash
 python scripts/verify_release_assets.py
+python scripts/check_environment.py --mode core
 python scripts/run_release_tests.py --group core
 python examples/offline_identity.py
 python examples/offline_api.py
@@ -25,7 +26,7 @@ The initial release is assembled from the preserved research checkout with its a
 
 The supplied workflow installs the lightweight environment and checks assets, core tests, fixture examples and table/figure reconstruction on Windows and Linux. It needs no model-provider secrets. Full agent/baseline dependencies and online experiments are outside this lightweight job.
 
-Local checks recorded for this candidate are Windows checks. The Linux job is configured but must actually run before its result is reported as verified.
+Windows and Linux CI both passed for the private review candidate. Each new revision must pass its own workflow before release; inspect the checks attached to that commit.
 
 ## Evidence scope
 

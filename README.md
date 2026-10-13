@@ -1,25 +1,37 @@
 # BioAgent: Type-Safe Execution for Protein Tool-Using Agents
 
+**English | [简体中文](README.zh-CN.md)**
+
 BioAgent controls scientific object identity and provenance at runtime. A request-scoped artifact pool binds tool inputs to their source objects; complete-plan validation checks the workflow before execution; deterministic recovery inserts uniquely authorized bridges or prunes redundant invalid steps. Model replanning is an optional follow-up to deterministic runtime control.
 
 This repository contains the protein-tool execution layer, the frozen BioToolEval benchmark, adapters for ReAct, CodeAct, SciToolAgent and Biomni-A1, and an offline evidence package for the accompanying manuscript.
 
 The review candidate is hosted at [xiaoshi405/bioagent](https://github.com/xiaoshi405/bioagent). It remains private until the maintainer approves public release.
 
-## Start offline
+## Download and start offline
+
+Clone this repository or extract its source ZIP, then run commands from the repository root. While the repository is private, GitHub access requires an authorized account.
+
+```bash
+git clone https://github.com/xiaoshi405/bioagent.git
+cd bioagent
+```
 
 The lightweight path runs without a model key, embedding download, or paid API call. Python 3.13 was used for the local release checks; the historical experiment environment is recorded in `results/environment/frozen_external_packages.json`.
 
 ```bash
 python -m venv .venv
-# Windows: .venv\Scripts\activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
 # Linux/macOS: source .venv/bin/activate
 python -m pip install -r requirements.txt
 python scripts/verify_release_assets.py
+python scripts/check_environment.py --mode core
 python examples/offline_identity.py
 python examples/offline_api.py
 python scripts/reproduce_paper_results.py --output outputs/reproduced
 ```
+
+If PowerShell blocks activation, use `.venv\Scripts\python.exe` directly instead of `python`; no execution-policy change is needed.
 
 The identity example uses the supplied multi-record FASTA fixture and real selection/GRAVY tools. Result reproduction reads archived per-run labels and recorded token counts. It performs no model calls and generates no new experimental outcomes.
 
@@ -31,15 +43,27 @@ The registry contains 20 protein-analysis tools covering sequences, FASTA record
 python -m uvicorn ToolsAgent.ToolsFuns.Biology.main:app --host 127.0.0.1 --port 8000
 ```
 
-For model-backed planning, install `requirements-agent.txt`, copy `example.env` to `.env`, supply your own model endpoint/key, and configure local embedding weights. Then build the index and start the optional interfaces:
+For the full agent and web interface, install the optional dependencies. A CPU-only PyTorch wheel avoids installing GPU libraries on machines that do not need them:
 
 ```bash
-python -m scripts.fix_my_index
-python scripts/start_agent.py --host 127.0.0.1 --port 50005
-streamlit run web_demo.py
+python -m pip install torch==2.10.0 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements-agent.txt
 ```
 
-The public configuration enables binding, validation and deterministic repair. API keys and runtime outputs remain local. See [installation](docs/INSTALLATION.md) for the separate core, agent and baseline environments.
+On the first setup, copy `example.env` to `.env` (do not overwrite an existing configuration). Set `API_KEY`, `API_BASE` and `MODEL_NAME` for your own OpenAI-compatible provider. The backend reads these values from `.env`; the web interface does not override them.
+
+The retrieval model is [BAAI/bge-small-zh](https://huggingface.co/BAAI/bge-small-zh), matching the archived model family. Download its complete snapshot, or point `BGE_MODEL_PATH` to an existing local copy:
+
+```bash
+hf download BAAI/bge-small-zh --local-dir bge_model
+python scripts/check_environment.py --mode agent --before-index
+python -m scripts.fix_my_index
+python scripts/start_demo.py
+```
+
+Open **http://127.0.0.1:8501** after all three services report ready. The launcher starts the protein tool API (8000), agent backend (50005) and Streamlit interface (8501), then stops its own processes on Ctrl+C. You can also start each service in a separate terminal; see [installation](docs/INSTALLATION.md).
+
+Binding, validation and deterministic repair are enabled in `example.env`, which also points to the bundled toxicity reference CSV. Model-backed requests send their inputs to the configured provider and may incur charges. Downloading embedding weights is a separate first-time setup step; offline examples and result reconstruction need neither these weights nor an API key.
 
 ## Benchmark and paper evidence
 

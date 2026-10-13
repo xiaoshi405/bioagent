@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-SciToolAgent Web Demo — 带推理链可视化的生命科学智能助手前端。
+BioAgent Web Demo — 带推理链可视化的生命科学智能助手前端。
 
 修改记录：
 - 2026-07-20：增加受控PDB文件上传，把结构文件路径传入Agent工具链。
@@ -13,7 +13,6 @@ from pathlib import Path
 
 import streamlit as st
 import requests
-import json
 from app.core.config import Config
 
 _cfg = Config()
@@ -82,7 +81,7 @@ def save_uploaded_fasta(uploaded_file):
 # 页面配置
 # ─────────────────────────────────────────────
 st.set_page_config(
-    page_title="SciToolAgent · 生命科学智能助手",
+    page_title="BioAgent · 蛋白质工具智能助手",
     page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -164,8 +163,7 @@ st.markdown("""
 # ─────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### ⚙️ 服务配置")
-    api_key = st.text_input("API Key", value=_cfg.API_KEY, type="password")
-    api_base = st.text_input("API Base URL", value=_cfg.API_BASE)
+    st.caption("模型、API 地址和密钥由后端 .env 配置，修改后请重启 Agent 服务。")
     backend_url = st.text_input("后端地址", value=f"http://127.0.0.1:{_cfg.SERVER_PORT}")
 
     st.divider()
@@ -208,12 +206,12 @@ with st.sidebar:
     st.divider()
     st.markdown(f"**模型**: `{_cfg.MODEL_NAME}`")
     st.markdown(f"**Embedding**: BGE-Small-zh")
-    st.caption("⚠️ 请确保 app.py 已在后端启动")
+    st.caption("启动命令：python scripts/start_demo.py")
 
 # ─────────────────────────────────────────────
 # 主区域：标题
 # ─────────────────────────────────────────────
-st.markdown('<div class="hero-title">🧬 SciToolAgent</div>', unsafe_allow_html=True)
+st.markdown('<div class="hero-title">🧬 BioAgent</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-subtitle">知识图谱驱动的生命科学多模态智能体 · 自动规划工具链 · 多步串联推理</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
@@ -381,8 +379,6 @@ if prompt:
                 ]
                 payload = {
                     "question": prompt,
-                    "api_key": api_key,
-                    "api_base": api_base,
                     "is_add_filename": bool(file_path_list),
                     "file_path_list": file_path_list
                 }
@@ -394,6 +390,8 @@ if prompt:
 
                 if resp.status_code == 200:
                     data = resp.json()
+                    if data.get("error_type"):
+                        raise RuntimeError(f"{data['error_type']}: {data.get('message', '后端请求失败')}")
                     ans = data.get("response", "未获取到结果")
                     reasoning = data.get("reasoning", {})
                     latency = data.get("latency", None)
@@ -417,7 +415,7 @@ if prompt:
                     st.session_state.messages.append({"role": "assistant", "content": err})
 
             except requests.exceptions.ConnectionError:
-                err = "❌ 无法连接后端服务，请先运行 `start.bat` 或手动执行 `python app.py`"
+                err = "❌ 无法连接后端服务，请运行 `python scripts/start_demo.py`，或按安装指南分别启动服务"
                 st.error(err)
                 st.session_state.messages.append({"role": "assistant", "content": err})
             except Exception as e:
