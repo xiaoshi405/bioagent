@@ -1,0 +1,30 @@
+name: Bug report / 问题反馈
+description: Report a reproducible software or installation issue.
+body:
+  - type: markdown
+    attributes:
+      value: Please remove API keys, private inputs and credentials from all output. / 请勿粘贴密钥或私人数据。
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit / 版本
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS and Python version / 系统与 Python 版本
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Command and steps to reproduce / 复现步骤
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Expected behavior and redacted output / 预期行为与脱敏报错
+    validations:
+      required: true

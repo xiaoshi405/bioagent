@@ -7,3 +7,5 @@ Historical datasets, official-source hashes, frozen manifests and archived resul
 Do not commit credentials, uploaded inputs, model weights, local indexes, runtime logs or manuscript-management files. Retain upstream license/provenance notices for imported code. Describe the change and the relevant offline checks in a pull request.
 
 The release manifest covers every tracked public file. Maintainers update its checksums when preparing a new version; historical freeze hashes remain independent and immutable. See [release maintenance](docs/RELEASE.md) for packaging and the offline CI scope.
+
+For a documentation/test/release-wrapper change, stage intended files, preview `python scripts/update_release_manifest.py`, apply it with `--write`, and stage the updated manifest. The updater enforces historical asset boundaries; do not bypass them. See [release maintenance](docs/RELEASE.md).

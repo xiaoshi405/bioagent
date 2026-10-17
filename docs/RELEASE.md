@@ -1,8 +1,8 @@
-# Maintaining and publishing the release
+# Maintaining and publishing a release
 
-## Check a release
+## Verify a checkout or source archive
 
-Run from the repository root in the documented Python 3.13 environment:
+Use Python 3.13 and the dependency group documented in [installation](INSTALLATION.md):
 
 ```bash
 python scripts/verify_release_assets.py
@@ -11,25 +11,38 @@ python scripts/run_release_tests.py --group core
 python examples/offline_identity.py
 python examples/offline_api.py
 python scripts/reproduce_paper_results.py --output outputs/reproduced
-python scripts/build_release_archive.py --output outputs/BioAgent-source.zip
 ```
 
-The archive builder verifies every manifested file before packaging, includes exactly the manifested files plus `RELEASE_MANIFEST.json`, and writes a SHA256 sidecar. It excludes Git history, local `.env`, runtime logs, installed environments and generated outputs.
+Core checks run on Windows and Linux in GitHub Actions. Full agent/baseline tests require `requirements-baselines.txt`; they use local transports and scripted responses, not a model provider. For those checks use `python scripts/run_release_tests.py --group all`.
 
-## Versioned assets
+## Maintain the file manifest
 
-`RELEASE_MANIFEST.json` records exact bytes for this release. The historical source/data freeze and official-source manifests independently protect research inputs and upstream code. Changing documentation or portable release scripts requires a corresponding release-manifest update; changing a frozen method or dataset requires a separately versioned research configuration. Do not replace historical hashes to hide a scientific change.
+`RELEASE_MANIFEST.json` covers every tracked release file. The historical source/input freeze and the official-source manifests independently protect research assets. To update documentation, release wrappers or tests:
 
-The initial release is assembled from the preserved research checkout with its allowlisted exporter. That private preparation workflow is separate from the public repository. Public contributions are reviewed against the release checks before the maintainer prepares the next version and updates its manifest.
+```bash
+git add <intended-files>
+python scripts/update_release_manifest.py
+python scripts/update_release_manifest.py --write
+git add RELEASE_MANIFEST.json
+python scripts/verify_release_assets.py
+```
 
-## GitHub checks
+The default mode previews changes. Only tracked files enter the manifest; local untracked notes and credentials are excluded. The updater rejects changed or removed frozen code, benchmark inputs, archived results, source plots, vendored sources and source licenses. It also rejects environment files, runtime directories and manuscript administration. Historical changes require a separately versioned research preparation, rather than replacing historical hashes. The command requires a Git checkout; an extracted ZIP can be verified without Git.
 
-The supplied workflow installs the lightweight environment and checks assets, core tests, fixture examples and table/figure reconstruction on Windows and Linux. It needs no model-provider secrets. Full agent/baseline dependencies and online experiments are outside this lightweight job.
+## Build a source package
 
-Windows and Linux CI both passed for the private review candidate. Each new revision must pass its own workflow before release; inspect the checks attached to that commit.
+```bash
+python scripts/build_release_archive.py --output outputs/BioAgent-v0.1.0-source.zip
+```
 
-## Evidence scope
+The builder checks the release first, packages exactly the manifest files and `RELEASE_MANIFEST.json`, and writes a `.zip.sha256` sidecar. It excludes local Git history, credentials, installed environments, model weights and generated outputs. An existing output is not overwritten.
 
-The bundled labels and metrics support offline result reconstruction. Full historical model/tool events are not included in this source archive. Their hashes are retained; independent event rescoring needs the original event archive. See [reproducibility](REPRODUCIBILITY.md).
+## Review and publish
 
-The review candidate is hosted at `xiaoshi405/bioagent` as a private repository. At the maintainer's request, the original research repository was renamed to `xiaoshi405/bioagent-private`; its development remotes now point to that separate private repository. Public release requires maintainer approval. Publish only this clean candidate and verify its CI results before documenting a public release tag and download URL.
+1. Keep the repository private while reviewing a prepared release. Check the CI runs attached to the intended commit.
+2. Run the complete local tests, inspect the source ZIP independently and review all secret-scan findings. The scanner configuration records only specifically reviewed historical false positives.
+3. Check the version in `CITATION.cff`, `RELEASE_MANIFEST.json`, changelog and release notes. A software version is not a claim of manuscript acceptance or journal publication.
+4. Prepare a GitHub draft release targeting the verified commit. Attach the source ZIP and SHA256 sidecar.
+5. After the maintainer authorizes public release, change the repository visibility and publish the draft. Verify access from an unauthenticated session before announcing public availability.
+
+No DOI or archival repository identifier is claimed until one has actually been assigned. The software/data-source terms and evidence levels are described in [third-party notices](THIRD_PARTY_NOTICES.md), [data sources](DATA_SOURCES.md) and [reproducibility](REPRODUCIBILITY.md).

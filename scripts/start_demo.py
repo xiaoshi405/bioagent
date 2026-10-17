@@ -58,7 +58,11 @@ def main():
     parser.add_argument("--web-port", type=int, default=8501)
     parser.add_argument("--check-only", action="store_true")
     args = parser.parse_args()
-    report = check_environment("agent")
+    try:
+        report = check_environment("agent")
+    except (OSError, ValueError, ImportError):
+        print("Invalid local environment; run python scripts/check_environment.py --mode agent.", flush=True)
+        return 1
     if report["status"] != "PASS":
         print(json.dumps(report, indent=2), flush=True)
         return 1

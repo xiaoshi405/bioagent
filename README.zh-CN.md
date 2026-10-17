@@ -6,11 +6,13 @@ BioAgent 在运行时管理科学对象的身份与来源。请求级 artifact p
 
 本仓库包含蛋白质工具执行层、冻结的 BioToolEval 基准、ReAct、CodeAct、SciToolAgent 和 Biomni-A1 适配器，以及配套论文的离线结果证据包。
 
-当前候选仓库为 [xiaoshi405/bioagent](https://github.com/xiaoshi405/bioagent)，维护者确认公开前保持私有。
+[![离线检查](https://github.com/xiaoshi405/bioagent/actions/workflows/offline-checks.yml/badge.svg)](https://github.com/xiaoshi405/bioagent/actions/workflows/offline-checks.yml)
+
+软件版本：**v0.1.0**。详见[安装指南](docs/INSTALLATION.md)、[复现指南](docs/REPRODUCIBILITY.md)和[版本说明](docs/RELEASE_NOTES_v0.1.0.md)。
 
 ## 下载并运行离线示例
 
-克隆仓库或解压源码 ZIP，进入仓库根目录后执行命令。仓库私有期间，下载需要已获授权的 GitHub 账号。
+克隆仓库或解压源码 ZIP，进入仓库根目录后执行命令。
 
 ```bash
 git clone https://github.com/xiaoshi405/bioagent.git

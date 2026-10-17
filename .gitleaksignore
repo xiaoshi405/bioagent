@@ -1,0 +1,10 @@
+# Reviewed historical false positives only: 23 SHA256 provenance digests and one UniProt entry-name/protein annotation.
+# Each fingerprint is bound to its original commit, file, rule and line. New findings require independent review.
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/external_baselines_freeze_v2.json:generic-api-key:1
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/external_baselines_freeze_v1.json:generic-api-key:1
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/external_baselines_freeze_v3_1_resource.json:generic-api-key:1
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/external_baselines_freeze_v3_resource.json:generic-api-key:1
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/gate2_method_analysis_freeze_v1.json:generic-api-key:75
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/gate2_method_analysis_freeze_v1.json:generic-api-key:113
+be9a0adc6094f7960545d783735a3f43dfb760a0:evaluation/biotooleval/gate3_dual_model_experiment_freeze_v1.json:generic-api-key:92
+be9a0adc6094f7960545d783735a3f43dfb760a0:data/toxin_protein.csv:generic-api-key:1011

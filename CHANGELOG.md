@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.1.0
+
+- Prepare the first versioned source package with bilingual documentation and a draft release.
+- Add a manifest maintenance command that protects historical code, data and official sources.
+- Add contribution templates, reviewed secret-scanning configuration and source/data notices.
+
 
 - Provide separate English and Chinese READMEs and complete installation instructions.
 - Add configuration checks and a local launcher for the tool API, agent and web interface.
@@ -16,4 +21,4 @@
 - Preserve upstream licenses and file hashes; keep manuscript administration, credentials and development history outside the release.
 - Add portable service launch, fixture-based API checks, release verification, archive construction and offline CI.
 
-This is a software release candidate. It does not assert journal acceptance or add new experimental results.
+Software releases do not assert journal acceptance or add new experimental results.
