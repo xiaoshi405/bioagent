@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""工具值参数的提取、校验与请求级绑定。
-
-修改记录：
-- 2026-09-04：新增PDB/ANM显式参数上下文，保证普通执行与类型化执行
-  使用同一来源和同一契约，避免Artifact正确但数值参数静默丢失。
-
-本模块只处理用户明确给出的值参数；文件、序列等数据对象仍由Artifact
-Pool管理。未出现的参数不写入上下文，由工具接口使用其注册默认值。
-"""
+"""Extract and validate explicit tool parameters."""
 
 from __future__ import annotations
 
@@ -42,7 +34,6 @@ _MODE_TOKEN = r"(?:[-+]?\d+(?:\.\d+)?|[一二两三四五六七八九十]{1,3})"
 
 
 def _error(message: str, code: str, *, api_path: str, parameter: str) -> dict:
-    """构造工具参数统一错误结构。"""
     return {
         "status": "error",
         "message": message,
@@ -58,7 +49,6 @@ def _error(message: str, code: str, *, api_path: str, parameter: str) -> dict:
 
 
 def _conflict_error(*, api_path: str, parameter: str, values: list[Any]) -> dict:
-    """构造同一显式参数出现多个不同值时的失败关闭错误。"""
     displayed = "、".join(str(value) for value in values)
     return _error(
         f"参数{parameter}存在互相冲突的显式值：{displayed}",
@@ -69,7 +59,6 @@ def _conflict_error(*, api_path: str, parameter: str, values: list[Any]) -> dict
 
 
 def _parse_small_integer(token: str) -> int | None:
-    """解析1至99的阿拉伯数字或常见中文整数写法。"""
     try:
         normalized = str(token or "").strip()
         if not normalized:
@@ -89,7 +78,6 @@ def _parse_small_integer(token: str) -> int | None:
 
 
 def _parameter_schema() -> dict[str, Any]:
-    """从唯一工具注册表读取ANM机器可校验参数契约。"""
     try:
         tool = BIOLOGY_TOOLS_DESC.get("calculate_protein_anm") or {}
         schema = tool.get("parameter_schema") or {}
@@ -100,7 +88,7 @@ def _parameter_schema() -> dict[str, Any]:
 
 
 def validate_tool_parameters(api_path: Any, parameters: Any) -> dict:
-    """按注册表白名单校验单个接口的显式参数，不补入默认值。"""
+    """Validate explicit parameters against the registry without adding defaults."""
     try:
         normalized_api = str(api_path or "").strip()
         if parameters is None:
@@ -208,14 +196,12 @@ def validate_tool_parameters(api_path: Any, parameters: Any) -> dict:
 
 
 def _extract_pdb_parameter_candidates(text: Any) -> dict:
-    """提取PDB显式参数候选，并保留非法候选供统一诊断。"""
     try:
         normalized = text if isinstance(text, str) else ""
         candidates: dict[str, Any] = {}
         conflicts: dict[str, list[Any]] = {}
 
         def register_candidates(name: str, matches: list[tuple[int, Any]]) -> None:
-            """按文本顺序去重；不同显式值不静默选择其中一个。"""
             ordered_values: list[Any] = []
             for _, value in sorted(matches, key=lambda item: item[0]):
                 if value not in ordered_values:
@@ -282,7 +268,6 @@ def _extract_pdb_parameter_candidates(text: Any) -> dict:
 
 
 def extract_pdb_options(text: Any) -> dict:
-    """兼容旧调用方：返回通过契约校验的PDB参数，非法参数不伪造成默认值。"""
     extracted = _extract_pdb_parameter_candidates(text)
     if extracted.get("status") != "success":
         return {}
@@ -296,7 +281,7 @@ def extract_pdb_options(text: Any) -> dict:
 
 
 def build_tool_parameter_context(text: Any) -> dict:
-    """从原始用户问题构建按接口绑定的、可审计请求级参数上下文。"""
+    """Bind explicit request parameters to their registered interfaces."""
     try:
         extracted = _extract_pdb_parameter_candidates(text)
         if extracted.get("status") != "success":
@@ -363,7 +348,7 @@ def build_tool_parameter_context(text: Any) -> dict:
 
 
 def resolve_tool_parameters(context: Any, api_path: Any) -> dict:
-    """按接口从请求级上下文取值，并再次执行防御性契约校验。"""
+    """Read and revalidate parameters for a specific interface."""
     try:
         normalized_api = str(api_path or "").strip()
         if context is None:

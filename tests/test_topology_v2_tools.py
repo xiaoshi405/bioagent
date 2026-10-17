@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Topology v2-lite多记录FASTA与蛋白质比对工具回归测试。
-
-修改记录：
-- 2026-08-14：覆盖集合解析、精确选择、成对比对、统计摘要及防御性拒绝。
-"""
+"""Tests for topology v2 tools."""
 
 import tempfile
 import unittest
@@ -25,7 +20,6 @@ FIXTURE = PROJECT_ROOT / "tests" / "fixtures" / "fasta" / "multi_protein.fasta"
 
 
 class TopologyV2ToolTests(unittest.TestCase):
-    """验证四个工具形成可执行的数据依赖链，而非共享输入扇出。"""
 
     def setUp(self):
         self.parsed = parse_multi_protein_fasta(str(FIXTURE))

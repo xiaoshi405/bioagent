@@ -1,29 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent 类型约束规划基础模块。
-
-修改记录：
-- 2026-09-05：将注册表的重规划角色策略透传到工具签名，供 F1
-  目标保真门禁使用。
-- 2026-08-15：新增注册表显式授权的重复无效步骤剪枝；仅当候选步骤相邻重复、
-  均缺失输入、输出未被下游消费且删除后全计划唯一类型合法时才允许改写，
-  并输出可审计的修复操作证明。
-- 2026-07-22：新增基于类型化数据对象池的计划检查，并支持
-  PDB 文件到氨基酸序列的保守桥接修复。当前模块保持独立，尚未接入主链路。
-- 2026-07-23：对缺失显式输入类型的兼容回退增加告警，便于审计元数据质量。
-- 2026-07-24：增加单记录Protein FASTA到氨基酸序列的确定性桥接；
-  多个可用桥接同时存在时拒绝猜测输入来源。
-- 2026-07-24：修正PDB桥语义：多链提取输出链序列映射，只有同时存在
-  PDB文件和显式链ID时，才允许插入select_pdb_chain得到单条序列。
-- 2026-08-14：桥接能力改由唯一工具注册表声明；新增有界唯一最短路径
-  搜索，支持多记录FASTA经集合和显式记录ID进行最多配置跳数的修复。
-
-设计原则：
-1. 工具签名只从 BIOLOGY_TOOLS_DESC 唯一注册表生成；
-2. 多个工具可以复用仍然存在的用户输入，不能只检查相邻步骤；
-3. 自动修复只能插入确定性的注册工具，或执行注册表明确许可且有全图证明的剪枝；
-4. 所有公开函数返回标准 status 字段，异常不能传播到主进程。
-"""
+"""Validate artifact flow and find authorized repairs."""
 
 from __future__ import annotations
 
@@ -55,7 +31,6 @@ FASTA_COLLECTION_TO_ALIGNMENT_BRIDGE = "align_fasta_records"
 
 
 def _normalize_type_name(value: Any) -> str:
-    """把类型名称转换为稳定字符串；非法值返回空字符串。"""
     try:
         if not isinstance(value, str):
             return ""
@@ -66,7 +41,6 @@ def _normalize_type_name(value: Any) -> str:
 
 
 def _normalize_type_collection(values: Any) -> list[str]:
-    """规范化类型集合并保持首次出现顺序。"""
     try:
         if isinstance(values, str):
             candidates: Iterable[Any] = [values]
@@ -87,7 +61,7 @@ def _normalize_type_collection(values: Any) -> list[str]:
 
 
 def get_tool_signatures() -> dict[str, Any]:
-    """从唯一工具注册表构造外部工具的输入/输出类型签名。"""
+    """Read input and output types from the tool registry."""
     try:
         signatures: dict[str, dict[str, Any]] = {}
         for tool_name, info in BIOLOGY_TOOLS_DESC.items():
@@ -144,7 +118,6 @@ def get_tool_signatures() -> dict[str, Any]:
 
 
 def _invalid_request_result(message: str, code: str = "INVALID_REQUEST") -> dict[str, Any]:
-    """生成不会抛异常的统一检查失败结构。"""
     try:
         return {
             "status": "error",
@@ -162,12 +135,7 @@ def validate_tool_plan(
     tool_path: Any,
     available_input_types: Any,
 ) -> dict[str, Any]:
-    """
-    基于类型化数据对象池验证工具计划。
-
-    `status=success` 表示检查器正常完成；计划本身是否合法由 `valid` 表示。
-    这样可以区分“检测到非法计划”和“检查器运行失败”。
-    """
+    """Check artifact flow; status describes the checker and valid describes the plan."""
     try:
         if not isinstance(tool_path, (list, tuple)) or not tool_path:
             return _invalid_request_result("工具计划必须是非空列表", "INVALID_PLAN")
@@ -305,7 +273,6 @@ def validate_tool_plan(
 def _registered_bridge_signatures(
     signatures: dict[str, Any],
 ) -> list[tuple[str, dict[str, Any]]]:
-    """从工具签名中选择显式声明的确定性桥接器，并稳定排序。"""
     try:
         bridges: list[tuple[str, dict[str, Any]]] = []
         for tool_name, signature in signatures.items():
@@ -331,7 +298,7 @@ def _find_unique_shortest_bridge_path(
     signatures: dict[str, Any],
     max_hops: int,
 ) -> dict[str, Any]:
-    """在类型超图中搜索有界最短桥接路径；多条最短路径时拒绝猜测。"""
+    """Find a bounded shortest bridge path; reject ties."""
     try:
         target = frozenset(required_types)
         initial_state = frozenset(current_types)
@@ -415,7 +382,7 @@ def _find_unique_safe_duplicate_pruning(
     signatures: dict[str, Any],
     max_pruned_steps: int,
 ) -> dict[str, Any]:
-    """寻找唯一、注册表授权且可由全图类型检查证明安全的重复无效步骤剪枝。"""
+    """Find unique, registry-authorized pruning that preserves valid artifact flow."""
     try:
         step_results = original_validation.get("steps") or []
         if len(step_results) != len(tool_path):
@@ -456,7 +423,7 @@ def _find_unique_safe_duplicate_pruning(
                 for position in range(index, group_end)
             )
 
-            # 至少保留一个下游步骤，避免删除用户可能明确请求的终端结果。
+            # Keep a downstream step so pruning cannot remove the terminal result.
             has_downstream_step = group_end < len(tool_path)
             if (
                 registry_opt_in
@@ -531,7 +498,6 @@ def _pruning_repair_result(
     original_validation: dict[str, Any],
     candidate: dict[str, Any],
 ) -> dict[str, Any]:
-    """把已证明唯一合法的剪枝候选转换为统一修复结果和脱敏证明。"""
     tool_name = str(candidate["tool_name"])
     group_start = int(candidate["group_start"])
     group_end = int(candidate["group_end"])
@@ -593,7 +559,7 @@ def repair_tool_plan(
     tool_path: Any,
     available_input_types: Any,
 ) -> dict[str, Any]:
-    """通过安全剪枝或注册桥接器的有界唯一最短路径修复非法计划。"""
+    """Repair by authorized pruning or a unique bounded bridge path."""
     try:
         original_validation = validate_tool_plan(tool_path, available_input_types)
         if original_validation.get("status") != "success":

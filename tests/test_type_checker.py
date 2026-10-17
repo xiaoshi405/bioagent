@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-类型约束规划基础模块测试。
-
-修改记录：
-- 2026-08-15：覆盖注册表授权的重复无效记录选择剪枝、完整类型证明及
-  单步/下游消费场景的拒绝误删边界。
-- 2026-07-22：覆盖共享序列输入、PDB桥接、未知工具和保守修复边界。
-- 2026-07-23：冻结v0.1类型拓扑，验证显式元数据、唯一桥接器和修复幂等性。
-- 2026-07-24：加入单记录Protein FASTA类型、桥接修复和多来源歧义拒绝。
-- 2026-07-24：修正PDB多链输出类型；只有PDB文件与显式链ID同时存在时
-  才允许修复到单条氨基酸序列。
-- 2026-08-14：冻结Topology v2-lite的20工具、9输入类型、5确定性桥接器
-  及两跳唯一最短路径修复行为。
-"""
+"""Tests for type checker."""
 
 import unittest
 
@@ -41,7 +28,6 @@ from ToolsAgent.ToolsFuns.Biology.tool_name_dict import BIOLOGY_TOOLS_DESC
 
 
 class ToolSignatureTests(unittest.TestCase):
-    """验证签名始终来自当前20个外部工具的唯一注册表。"""
 
     def test_registry_contains_twenty_external_tools(self):
         result = get_tool_signatures()
@@ -161,7 +147,6 @@ class ToolSignatureTests(unittest.TestCase):
 
 
 class ToolPlanValidationTests(unittest.TestCase):
-    """验证数据对象池语义，而不是错误的相邻输出匹配。"""
 
     def test_multiple_sequence_tools_reuse_initial_sequence(self):
         result = validate_tool_plan(
@@ -265,7 +250,6 @@ class ToolPlanValidationTests(unittest.TestCase):
 
 
 class ToolPlanRepairTests(unittest.TestCase):
-    """验证修复器只执行有界、唯一且由注册表授权的局部图改写。"""
 
     def test_prunes_duplicate_invalid_record_selections_with_proof(self):
         plan = [

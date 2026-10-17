@@ -1,19 +1,5 @@
 # -*- coding: utf-8 -*-
-"""BioToolEval E0–E3 与 S1/L1 配对实验分析入口。
-
-修改记录：
-- 2026-09-03：新增干预后 baseline 诊断与重规划账本核对，修正成本
-  显示层级及缺失值处理；保留原 H1–H3 定义，新增报告版本不覆盖旧结果。
-- 2026-08-31：新增六条件分析、共享冻结计划审计、失败单元记账、
-  H1–H3 配对统计和 baseline 成本比较；不改变历史 B0–B2 分析口径。
-
-设计边界：
-1. 只接受完整声明的 E0/E1/E2/E3/S1/L1 条件集合；
-2. 同题同模型同轮次必须共享一个原始计划 ID；
-3. H1 比较 E2 vs E1，H2 比较 E3 vs E2，H3 比较 E3 vs E0；
-4. 缺少有效分母时返回 not_estimable，禁止用 0 伪造结果；
-5. 失败账本进入完整性分母，不把失败 Trace 静默删除。
-"""
+"""Analyze E0-E3 and S1/L1 paired conditions."""
 
 from __future__ import annotations
 
@@ -96,7 +82,6 @@ QUESTION_METRICS = (
 
 
 def _extract_metric(record: dict[str, Any], metric: str) -> float | None:
-    """提取题目级聚合数值；不适用或未人工标注时返回 None。"""
     try:
         if metric == "final_answer_accuracy":
             value = record.get("evaluation", {}).get("final_answer_correct")
@@ -125,7 +110,6 @@ def _audit_records(
     records: Any,
     manifest: dict[str, Any],
 ) -> dict[str, Any]:
-    """审计六条件 Trace、控制变量、Manifest 和共享原始计划。"""
     try:
         if not isinstance(records, list) or not records:
             return _error_result("六条件分析输入不能为空", "EMPTY_FACTORIAL_INPUT")
@@ -302,7 +286,6 @@ def _audit_records(
 
 
 def _not_estimable(specification: dict[str, Any], reason: str) -> dict[str, Any]:
-    """构造零分母主要假设结果，保留 null 而非伪造 0。"""
     return {
         **specification,
         "pair_count": 0,
@@ -320,7 +303,6 @@ def _extract_hypothesis(
     comparison: dict[str, Any],
     treatment_condition: str,
 ) -> dict[str, Any]:
-    """从配对比较中提取一个预注册 H1–H3 结果。"""
     try:
         if comparison.get("status") != "success":
             return _not_estimable(specification, "比较未形成有效结果")
@@ -357,7 +339,6 @@ def _condition_pair(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """只保留指定两条件，避免无关条件污染配对结果结构。"""
     subset = [item for item in records if item.get("condition") in {baseline, treatment}]
     if not subset:
         return _error_result("指定条件没有记录", "EMPTY_FACTORIAL_PAIR")
@@ -376,7 +357,6 @@ def _compute_repeat_sections(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """逐轮计算六条件指标、H1–H3 和 baseline 成本比较。"""
     try:
         sections: dict[str, Any] = {}
         for repeat_index in repeat_indices:
@@ -470,7 +450,6 @@ def _question_pair_metric(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """题内先聚合重复，再以题目为统计单位做配对 bootstrap。"""
     try:
         grouped: dict[str, dict[str, dict[int, dict[str, Any]]]] = {}
         for item in records:
@@ -555,7 +534,6 @@ def _compute_question_level(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """计算总体与类型敏感题的跨重复题目级效应。"""
     try:
         populations = {
             "all": records,
@@ -602,7 +580,6 @@ def analyze_factorial_records(
     n_resamples: int = DEFAULT_BOOTSTRAP_RESAMPLES,
     seed: int = DEFAULT_ANALYSIS_SEED,
 ) -> dict[str, Any]:
-    """分析完整六条件实验并返回可序列化、可独立复算的报告。"""
     try:
         if not isinstance(n_resamples, int) or n_resamples < 100:
             return _error_result("bootstrap 次数至少为 100", "INVALID_FACTORIAL_RESAMPLES")
@@ -706,7 +683,6 @@ def analyze_factorial_records(
 
 
 def render_factorial_markdown(analysis: Any) -> dict[str, Any]:
-    """把六条件分析渲染为简洁且可审计的 Markdown。"""
     try:
         if not isinstance(analysis, dict) or analysis.get("status") != "success":
             return _error_result("只有成功分析可以渲染", "INVALID_FACTORIAL_MARKDOWN")
@@ -733,7 +709,7 @@ def render_factorial_markdown(analysis: Any) -> dict[str, Any]:
         for repeat_key, repeat_section in analysis.get("per_repeat", {}).items():
             for condition in REQUIRED_CONDITIONS:
                 result = repeat_section.get("condition_metrics", {}).get(condition, {})
-                # baseline 成本在嵌套对象中；非 baseline 无此旧字段，不能伪装成缺失用量。
+                # Read replanning cost from the nested baseline metadata.
                 cost = result.get("metrics", {}).get("external_baseline_cost", {})
                 calls = cost.get("extra_llm_calls", {}).get("mean")
                 if condition in {"E0", "E1", "E2", "E3"}:
@@ -813,7 +789,6 @@ def write_factorial_artifacts(
     output_prefix: Any,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """原子写出六条件 JSON 与 Markdown，默认拒绝覆盖。"""
     try:
         if not isinstance(analysis, dict) or analysis.get("status") != "success":
             return _error_result("只有成功分析可以写出", "INVALID_FACTORIAL_OUTPUT")
@@ -863,7 +838,6 @@ def analyze_factorial_trace_file(
     seed: int = DEFAULT_ANALYSIS_SEED,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """加载六条件 Trace、Manifest 和失败账本并导出分析。"""
     try:
         trace = Path(str(trace_path or "")).expanduser()
         loaded = load_experiment_traces(trace)
@@ -886,7 +860,7 @@ def analyze_factorial_trace_file(
         failure_summary = _load_failure_summary(resolved_failure, manifest)
         if failure_summary.get("status") != "success":
             return failure_summary
-        # 只读取调用方显式指定的账本，不猜测版本，也不读取任何数据集题面。
+        # Read only the explicitly supplied ledger.
         ledger = None
         ledger_sha256 = None
         if replan_ledger_path is not None:
@@ -943,7 +917,6 @@ def analyze_factorial_trace_file(
 
 
 def _build_cli_parser() -> argparse.ArgumentParser:
-    """构建六条件分析命令行。"""
     parser = argparse.ArgumentParser(
         description="分析 BioToolEval E0–E3 与 S1/L1 配对实验 Trace"
     )
@@ -959,7 +932,6 @@ def _build_cli_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """命令行入口，只打印脱敏摘要。"""
     try:
         args = _build_cli_parser().parse_args(argv)
         result = analyze_factorial_trace_file(

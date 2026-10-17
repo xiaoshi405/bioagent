@@ -1,15 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Controlled Repair v2 数据契约、离线工具适配与单元执行。
-
-修改记录：
-- 2026-08-30：新增30个配对机会、6个拓扑机制家族的物化校验，支持
-  一步/两步桥接、中间步骤遗漏和注册表授权的无效分支剪枝；公开Trace
-  只保留类型与操作元数据，不保存序列、绝对路径或完整工具结果。
-
-本模块只实现单实验单元；批量调度、no-overwrite与统计位于
-``run_controlled_repair_v2.py``，避免继续扩张冻结的v1运行器。
-"""
+"""Load and execute controlled repair cases."""
 
 from __future__ import annotations
 
@@ -80,7 +70,6 @@ ControlledV2Runner = Callable[..., Awaitable[Any]]
 
 
 def _render_plan(template: Any, terminal_tool: str) -> list[str]:
-    """把冻结模板中的唯一终端占位符物化为显式工具计划。"""
     if not isinstance(template, list) or not template:
         return []
     rendered: list[str] = []
@@ -92,7 +81,6 @@ def _render_plan(template: Any, terminal_tool: str) -> list[str]:
 
 
 def _safe_step_changes(items: Any, *, index_key: str) -> list[dict[str, Any]]:
-    """把修复器内部操作压缩成不含原因正文的工具名与位置。"""
     changes: list[dict[str, Any]] = []
     if not isinstance(items, list):
         return changes
@@ -110,7 +98,6 @@ def _validate_case_input_shape(
     case: dict[str, Any],
     contract: dict[str, Any],
 ) -> str | None:
-    """按输入类型检查显式标识符，禁止在受控集里隐式猜链或记录。"""
     input_type = contract.get("input_type")
     if input_type == "pdb_file":
         chain_id = case.get("chain_id")
@@ -142,7 +129,6 @@ def _materialize_case(
     contract: dict[str, Any],
     fixture: Path,
 ) -> dict[str, Any]:
-    """把紧凑冻结case物化为包含注入计划、初始类型与Gold的运行单元。"""
     terminal_tool = str(raw_case.get("terminal_tool") or "").strip()
     injected_plan = _render_plan(
         contract.get("injected_plan_template"),
@@ -182,7 +168,6 @@ def _materialize_case(
 
 
 def _validate_materialized_gold(item: dict[str, Any]) -> dict[str, Any] | None:
-    """用当前注册类型图验证冻结Gold，防止数据契约与修复器语义漂移。"""
     result = repair_tool_plan(item["injected_plan"], item["_initial_types"])
     gold = item["gold"]
     inserted = [
@@ -217,7 +202,6 @@ def load_controlled_repair_v2_dataset(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """加载v2冻结微基准，验证Schema、家族配额、fixture与物化Gold。"""
     try:
         cfg = config if config is not None else Config()
         path = Path(
@@ -410,7 +394,6 @@ async def local_controlled_v2_runner(
     file_path_list: list[str],
     typed_inputs: dict[str, Any],
 ) -> dict[str, Any]:
-    """执行v2允许的本地确定性工具；任何异常均转换为统一错误。"""
     del tool_args, file_path_list
     try:
         if tool_name == "parse_protein_fasta":
@@ -454,7 +437,6 @@ async def local_controlled_v2_runner(
 
 
 def _build_v2_initial_result(case: dict[str, Any]) -> dict[str, Any]:
-    """用显式链/记录语义构造初始Artifact，绝不从fixture内容猜选择目标。"""
     input_type = case.get("input_type")
     if input_type == "single_protein_fasta_file":
         question = "受控修复v2输入：单记录蛋白质FASTA。"
@@ -478,7 +460,6 @@ async def run_controlled_v2_unit(
     trace_validator: Draft202012Validator,
     runner: ControlledV2Runner = local_controlled_v2_runner,
 ) -> dict[str, Any]:
-    """执行一个E2/E3配对单元；摘要与Planner均不参与该机制实验。"""
     started_at = time.perf_counter()
     if condition not in CONDITIONS_V2:
         return _error_result("v2实验条件必须是E2或E3", "INVALID_CONDITION")

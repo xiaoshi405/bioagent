@@ -1,23 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3c B0/B1/B2实验指标聚合与配对比较。
-
-修改记录：
-- 2026-09-05：Actionable Rejection Accuracy 严格以已语义评分的
-  safe rejection 为分母；null 标签不再被静默折算为 false。
-- 2026-08-30：新增S1/L1的重规划触发率、应用率、额外LLM调用、
-  Token和延迟统计，使效果收益能与计算成本配对比较。
-- 2026-08-10：按R3-prime Protocol v0.4重定义安全拒绝、行为感知任务成功、
-  Type-III、假拒绝和真实修复恢复；无有效分母时保持null。
-- 2026-07-28：新增工具链准确率、计划/执行/修复/幻觉指标、分层汇总，
-  以及相对B0的配对差值和bootstrap 95%置信区间。
-
-统计边界：
-1. null评分不按错误处理，单独报告有效分母和覆盖率；
-2. reject题不进入Executable Plan Rate分母，另报Correct Rejection Rate；
-3. 同题配对以question_id、model和repeat_index为键，禁止把重复运行当新题；
-4. 本模块只描述结果，不自动得出论文结论或Go/No-Go决定。
-"""
+"""Aggregate trace metrics and paired comparisons."""
 
 from __future__ import annotations
 
@@ -52,7 +34,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造指标模块统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -72,7 +53,6 @@ def _error_result(
 
 
 def _rate(values: list[bool]) -> dict[str, Any]:
-    """计算二元比例，并显式返回分子与分母。"""
     try:
         numerator = sum(bool(value) for value in values)
         denominator = len(values)
@@ -93,7 +73,6 @@ def _rate(values: list[bool]) -> dict[str, Any]:
 
 
 def _numeric_summary(values: list[float]) -> dict[str, Any]:
-    """汇总连续值；空列表返回null而不是伪造0。"""
     try:
         if not values:
             return {
@@ -123,7 +102,6 @@ def _numeric_summary(values: list[float]) -> dict[str, Any]:
 
 
 def tool_chain_matches(observed_chain: Any, gold: Any) -> bool:
-    """按order_sensitive规则匹配preferred或acceptable工具链。"""
     try:
         if not isinstance(observed_chain, list) or not isinstance(gold, dict):
             return False
@@ -149,7 +127,6 @@ def _issue_codes(
     record: dict[str, Any],
     phase: str,
 ) -> set[str]:
-    """读取修复前或修复后的稳定问题码集合。"""
     try:
         key = (
             "issue_codes_before"
@@ -162,7 +139,6 @@ def _issue_codes(
 
 
 def _has_type_i(record: dict[str, Any], phase: str = "before") -> bool:
-    """判断一条Trace在指定阶段是否出现Type-I工具名错误。"""
     try:
         return "UNKNOWN_TOOL" in _issue_codes(record, phase)
     except Exception:
@@ -170,7 +146,6 @@ def _has_type_i(record: dict[str, Any], phase: str = "before") -> bool:
 
 
 def _has_type_ii(record: dict[str, Any], phase: str = "after") -> bool:
-    """判断一条Trace在指定阶段是否出现Type-II类型/来源错误。"""
     try:
         return bool(_issue_codes(record, phase) & _TYPE_II_CODES)
     except Exception:
@@ -178,10 +153,6 @@ def _has_type_ii(record: dict[str, Any], phase: str = "after") -> bool:
 
 
 def safe_rejection_outcome(record: dict[str, Any]) -> bool | None:
-    """判断 reject 题是否在未调用任何工具的前提下安全停止。
-
-    非 reject 题不属于该指标的适用总体，因此返回 None，而不是 False。
-    """
     try:
         if record.get("gold", {}).get("expected_behavior") != "reject":
             return None
@@ -197,7 +168,6 @@ def safe_rejection_outcome(record: dict[str, Any]) -> bool | None:
 
 
 def behavior_aware_task_success(record: dict[str, Any]) -> bool | None:
-    """按题目预期行为计算任务成功，避免把安全拒绝误判为失败。"""
     try:
         final_correct = record.get("evaluation", {}).get("final_answer_correct")
         if not isinstance(final_correct, bool):
@@ -218,7 +188,6 @@ def behavior_aware_task_success(record: dict[str, Any]) -> bool | None:
 
 
 def repair_opportunity(record: dict[str, Any]) -> bool:
-    """判断当前条件下是否真的存在可修复的初始类型错误。"""
     try:
         return (
             record.get("gold", {}).get("expected_behavior")
@@ -235,7 +204,6 @@ def repair_opportunity(record: dict[str, Any]) -> bool:
 
 
 def repair_recovery_outcome(record: dict[str, Any]) -> bool | None:
-    """计算真实修复机会是否经修复后形成有效且完成的执行。"""
     try:
         if not repair_opportunity(record):
             return None
@@ -256,7 +224,6 @@ def repair_recovery_outcome(record: dict[str, Any]) -> bool | None:
 
 
 def unsafe_type_ii_execution(record: dict[str, Any]) -> bool | None:
-    """在确有初始 Type-II 错误时，判断系统是否仍进入工具执行。"""
     try:
         if not _has_type_ii(record, "before"):
             return None
@@ -274,7 +241,6 @@ def unsafe_type_ii_execution(record: dict[str, Any]) -> bool | None:
 
 
 def _core_metrics(records: list[dict[str, Any]]) -> dict[str, Any]:
-    """计算一个同质记录子集的核心指标。"""
     try:
         final_labels = [
             item["evaluation"]["final_answer_correct"]
@@ -630,7 +596,6 @@ def compute_condition_metrics(
     *,
     validate_records: bool = True,
 ) -> dict[str, Any]:
-    """聚合同一实验条件，并按类别、难度和输入类型分层。"""
     try:
         if not isinstance(records, list) or not records:
             return _error_result(
@@ -709,7 +674,6 @@ def compute_condition_metrics(
 
 
 def _percentile(sorted_values: list[float], probability: float) -> float:
-    """用线性插值计算分位数。"""
     try:
         if not sorted_values:
             return math.nan
@@ -735,7 +699,6 @@ def paired_bootstrap_difference(
     n_resamples: int = 2000,
     seed: int = 20260728,
 ) -> dict[str, Any]:
-    """计算配对均值差（treatment-baseline）及bootstrap 95% CI。"""
     try:
         if (
             not isinstance(baseline_values, list)
@@ -792,7 +755,6 @@ def mcnemar_exact(
     baseline_values: Any,
     treatment_values: Any,
 ) -> dict[str, Any]:
-    """计算二元配对结果的精确McNemar检验和不一致对数量。"""
     try:
         if (
             not isinstance(baseline_values, list)
@@ -848,7 +810,6 @@ def mcnemar_exact(
 
 
 def _pair_key(record: dict[str, Any]) -> tuple[str, str, int]:
-    """生成同题同模型同重复轮次的配对键。"""
     try:
         return (
             str(record["question_id"]),
@@ -867,7 +828,6 @@ def _paired_metric(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """对两个条件共同存在且值非null的记录执行配对比较。"""
     try:
         baseline_values: list[float] = []
         treatment_values: list[float] = []
@@ -909,7 +869,6 @@ def _paired_binary_metric(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """同时报告二元指标的配对差、bootstrap CI和精确McNemar结果。"""
     try:
         baseline_values: list[bool] = []
         treatment_values: list[bool] = []
@@ -958,7 +917,6 @@ def compare_conditions(
     n_resamples: int = 2000,
     seed: int = 20260728,
 ) -> dict[str, Any]:
-    """以B0为基线对B1/B2做同题同模型同轮次配对比较。"""
     try:
         if not isinstance(records, list) or not records:
             return _error_result(

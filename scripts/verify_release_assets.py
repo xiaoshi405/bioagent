@@ -2,6 +2,9 @@
 from pathlib import Path
 import hashlib,json,re,sys,subprocess
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.source_provenance import verify_source
+
 ROOT=Path(__file__).resolve().parents[1]
 PATTERNS={
     'provider_token':rb'\bsk-[A-Za-z0-9_-]{24,}\b',
@@ -38,7 +41,8 @@ def verify():
     frozen=read(ROOT/'evaluation/biotooleval/external_baselines_freeze_v3_1_resource.json')
     checked=0
     for relative,expected in frozen['code_sha256'].items():
-        check_hash(relative,expected,'Frozen code')
+        try:verify_source(ROOT,relative,expected)
+        except (OSError,ValueError,KeyError,RuntimeError) as exc:errors.append('Frozen source: '+relative+': '+str(exc))
         checked+=1
     data=frozen['dataset']
     for relative,expected in [(data['path'],data['raw_sha256']),(data['metadata_path'],data['metadata_sha256'])]+[(f['path'],f['raw_sha256']) for f in data['fixtures']]:

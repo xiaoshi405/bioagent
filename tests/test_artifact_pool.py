@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3a类型化Artifact Pool测试。
-
-修改记录：
-- 2026-07-26：覆盖真实值保存、精确来源解析、输出字段绑定、原子写入、
-  重复对象拒绝和脱敏快照。
-"""
+"""Tests for artifact pool."""
 
 import json
 import unittest
@@ -19,7 +13,6 @@ FASTA_TYPE = "single-record protein FASTA file"
 
 
 class ArtifactPoolTests(unittest.TestCase):
-    """验证对象池真实保存数据，但审计快照不泄漏真实值。"""
 
     def test_initial_value_can_be_resolved_exactly(self):
         pool = ArtifactPool()

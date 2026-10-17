@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Protein序列集合的显式两记录全局比对与统计摘要工具。
-
-修改记录：
-- 2026-08-14：新增集合到比对、比对到统计的两级离线工具；比对矩阵、
-  gap罚分与长度上限均由Config读取，非法输入返回统一错误结构。
-"""
+"""Align named FASTA records and summarize alignments."""
 
 from __future__ import annotations
 
@@ -27,7 +21,7 @@ logger = get_logger("ProteinAlignment", "protein_alignment.log")
 
 
 def _validate_record_pair(record_ids: Any) -> dict[str, Any]:
-    """校验record_id pair恰含两个不同的显式字符串ID。"""
+    """Require two distinct, explicit string record IDs."""
     try:
         if not isinstance(record_ids, (list, tuple)) or len(record_ids) != 2:
             return error_result(
@@ -53,7 +47,7 @@ def _validate_record_pair(record_ids: Any) -> dict[str, Any]:
 
 
 def align_fasta_records(collection: Any, record_ids: Any) -> dict[str, Any]:
-    """对集合中两个显式记录执行配置化BLOSUM全局比对。"""
+    """Globally align two explicit records using the configured BLOSUM matrix."""
     try:
         collection_result = validate_sequence_collection(collection)
         if collection_result.get("status") != "success":
@@ -160,7 +154,7 @@ def align_fasta_records(collection: Any, record_ids: Any) -> dict[str, Any]:
 
 
 def summarize_pairwise_alignment(alignment: Any) -> dict[str, Any]:
-    """计算比对的identity、similarity、gap与覆盖率统计。"""
+    """Summarize identity, similarity, gaps and coverage."""
     try:
         if not isinstance(alignment, dict):
             return error_result(

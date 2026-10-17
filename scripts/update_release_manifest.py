@@ -1,8 +1,4 @@
-"""Refresh public-file checksums while rejecting changes to historical evidence.
-
-Stage intended files with git add first. The default mode previews changes;
---write updates only RELEASE_MANIFEST.json. No experiment is run.
-"""
+"""Refresh public-file checksums while rejecting changes to historical evidence."""
 from __future__ import annotations
 
 import argparse
@@ -11,6 +7,9 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.source_provenance import ARCHIVE, verify_source
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = "RELEASE_MANIFEST.json"
@@ -57,13 +56,22 @@ def plan_update(root=ROOT):
     if FROZEN in previous and sha(frozen_path) != previous[FROZEN]["sha256"]:
         raise ValueError("Historical freeze changed; prepare a new versioned experiment instead.")
     frozen_code = set()
+    frozen_hashes = {}
     if FROZEN in previous:
-        frozen_code = {name.replace("\\", "/") for name in json.loads(
-            frozen_path.read_text(encoding="utf-8-sig"))["code_sha256"]}
+        frozen_hashes = {name.replace("\\", "/"): value for name, value in json.loads(
+            frozen_path.read_text(encoding="utf-8-sig"))["code_sha256"].items()}
+        frozen_code = set(frozen_hashes)
     protected = {name for name in previous if name.startswith(PROTECTED_PREFIXES)}
     protected |= frozen_code | ({"LICENSE", "data/toxin_protein.csv"} & set(previous))
     for name in sorted(protected):
         path = checked_path(root, name)
+        if name in frozen_hashes and ARCHIVE in previous:
+            if sha(root / ARCHIVE) != previous[ARCHIVE]["sha256"]:
+                raise ValueError("Protected historical/source asset changed: " + ARCHIVE)
+            verify_source(root, name, frozen_hashes[name])
+            if name not in tracked and Path(name).suffix != '.md':
+                raise ValueError("Protected historical/source asset removed: " + name)
+            continue
         if name not in tracked or not path.is_file() or sha(path) != previous[name]["sha256"]:
             raise ValueError("Protected historical/source asset changed: " + name)
     files = {}

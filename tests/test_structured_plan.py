@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.2结构化工具计划适配层测试。
-
-修改记录：
-- 2026-09-01：覆盖空计划在E1/E2/E3配置下保留正交开关证据。
-- 2026-07-25：覆盖fan-out、FASTA/PDB桥接、多输入来源、来源歧义、
-  保守修复、配置旁路和旧LLM Plan Chain确定性解析。
-"""
+"""Tests for structured plan."""
 
 import unittest
 
@@ -29,7 +22,6 @@ from scripts.type_checker import (
 
 
 class StructuredPlanBuildTests(unittest.TestCase):
-    """验证合法旧计划能被唯一、确定地绑定到输入来源。"""
 
     def test_single_tool_uses_initial_sequence(self):
         result = build_structured_plan(
@@ -141,7 +133,6 @@ class StructuredPlanBuildTests(unittest.TestCase):
 
 
 class StructuredPlanRepairTests(unittest.TestCase):
-    """验证修复开关只插入v0.1已验收的确定性桥接工具。"""
 
     def test_repair_disabled_preserves_invalid_plan_trace(self):
         result = prepare_structured_plan(
@@ -188,7 +179,6 @@ class StructuredPlanRepairTests(unittest.TestCase):
 
 
 class StructuredPlanResponseAndConfigTests(unittest.TestCase):
-    """验证旧LLM文本解析和统一配置开关。"""
 
     def test_llm_plan_response_is_parsed_without_second_llm(self):
         response = (
@@ -259,7 +249,6 @@ class StructuredPlanResponseAndConfigTests(unittest.TestCase):
         self.assertTrue(result["repair_applied"])
 
     def test_empty_plan_preserves_factorial_condition_switches(self):
-        """空计划必须保留E1/E2/E3开关，供条件Trace一致性校验。"""
         cases = (
             (False, False),
             (True, False),

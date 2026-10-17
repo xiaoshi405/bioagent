@@ -1,33 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3c 逐题实验Trace构建、校验与本地持久化。
-
-修改记录：
-- 2026-09-04：新增 F1 分层恢复条件与独立 v1.3 Trace 扩展，区分原计划、
-  确定性快速路径、一次受验证重规划和最终安全拒绝。
-- 2026-08-30：新增S1 Schema/runtime与L1固定一次LLM重规划条件，
-  使用独立v1.2扩展记录触发、Token、延迟和重规划结果。
-- 2026-08-27：在保留历史B0/B1/B2语义的同时新增E0/E1/E2/E3正交
-  条件，并在Trace中记录类型化运行时与类型门禁状态。
-- 2026-08-15：公开Trace增加脱敏修复策略与固定字段类型证明，区分桥接插入和
-  冗余步骤剪枝，不保存自由文本理由或原始输入内容。
-- 2026-08-15：公开Trace新增冻结计划ID、内容结果和脱敏尝试摘要；原始
-  LLM响应只保存在私有计划账本中。
-- 2026-08-12：允许证据完整的规划前未注册工具门禁作为B0/B1/B2共同前置
-  拒绝；该路径未进入类型干预层，不能误报为B1/B2条件轨迹缺失。
-- 2026-08-09：把可操作错误的detail_code写入新Trace执行摘要，旧R2因字段
-  可选仍保持Schema兼容。
-- 2026-08-09：离线类型复核优先使用实验运行时实际识别到的初始类型，
-  并保存脱敏类型与内容校验问题码，避免按数据集声明重新推断造成口径漂移。
-- 2026-07-28：新增B0/B1/B2固定配置、BioToolEval题目到脱敏Trace的
-  确定性转换、JSON Schema校验和JSONL保存/加载。
-
-设计原则：
-1. Trace不保存问题正文、原始序列、完整文件路径或最终答案全文；
-2. B0/B1/B2只改变类型检查和修复开关，其他实验上下文必须显式记录；
-3. 类型有效性由同一注册表离线复核，不信任自由文本自报；
-4. 人工或评分器尚未给出的标签必须保留null，禁止默认猜成正确。
-"""
+"""Build, validate and save experiment traces."""
 
 from __future__ import annotations
 
@@ -124,7 +96,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造Trace模块统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -144,7 +115,6 @@ def _error_result(
 
 
 def get_experiment_condition(condition: Any) -> dict[str, Any]:
-    """返回历史或正交实验条件的固定开关副本。"""
     try:
         normalized = condition.strip() if isinstance(condition, str) else ""
         if normalized not in EXPERIMENT_CONDITIONS:
@@ -171,7 +141,6 @@ def _load_trace_validator(
     schema_version: str = "1.0",
     config: Any = None,
 ) -> dict[str, Any]:
-    """加载v1.0 Schema；E条件和外部baseline分别使用独立扩展。"""
     try:
         cfg = config if config is not None else Config()
         raw_path = (
@@ -268,7 +237,6 @@ def validate_experiment_trace(
     schema_path: Any = None,
     config: Any = None,
 ) -> dict[str, Any]:
-    """依据固定Schema校验一条脱敏实验Trace。"""
     try:
         if not isinstance(trace, dict):
             return _error_result(
@@ -308,7 +276,6 @@ def validate_experiment_trace(
 
 
 def _initial_types_from_question(question_item: dict[str, Any]) -> list[str]:
-    """把BioToolEval输入标注映射为类型检查器的初始类型。"""
     try:
         input_data = question_item.get("input") or {}
         input_type = input_data.get("input_type")
@@ -332,7 +299,6 @@ def _posthoc_plan_validation(
     tool_chain: Any,
     initial_types: list[str],
 ) -> dict[str, Any]:
-    """使用冻结类型注册表离线复核计划，不执行任何工具。"""
     try:
         if not isinstance(tool_chain, list) or not tool_chain:
             return {
@@ -369,7 +335,6 @@ def _posthoc_plan_validation(
 
 
 def _normalize_execution_summary(reasoning: dict[str, Any]) -> dict[str, Any]:
-    """规范主链路execution_summary，缺失字段安全回退。"""
     try:
         summary = reasoning.get("execution_summary") or {}
         attempted = int(summary.get("attempted_steps") or 0)
@@ -404,7 +369,6 @@ def _normalize_execution_summary(reasoning: dict[str, Any]) -> dict[str, Any]:
 
 
 def _normalize_repair_operations(typed_trace: dict[str, Any]) -> list[dict[str, Any]]:
-    """仅保留固定类型证明字段，避免自由文本或输入值进入公开实验Trace。"""
     try:
         normalized: list[dict[str, Any]] = []
         for raw_item in typed_trace.get("repair_operations") or []:
@@ -486,7 +450,6 @@ def _validate_condition_observation(
     baseline_trace: dict[str, Any],
     recovery_trace: dict[str, Any],
 ) -> dict[str, Any]:
-    """防止实验运行状态与历史/正交条件标签不一致。"""
     try:
         if condition in {"B0", "E0", "S1"}:
             if typed_trace:
@@ -507,9 +470,8 @@ def _validate_condition_observation(
                     )
             return {"status": "success"}
 
-        # 显式未注册工具门禁是三个条件共有的规划前前置条件。只有门禁状态、
-        # 决策、错误码和未知工具列表四项证据同时成立时，才允许B1/B2没有
-        # typed_planning轨迹；其他缺轨迹情形仍按实验配置错误处理。
+        # All conditions share the explicit-tool guard.
+        # Missing typed traces require complete pre-planning rejection evidence.
         unknown_tools = request_guard.get("unknown_tools") or []
         is_verified_preplan_rejection = (
             not typed_trace
@@ -622,7 +584,6 @@ def build_experiment_trace(
     evaluation_labels: Any = None,
     config: Any = None,
 ) -> dict[str, Any]:
-    """把一题Agent响应转换为不含敏感原值的v1.0实验Trace。"""
     try:
         if not isinstance(question_item, dict):
             return _error_result(
@@ -1136,7 +1097,6 @@ def append_experiment_trace(
     output_path: Any = None,
     config: Any = None,
 ) -> dict[str, Any]:
-    """校验后把一条Trace追加到本地JSONL；不允许写出项目外默认目录。"""
     try:
         cfg = config if config is not None else Config()
         validation = validate_experiment_trace(trace, config=cfg)
@@ -1175,7 +1135,6 @@ def load_experiment_traces(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """加载并逐条校验JSONL实验Trace。"""
     try:
         path = Path(str(input_path or "")).expanduser()
         if not path.is_file() or path.suffix.lower() != ".jsonl":

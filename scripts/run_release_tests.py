@@ -5,7 +5,7 @@ import argparse,json,sys,unittest
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 GROUPS={
- 'core':'artifact_pool type_checker structured_plan initial_artifacts typed_executor fasta_analysis tool_parameters topology_v2_tools tool_request_guard release_maintenance'.split(),
+ 'core':'artifact_pool type_checker structured_plan initial_artifacts typed_executor fasta_analysis tool_parameters topology_v2_tools tool_request_guard release_maintenance source_provenance'.split(),
  'runtime':'typed_planning_runtime hierarchical_recovery controlled_repair controlled_repair_v2 plan_sampling evaluation_metrics evaluation_scoring evaluation_trace llm_client embedding_runtime release_entrypoints'.split(),
  'baselines':'external_baselines external_experiment external_scoring external_resources external_operational_analysis codeact_adapter biomni_adapter scitoolagent_adapter f1_audit'.split(),
 }

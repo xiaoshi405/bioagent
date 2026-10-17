@@ -2,11 +2,12 @@
 
 ## 0.1.0
 
+- Remove an unused response parser, superseded plotting scripts and development handoff notes.
+- Shorten comments and docstrings in the working code; preserve the original frozen sources in a separate snapshot.
+- Use one standalone plotting script and an English analysis report with computed counts.
 - Prepare the first versioned source package with bilingual documentation and a draft release.
 - Add a manifest maintenance command that protects historical code, data and official sources.
 - Add contribution templates, reviewed secret-scanning configuration and source/data notices.
-
-
 - Provide separate English and Chinese READMEs and complete installation instructions.
 - Add configuration checks and a local launcher for the tool API, agent and web interface.
 - Remove ineffective browser credential controls; accept legacy client fields optionally on the backend.

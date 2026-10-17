@@ -1,9 +1,4 @@
-"""Load unchanged CodeAct ICML-2024 implementation, without benchmark CLI/data.
-
-Task/parser/executor and run_task/postprocess_fn execute the upstream bodies.
-Only selected definitions of main.py are loaded to avoid its import-time CLI,
-legacy SDKs and benchmark evaluation. Source hashes are checked before use.
-"""
+"""Load unchanged CodeAct ICML-2024 implementation, without benchmark CLI/data."""
 from __future__ import annotations
 
 import ast

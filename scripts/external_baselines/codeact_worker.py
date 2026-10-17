@@ -1,8 +1,4 @@
-"""Process/IPC adapter around unchanged official CodeAct Task and PythonREPL.
-
-One process per request preserves ordinary Python state between code actions.
-The parent owns credentials, transport, tool counts and execution deadlines.
-"""
+"""Process/IPC adapter around unchanged official CodeAct Task and PythonREPL."""
 from __future__ import annotations
 
 import ast

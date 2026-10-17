@@ -1,17 +1,5 @@
 # -*- coding: utf-8 -*-
-"""分析 E3/L1/F1 分层恢复对照，不改写既有 H1–H3。
-
-修改记录：
-- 2026-09-05：新增三条件完整性、共享原始计划、逐轮配对、题内重复聚合、
-  F1 干预后 Type-II 分类和额外重规划成本审计。
-
-设计边界：
-1. 仅比较确定性修复 E3、一次 LLM 重规划 L1 与分层恢复 F1；
-2. 同题同模型同轮次必须共享原始计划，缺项或漂移时失败关闭；
-3. 多轮结果先在题内求均值，再以题目为独立单位做配对 bootstrap；
-4. 这是 H1–H3 之外的冻结次要分析，不在看到 Test 后新增显著性假设；
-5. 不读取题面、序列或 Gold 正文，只处理脱敏 Trace 与 Manifest。
-"""
+"""Compare E3, L1 and F1 recovery behavior."""
 
 from __future__ import annotations
 
@@ -47,19 +35,16 @@ QUESTION_METRICS = (
 
 
 def _error(message: str, code: str, **details: Any) -> dict[str, Any]:
-    """返回统一错误结构，避免分析异常导致主进程崩溃。"""
     issue = {"code": code, "message": message}
     issue.update(details)
     return {"status": "error", "message": message, "issues": [issue]}
 
 
 def _load_json(path: Path) -> Any:
-    """读取 UTF-8 JSON。"""
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _load_jsonl(path: Path) -> list[dict[str, Any]]:
-    """读取 JSONL 并拒绝非对象或空输入。"""
     rows: list[dict[str, Any]] = []
     with path.open("r", encoding="utf-8") as stream:
         for line_number, raw_line in enumerate(stream, 1):
@@ -75,7 +60,6 @@ def _load_jsonl(path: Path) -> list[dict[str, Any]]:
 
 
 def _sha256(path: Path) -> str:
-    """计算原始证据文件 SHA-256。"""
     digest = hashlib.sha256()
     with path.open("rb") as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b""):
@@ -84,14 +68,12 @@ def _sha256(path: Path) -> str:
 
 
 def _plan_identity(record: dict[str, Any]) -> str | None:
-    """统一提取三条件共享的原始计划样本 ID。"""
     plan = record.get("observation", {}).get("plan", {})
     value = plan.get("original_plan_sample_id") or plan.get("plan_sample_id")
     return value if isinstance(value, str) and value else None
 
 
 def _question_signature(record: dict[str, Any]) -> str:
-    """用脱敏元数据和 Gold 结构检测跨条件题目漂移。"""
     payload = {
         "split": record.get("split"),
         "category": record.get("category"),
@@ -105,14 +87,12 @@ def _question_signature(record: dict[str, Any]) -> str:
 
 
 def _numeric(value: Any) -> float | None:
-    """只接受非负有限数，布尔值不冒充成本。"""
     if type(value) not in (int, float) or value < 0 or not math.isfinite(value):
         return None
     return float(value)
 
 
 def _extract_metric(record: dict[str, Any], metric: str) -> float | None:
-    """提取题目/轮次级指标；不适用和未知标签保持 None。"""
     try:
         expected = record.get("gold", {}).get("expected_behavior")
         if metric == "final_answer_accuracy":
@@ -143,7 +123,6 @@ def _extract_metric(record: dict[str, Any], metric: str) -> float | None:
 
 
 def _audit(records: list[dict[str, Any]], manifest: dict[str, Any]) -> dict[str, Any]:
-    """审计完整三条件、控制量、共享计划和题目元数据。"""
     try:
         if not isinstance(manifest, dict):
             return _error("必须提供实验 Manifest", "MISSING_HYBRID_MANIFEST")
@@ -268,7 +247,6 @@ def _question_level_pair(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """先在题内聚合重复，再计算 treatment-baseline 配对效应。"""
     grouped: dict[str, dict[str, dict[int, dict[str, Any]]]] = defaultdict(
         lambda: defaultdict(dict)
     )
@@ -324,7 +302,6 @@ def _question_level_pair(
 
 
 def _f1_recovery_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
-    """汇总 F1 干预后类型状态与触发单元成本。"""
     f1_rows = [row for row in records if row.get("condition") == "F1"]
     classes = Counter(classify_type_ii_execution(row) for row in f1_rows)
     triggered = [
@@ -366,7 +343,6 @@ def analyze_hybrid_records(
     n_resamples: int = 10000,
     seed: int = 20260905,
 ) -> dict[str, Any]:
-    """生成 E3/L1/F1 的逐轮与题目级冻结分析。"""
     try:
         if not isinstance(records, list) or not records:
             return _error("Trace 必须是非空列表", "EMPTY_HYBRID_INPUT")
@@ -461,7 +437,6 @@ def analyze_hybrid_records(
 
 
 def main() -> int:
-    """执行只读分析并独占创建 JSON，禁止覆盖既有结果。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--trace", type=Path, required=True)
     parser.add_argument("--manifest", type=Path, required=True)

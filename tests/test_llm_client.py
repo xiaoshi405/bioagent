@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""LLM客户端离线单元测试，不发送真实网络请求。
-
-修改记录：
-- 2026-09-08：覆盖百炼 DeepSeek-V4 快照的非思考参数保真。
-"""
+"""Tests for llm client."""
 
 import os
 import sys
@@ -20,7 +16,6 @@ from app.llms.api_clients import openai_api
 
 
 class DialogTests(unittest.TestCase):
-    """验证System Prompt不会被客户端覆盖。"""
 
     def test_custom_system_prompt_is_preserved(self):
         dialogs = openai_api.make_simple_dialogs(
@@ -39,7 +34,6 @@ class DialogTests(unittest.TestCase):
 
 
 class AsyncChatTests(unittest.IsolatedAsyncioTestCase):
-    """验证模型配置进入请求体且能解析OpenAI兼容响应。"""
 
     async def test_qwen_payload_contains_reproducibility_settings(self):
         fake_response = {
@@ -97,7 +91,6 @@ class AsyncChatTests(unittest.IsolatedAsyncioTestCase):
                     )
 
     async def test_deepseek_payload_explicitly_disables_thinking(self):
-        """验证 DeepSeek-V4 不会悄悄使用供应商默认思考模式。"""
         fake_response = {
             "choices": [{"message": {"content": "Plan Chain:\n['ComputePiMw']"}}],
             "usage": {

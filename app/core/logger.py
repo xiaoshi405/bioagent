@@ -1,10 +1,4 @@
-"""
-统一日志工具。
-
-修改记录：
-- 2026-07-17：日志目录改从 Config.LOG_DIR 获取；文件日志初始化失败时退化为
-  控制台日志，避免日志系统导致主进程崩溃。
-"""
+"""Configure console and file logging."""
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -13,15 +7,12 @@ from pathlib import Path
 from app.core.config import Config
 
 def get_logger(name: str, log_file: str) -> logging.Logger:
-    """
-    获取一个配置好的 Logger 实例。
-    每个 logger 都有独立的处理器，以避免日志重复记录和多服务间的文件锁冲突。
-    """
+    """Configure a logger once, with a console fallback if file logging fails."""
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 
     try:
-        # 避免重复添加 Handler
+        # Do not add duplicate handlers.
         if logger.handlers:
             return logger
 
@@ -30,7 +21,7 @@ def get_logger(name: str, log_file: str) -> logging.Logger:
             datefmt='%Y-%m-%d %H:%M:%S'
         )
 
-        # 控制台日志始终优先建立，保证文件不可写时仍有诊断信息。
+        # Keep console logging if the log file is unavailable.
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
@@ -55,6 +46,6 @@ def get_logger(name: str, log_file: str) -> logging.Logger:
 
         return logger
     except Exception as exc:
-        # 最后的防线：日志初始化异常不能阻断业务进程。
+        # Logging failures must not stop request handling.
         logging.getLogger().warning("Logger %s 初始化失败: %s", name, exc)
         return logger

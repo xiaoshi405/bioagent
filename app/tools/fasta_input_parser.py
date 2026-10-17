@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-FASTA record_id自然语言输入的保守定位器。
-
-修改记录：
-- 2026-08-14：新增单记录ID与记录ID pair的显式语义解析；只识别带
-  record/记录标签的形式，不把普通英文、PDB ID或chain ID猜成记录ID。
-- 2026-08-14：收紧中文“记录”模式，排除“多记录FASTA”等数据格式描述，
-  只有记录ID标签或“记录为/是”结构才能生成record ID Artifact。
-"""
+"""Extract explicit FASTA record identifiers from requests."""
 
 from __future__ import annotations
 
@@ -23,7 +15,7 @@ _RECORD_ID_TOKEN = r"[A-Za-z0-9][A-Za-z0-9_.|:-]{0,255}"
 
 
 def extract_fasta_record_identifiers(text: Any) -> dict[str, Any]:
-    """定位显式FASTA记录ID；找不到时返回mode=none而不猜测。"""
+    """Locate explicit record IDs; leave unspecified identities unresolved."""
     try:
         if not isinstance(text, str) or not text.strip():
             return {"status": "success", "mode": "none", "record_ids": []}

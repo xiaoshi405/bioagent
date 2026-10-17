@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Protein FASTA 工具共享的文件、记录和序列校验边界。
-
-修改记录：
-- 2026-08-14：为Topology v2-lite新增共享FASTA读取与标准错误结构，
-  避免多记录解析、记录选择和比对工具重复实现安全校验。
-"""
+"""Shared FASTA file and sequence validation."""
 
 from __future__ import annotations
 
@@ -32,7 +26,6 @@ def error_result(
     details: dict[str, Any] | None = None,
     suggestion: str | None = None,
 ) -> dict[str, Any]:
-    """构造领域工具统一错误结构，确保非法输入不会使服务进程崩溃。"""
     try:
         issue: dict[str, Any] = {"code": code, "message": str(message)}
         if isinstance(details, dict):
@@ -56,7 +49,7 @@ def error_result(
 
 
 def validate_amino_acid_sequence(sequence: Any) -> dict[str, Any]:
-    """严格校验20种标准氨基酸字符，不静默清洗或替换用户数据。"""
+    """Accept only standard amino acids; do not replace invalid characters."""
     try:
         if not isinstance(sequence, str) or not sequence.strip():
             return error_result(
@@ -93,7 +86,7 @@ def validate_amino_acid_sequence(sequence: Any) -> dict[str, Any]:
 
 
 def resolve_fasta_path(file_path: Any) -> dict[str, Any]:
-    """校验FASTA路径、项目目录边界、扩展名和配置化大小上限。"""
+    """Check the FASTA path, project boundary, extension and size limit."""
     try:
         if not isinstance(file_path, str) or not file_path.strip():
             return error_result("FASTA文件路径不能为空", "EMPTY_FASTA_PATH")
@@ -151,7 +144,7 @@ def resolve_fasta_path(file_path: Any) -> dict[str, Any]:
 
 
 def read_protein_fasta_records(file_path: Any) -> dict[str, Any]:
-    """读取并校验全部蛋白质FASTA记录，返回内部可复用的记录列表。"""
+    """Read and validate all protein FASTA records."""
     try:
         path_result = resolve_fasta_path(file_path)
         if path_result.get("status") != "success":

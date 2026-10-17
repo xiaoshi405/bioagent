@@ -1,20 +1,5 @@
 # -*- coding: utf-8 -*-
-"""BioToolEval 外部对照策略：Schema/runtime 与单次 LLM 重规划。
-
-修改记录：
-- 2026-09-05：为可选的计划意图保真契约增加 Prompt 约束与执行前门禁；
-  L1 默认不启用该契约，保持既有 baseline 定义不变。
-- 2026-09-04：抽取可配置的单次重规划命名空间与策略标识，供 F1
-  分层恢复复用同一重规划实现；L1 默认行为和既有 Trace 语义保持不变。
-- 2026-08-30：新增 S1 非类型图 Schema/runtime 校验和 L1 固定一次、
-  固定输出上限的 LLM self-repair/replan baseline。
-
-设计边界：
-1. S1 只检查冻结计划结构、工具注册和可执行入口，不读类型图；
-2. L1 只在同一原始计划被判定为类型非法时调用 LLM 一次；
-3. 重规划响应原文只可进入本地私有账本，公开 Trace 只保存哈希和用量；
-4. 任何非法输入都返回统一错误结构，不让主进程崩溃。
-"""
+"""Schema checks and bounded replanning baselines."""
 
 from __future__ import annotations
 
@@ -48,7 +33,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造 baseline 统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -60,7 +44,6 @@ def _error_result(
 
 
 def validate_schema_runtime_plan(frozen_plan: Any) -> dict[str, Any]:
-    """仅校验计划Schema、闭集工具名和可执行入口，不使用类型边。"""
     try:
         validation = validate_frozen_plan(frozen_plan)
         if validation.get("status") != "success":
@@ -153,7 +136,6 @@ def build_schema_rejection_result(
     frozen_plan: Any,
     validation: Any,
 ) -> dict[str, Any]:
-    """把 S1 校验拒绝转为可评分、不含原始内容的Agent响应。"""
     try:
         issues = (
             copy.deepcopy(validation.get("issues") or [])
@@ -230,7 +212,6 @@ def _baseline_metadata(
     schema_valid_before: bool,
     strategy_kind: str = LLM_REPLAN_BASELINE,
 ) -> dict[str, Any]:
-    """构造公开Trace可使用的 L1 脱敏记账默认值。"""
     return {
         "baseline_kind": str(strategy_kind or LLM_REPLAN_BASELINE),
         "schema_valid_before": bool(schema_valid_before),
@@ -265,7 +246,6 @@ def _failed_replan_ledger_record(
     exception_type: Any = None,
     plan_namespace: str = "l1",
 ) -> dict[str, Any]:
-    """构造失败/无效L1尝试的私有账本记录。"""
     raw_text = str(raw_response or "")
     return {
         "schema_version": "1.0",
@@ -317,11 +297,6 @@ async def prepare_matched_budget_replan(
     plan_namespace: str = "l1",
     required_tool_names: Any = None,
 ) -> dict[str, Any]:
-    """对类型非法原计划最多执行一次有界LLM重规划。
-
-    ``required_tool_names`` 是可选的上层契约；L1 不传时仍保持原
-    matched-budget baseline，F1 可用它防止重规划删掉目标操作。
-    """
     try:
         normalized_namespace = str(plan_namespace or "").strip().lower()
         if (
@@ -701,7 +676,6 @@ def build_replan_prompt(
     type_issues: Any,
     required_tool_names: Any = None,
 ) -> dict[str, Any]:
-    """构造一次性重规划Prompt；仅暴露注册表必要类型签名。"""
     try:
         signatures_result = get_tool_signatures()
         if signatures_result.get("status") != "success":

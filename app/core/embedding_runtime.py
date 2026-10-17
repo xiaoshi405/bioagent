@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""本地嵌入模型的资产校验与延迟初始化。
-
-修改记录：
-- 2026-08-27：新增BGE本地资产预检、延迟加载和统一错误结构，避免模块
-  导入阶段因模型目录不完整而导致Agent主进程崩溃。
-"""
+"""Validate and load local embedding assets."""
 
 from __future__ import annotations
 
@@ -22,7 +17,6 @@ _LOADED_MODEL_PATH: str | None = None
 
 
 def _error_result(message: str, code: str, **details: Any) -> dict[str, Any]:
-    """生成不包含模型内容的统一错误结构。"""
     issue = {"code": code, "message": message}
     issue.update(details)
     return {
@@ -34,7 +28,7 @@ def _error_result(message: str, code: str, **details: Any) -> dict[str, Any]:
 
 
 def validate_local_embedding_model(model_path: Any) -> dict[str, Any]:
-    """校验Hugging Face格式本地嵌入模型运行所需的最小资产。"""
+    """Check the required files in a local Hugging Face embedding snapshot."""
     try:
         raw_path = str(model_path or "").strip()
         if not raw_path:
@@ -124,7 +118,7 @@ def configure_llama_index_embedding(
     *,
     cache_dir: Any = None,
 ) -> dict[str, Any]:
-    """按需加载BGE并配置LlamaIndex；失败时返回结构化结果而不抛异常。"""
+    """Load local BGE assets or return a structured error."""
     global _LOADED_MODEL_PATH
     validation = validate_local_embedding_model(model_path)
     if validation.get("status") != "success":

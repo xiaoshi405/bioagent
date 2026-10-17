@@ -20,4 +20,4 @@ Component ablations share the initial plan across conditions. The framework comp
 
 Natural repair and the 30-case controlled repair suite are separate sets. In the paper, the 38 natural recoveries prune redundant invalid steps; registered bridge families are tested separately in the controlled suite. Do not use a controlled bridge case as an individual natural-recovery trace.
 
-The frozen main metrics and scoring procedures are documented in `docs/EXTERNAL_BASELINES_FORMAL_SCORING_V2_ZH.md`, the source-level evaluation scripts, and the released result tables. The public documentation does not relabel execution outcomes as a new scientific-success metric.
+See [scoring](SCORING.md) for execution endpoints, scientific correctness labels and paired comparisons. The original scoring contract is preserved in `reproduction/frozen_source.zip`.

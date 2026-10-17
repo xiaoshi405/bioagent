@@ -1,5 +1,4 @@
-#这个是浙大的代码，没做修改
-#知识图谱检索器，把自然语言转成的向量和知识图谱计算相似度
+# Based on SciToolAgent; see UPSTREAM.md.
 """KG Retrievers."""
 
 import pdb
@@ -33,7 +32,6 @@ from llama_index.core.service_context import ServiceContext
 from llama_index.core.settings import Settings
 from llama_index.core.storage.storage_context import StorageContext
 from llama_index.core.utils import print_text, truncate_text
-# from app.llms import query_next_tool
 
 DQKET = DEFAULT_QUERY_KEYWORD_EXTRACT_TEMPLATE
 DEFAULT_NODE_SCORE = 1000.0
@@ -201,58 +199,38 @@ class KGTableRetriever(BaseRetriever):
     #     query_bundle: QueryBundle):
     #
     #     # compute embedding similarity between all tools with query
-    #     query_embedding = self._embed_model.get_text_embedding(
     #         query_bundle.query_str
     #     )
-    #     all_rel_texts = list(self._index_struct.embedding_dict.keys())
-    #     fun_rel_texts = self.extract_function_triple(all_rel_texts, function_name='functionality')
-    #     rel_text_embeddings = [
     #         self._index_struct.embedding_dict[_id] for _id in fun_rel_texts
     #     ]
     #     similarities, top_rel_texts = get_top_k_embeddings(
     #         query_embedding,
     #         rel_text_embeddings,
-    #         similarity_top_k=self.similarity_top_k,
-    #         embedding_ids=fun_rel_texts,
     #     )
     #
     #     # get tool name
-    #     tool_retrieved = []
     #     for text in top_rel_texts:
-    #         item = re.search(r"(?<=\(')(.*?)(?=\',)", text)
-    #         item = item.group(1)
     #         tool_retrieved.append(item)
     #     # print(f"tool_retrieved:{tool_retrieved}")
     #
     #     # get tool subgraph
-    #     tool_subgraph = self._graph_store.get_rel_map(
     #         tool_retrieved, depth=self.graph_store_query_depth,limit=self.max_knowledge_sequence
     #     )
     #     # print(f"tool_subgraph:{tool_subgraph}")
     #     # pdb.set_trace()
     #
     #     # compute embedding similarity between subgraph'tools with query+previous_tool
-    #     c = 0
     #     for tool in tool_subgraph:
-    #         fun_rel_texts = self.extract_function_triple(self.list2string(tool_subgraph[tool]), function_name='functionality')
-    #         fun_rel_texts = list(dict.fromkeys(fun_rel_texts)) #remove deplicate
     #         # tool_existed = "There is a computational tool represented by a triplet:" + fun_rel_texts[0]
-    #         fun_rel_texts = fun_rel_texts[1:]
     #         if fun_rel_texts == []:
     #             continue
     #
-    #         tool_existed = self._graph_store.get_rel_map([tool], 1, limit=self.max_knowledge_sequence)[tool]
-    #         tool_existed = self.triple2text(tool_existed[1:])
-    #         find_next_tools = "Query: "+query_bundle.query_str + "\n The existed tool: "+ tool_existed + "\n According to the query and the existed tool, please imagine what next tools do we need, only show the functionality of the required tool in a sentence. DO NOT give any explanations."
-    #         next_tools = self._llm.predict(PromptTemplate(find_next_tools))
     #         # print(f"next_tools:\n{next_tools}")
     #         # new_query = await query_next_tool(query_bundle.query_str, fun_rel_texts[0], model='gpt-4o')
     #         # print(f"new_query:\n{new_query}")
-    #         query_embedding = self._embed_model.get_text_embedding(next_tools)
     #
     #         # query_embedding = self._embed_model.get_text_embedding(query_bundle.query_str+tool_existed)
     #
-    #         rel_text_embeddings = [
     #             self._index_struct.embedding_dict[_id] for _id in fun_rel_texts
     #         ]
     #
@@ -265,37 +243,23 @@ class KGTableRetriever(BaseRetriever):
     #         similarities_sub, top_rel_texts_sub = get_top_k_embeddings(
     #             query_embedding,
     #             rel_text_embeddings,
-    #             similarity_top_k=self.similarity_top_k, # 3
-    #             embedding_ids=fun_rel_texts,
     #         )
     #         for text in top_rel_texts_sub:
-    #             item = re.search(r"(?<=\(')(.*?)(?=\',)", text)
-    #             item = item.group(1)
     #             tool_retrieved.append(item)
-    #         similarities = similarities + [i * similarities[c] for i in similarities_sub]
-    #         c = c+1
     #
     #     #  remove deplicate
-    #     tool_retrieved_dep = list(dict.fromkeys(tool_retrieved))
     #     # get tool weights based on similarity
-    #     tool_weights = {}
     #     for item in tool_retrieved_dep:
-    #         weight = [similarities[i] for i, x in enumerate(tool_retrieved) if x == item]
     #         tool_weights[item]=sum(weight)
     #
     #     # Priority is given to larger weights
-    #     tool_retrieved_sort = sorted(tool_retrieved_dep, key=lambda x: tool_weights[x], reverse=True)
-    #     tool_retrieved_sort = tool_retrieved_sort[:self.max_tools]
     #     # get tool node
-    #     tool_subgraph = self._graph_store.get_rel_map(
     #         tool_retrieved_sort, 1, limit=self.max_knowledge_sequence
     #     )
-    #     print(tool_retrieved_sort)
     #     # convert to text
     #     # tool_text = []
     #     # for tool in tool_retrieved_sort:
     #     #     tool_text.append(self.triple2text(tool_subgraph[tool]))
-    #     original_triples = []
     #     for tool in tool_retrieved_sort:
     #         original_triples.extend(tool_subgraph[tool])
     #
@@ -415,11 +379,9 @@ class KGTableRetriever(BaseRetriever):
                     non_matching_paths[tool] = path
 
             # save to variable
-            # tool_paths_with_pattern = matching_paths
             tool_paths_without_pattern = non_matching_paths
 
             for tool, path in tool_paths_without_pattern.items():
-                # print(f"Tool Node: {tool}")
                 tool_subgraph_filter.append(tool)
 
 
@@ -489,8 +451,6 @@ class KGTableRetriever(BaseRetriever):
         original_triples = []
         for tool in tool_retrieved_sort:
             original_triples.extend(tool_subgraph[tool])
-
-
 
 
         return original_triples

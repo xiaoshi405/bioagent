@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Focused Gate3 H1-H3 analysis using the frozen factorial definitions.
-
-The full factorial reporter bootstraps many secondary metrics. This focused
-entry point computes only the preregistered H1-H3 family, preserving the same
-pairing, extractors, bootstrap implementation, seeds, exact McNemar tests, and
-Holm correction.
-"""
+"""Focused Gate3 H1-H3 analysis using the frozen factorial definitions."""
 
 from __future__ import annotations
 

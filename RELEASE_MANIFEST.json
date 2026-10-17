@@ -51,9 +51,9 @@
     "CHANGELOG.md": {
       "source": "docs/open_source_release/assets/CHANGELOG.md",
       "source_sha256": "9ed2a4e5d74dc1eefb31d6bf24fff2f3e74392a4da35083b02994444ea8b9cf6",
-      "sha256": "10ef266a69d51075f15c0bd999cec6d3ea812f0772696ca09fc5024f6b04054f",
+      "sha256": "5f01aefab7c38183f21750ec258b7e2da5c7f38c66206fa0501f4d264650e8c7",
       "mode": "public_maintenance",
-      "reason": "public documentation/portable entry point"
+      "reason": "reviewed source documentation and release maintenance"
     },
     "CITATION.cff": {
       "source": "docs/open_source_release/assets/CITATION.cff",
@@ -79,16 +79,16 @@
     "README.md": {
       "source": "docs/open_source_release/assets/README.md",
       "source_sha256": "ed31b820ca13dab3fba942371adc95906369831e84fc8f5b0da414c17bf5df30",
-      "sha256": "fe7fcaa16c2d5d18eb3e3e73f4d08cc630ccc61739dd272ef3244d2f02270a71",
+      "sha256": "68ce3fef070f561fb2c71b9c12fb7544c28380b54a26f657c2e153b2e29aeab1",
       "mode": "public_maintenance",
-      "reason": "public documentation/portable entry point"
+      "reason": "reviewed source documentation and release maintenance"
     },
     "README.zh-CN.md": {
       "source": "docs/open_source_release/assets/README.zh-CN.md",
       "source_sha256": "193d17139b7e27fdaa7fccf8b2c6186d383631392abb862ec4155899fb23dbb4",
-      "sha256": "e35efb326099a5adb8c77200ed57c1c53a6c75b7d8b37eb75bbe0888cdd8ad11",
+      "sha256": "4e215841a36201abaeafad174d52c912948f08c23b6f1ddf0dd813334849b7b2",
       "mode": "public_maintenance",
-      "reason": "public documentation/portable entry point"
+      "reason": "reviewed source documentation and release maintenance"
     },
     "SECURITY.md": {
       "source": "docs/open_source_release/assets/SECURITY.md",
@@ -100,65 +100,65 @@
     "ToolsAgent/ToolsFuns/Biology/__init__.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/__init__.py",
       "source_sha256": "fb4f49a774f47367914cdf027a8d00b4e3de7b782ed1282cef979f745863d46d",
-      "sha256": "fb4f49a774f47367914cdf027a8d00b4e3de7b782ed1282cef979f745863d46d",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/biologyCommon.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/biologyCommon.py",
       "source_sha256": "2cd0f03223fb96d9ef9e7394a44b5c44612305a1954942212517de3f8e80f4cd",
-      "sha256": "2cd0f03223fb96d9ef9e7394a44b5c44612305a1954942212517de3f8e80f4cd",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "3d5ac0fd3666e39ce95c7e88245935f35b5b4726a410fcbce628c6a7c959a762",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/fasta_analysis.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/fasta_analysis.py",
       "source_sha256": "2af1e39ae47108e6b149a49a4815a0c5cf9f17aaf42634df1aab3f4ee9b000b8",
-      "sha256": "2af1e39ae47108e6b149a49a4815a0c5cf9f17aaf42634df1aab3f4ee9b000b8",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "ba140403237ea62e03dcb0e4d7f36ac3bdd7f2b51de8ea3eeb60e6e3d25a14ab",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/fasta_collection.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/fasta_collection.py",
       "source_sha256": "33fd1ab3a03f78d2cea400ba81e01562fa6f9106c2ed5791093c53a30932e117",
-      "sha256": "33fd1ab3a03f78d2cea400ba81e01562fa6f9106c2ed5791093c53a30932e117",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "70d29ba1b6b2bb946f9a82492cb169fd38d4e3a70171c2f6320c22efda0fd9be",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/fasta_common.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/fasta_common.py",
       "source_sha256": "6ad1190d2ef7359983852ad76dc54ac6feb7706f8f2298fd57aa5c6afa69c267",
-      "sha256": "6ad1190d2ef7359983852ad76dc54ac6feb7706f8f2298fd57aa5c6afa69c267",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "209f291107624356c681ff99ad852b0f9ca0abf8618a45f9e8d188a2c6a38818",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/main.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/main.py",
       "source_sha256": "acd6e682b03d6b94849bc72300cf17cd50b6a884086515d2789f3f2b5eb4d411",
-      "sha256": "acd6e682b03d6b94849bc72300cf17cd50b6a884086515d2789f3f2b5eb4d411",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "b58524cc753bbf9dbafc78084cd4aaa89bf45fc1653a53e98e8e33f6e752c0a7",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/pdb_analysis.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/pdb_analysis.py",
       "source_sha256": "210bc17223c77ea309a963016351b4282405ed2bd75bc246a9e6a65a25ce2c27",
-      "sha256": "210bc17223c77ea309a963016351b4282405ed2bd75bc246a9e6a65a25ce2c27",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "d1ae66a590a0d66f2772e9af41d16ec91c63bad4212320d1371c11065b475d77",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/protein_alignment.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/protein_alignment.py",
       "source_sha256": "0b1bf77910bcfe5521d7053b95789ab6a781695a47c9e53283549037d8dd5c7d",
-      "sha256": "0b1bf77910bcfe5521d7053b95789ab6a781695a47c9e53283549037d8dd5c7d",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "db1c423edba003b29801ab27d440bcd462c44c05e238996e300af4585ad2e482",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "ToolsAgent/ToolsFuns/Biology/tool_name_dict.py": {
       "source": "ToolsAgent/ToolsFuns/Biology/tool_name_dict.py",
       "source_sha256": "900318ade7e45d768a4ff97559308118976543f8af12d6602412163f3f84e67c",
-      "sha256": "900318ade7e45d768a4ff97559308118976543f8af12d6602412163f3f84e67c",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "9fabbf80bbe4951ce0c9c5fbedaa35c4925120cdc0c819c69af32024708d1280",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "UPSTREAM.md": {
       "source": "docs/open_source_release/assets/UPSTREAM.md",
@@ -170,16 +170,16 @@
     "__init__.py": {
       "source": "__init__.py",
       "source_sha256": "cf5b3f7199f232ed496036f8c0d68c55d1a2d9225a13018789e64902dbae0bdb",
-      "sha256": "cf5b3f7199f232ed496036f8c0d68c55d1a2d9225a13018789e64902dbae0bdb",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app.py": {
       "source": "docs/open_source_release/assets/app.py",
       "source_sha256": "a7d132794569d5d01c615818c7d07a882198d167bdf2c0c1c46c249504507679",
-      "sha256": "a7d132794569d5d01c615818c7d07a882198d167bdf2c0c1c46c249504507679",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "16cbb6821a299034c4e7182cfffadd0032fea71bca793eb44976bfbc9314942f",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/__init__.py": {
       "source": "app/__init__.py",
@@ -198,30 +198,30 @@
     "app/core/config.py": {
       "source": "app/core/config.py",
       "source_sha256": "9af272864c7f293625d888afc96ea7691c8564131de642e25ce6fc0afd9ebc4f",
-      "sha256": "9af272864c7f293625d888afc96ea7691c8564131de642e25ce6fc0afd9ebc4f",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "22e4784125b0a1d574dfb4315d2fbdbd643a8b1472a699156d151feb16112dd7",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/core/embedding_runtime.py": {
       "source": "app/core/embedding_runtime.py",
       "source_sha256": "03a61cf6c71c6efa020ca393c4af6e87e0723e2bb378f8da48ded72d19398d7d",
-      "sha256": "03a61cf6c71c6efa020ca393c4af6e87e0723e2bb378f8da48ded72d19398d7d",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "3d7242cfa80cf37533a8c818bc841f7fdb2ce1f720eb6095f732de9249e02e9c",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/core/logger.py": {
       "source": "app/core/logger.py",
       "source_sha256": "4e913ea334893d0b6ec808326271e1340790fe1dcf7376eae575c7f0b8011dc2",
-      "sha256": "4e913ea334893d0b6ec808326271e1340790fe1dcf7376eae575c7f0b8011dc2",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "68ceb0045821cc4940478986e10772029f75d22bedc56221cbd7728b3f0d7df2",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/core/runtime_identity.py": {
       "source": "app/core/runtime_identity.py",
       "source_sha256": "5c53c09b17cb9b4fd5edfbba17019ff45cde308c5bb58bd4eecb0d54d189ac57",
-      "sha256": "5c53c09b17cb9b4fd5edfbba17019ff45cde308c5bb58bd4eecb0d54d189ac57",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "aecaf676a232aa661b99160c567c8bc0975924c6eaf0004dbff8bc1181e22fb2",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/llms/__init__.py": {
       "source": "app/llms/__init__.py",
@@ -240,9 +240,9 @@
     "app/llms/api_clients/openai_api.py": {
       "source": "app/llms/api_clients/openai_api.py",
       "source_sha256": "533ad15e7f2671ab51d206463c093570c1d067560cc5ed862bf263f5ea1722e9",
-      "sha256": "533ad15e7f2671ab51d206463c093570c1d067560cc5ed862bf263f5ea1722e9",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "fe814f22708b8fa49be1ebddb4965b46003550957209a954b15179886a7d74be",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/llms/extraction/__init__.py": {
       "source": "app/llms/extraction/__init__.py",
@@ -251,40 +251,33 @@
       "mode": "byte_exact_copy",
       "reason": "runtime/source"
     },
-    "app/llms/extraction/extract_answer.py": {
-      "source": "app/llms/extraction/extract_answer.py",
-      "source_sha256": "4e8f58f38aeb33b80f09c92a5845d70d2efd932db475366e09dd8fd1dcc2765f",
-      "sha256": "4e8f58f38aeb33b80f09c92a5845d70d2efd932db475366e09dd8fd1dcc2765f",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
-    },
     "app/llms/extraction/extract_tool.py": {
       "source": "app/llms/extraction/extract_tool.py",
       "source_sha256": "0951488cc00caa3d8614fd13cbb26f1d0cea73463f18fa4581e7eb30dfcf9848",
-      "sha256": "0951488cc00caa3d8614fd13cbb26f1d0cea73463f18fa4581e7eb30dfcf9848",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "6bec0e465161059ffdccff1ca2bb1eea93cb3583272d25187ed9a7af199da7bd",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/llms/planning/__init__.py": {
       "source": "app/llms/planning/__init__.py",
       "source_sha256": "2b3c1fed85fa983457d83d9e8f602009be071373426e3f22b17e58f12f505e11",
-      "sha256": "2b3c1fed85fa983457d83d9e8f602009be071373426e3f22b17e58f12f505e11",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "cf548c5b7bcbf9278f9969e51a75b830e98d5aa6930f6002302b7b61ecae825a",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/llms/planning/prompt_templates.py": {
       "source": "app/llms/planning/prompt_templates.py",
       "source_sha256": "0d63526cfc535ad1fad61b54b7d7e23e7dda83fce3a3c687d6579b514a11dc88",
-      "sha256": "0d63526cfc535ad1fad61b54b7d7e23e7dda83fce3a3c687d6579b514a11dc88",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "da6cfd71221447ad24125972dfc742ee950c2b48b85e9b973d3ca13c6b423c38",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/llms/planning/tool_plan_executor.py": {
       "source": "app/llms/planning/tool_plan_executor.py",
       "source_sha256": "842dad8265e02b65af97a9a606101c744a927a1a41dba379bd35329aae574b0f",
-      "sha256": "842dad8265e02b65af97a9a606101c744a927a1a41dba379bd35329aae574b0f",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "db3dda1d9ac9a0c4e60560833af69e0f6718739b305b2eaa6a2c83ffb014fa3e",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/__init__.py": {
       "source": "app/tools/__init__.py",
@@ -296,51 +289,51 @@
     "app/tools/fasta_input_parser.py": {
       "source": "app/tools/fasta_input_parser.py",
       "source_sha256": "676b07820c297ecff20c87a2307a8e392fc80c0754e0fdd076a41fc22f594a94",
-      "sha256": "676b07820c297ecff20c87a2307a8e392fc80c0754e0fdd076a41fc22f594a94",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "65a7ed40a0af0d9a44a0bf84009cd451a4047576728ab288c4f97d3fed09d4fd",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/request_guard.py": {
       "source": "app/tools/request_guard.py",
       "source_sha256": "b0d78d3819d3c6cf825a776d7aeea2891b1b4996a4dd750989a93a6bc7e022f9",
-      "sha256": "b0d78d3819d3c6cf825a776d7aeea2891b1b4996a4dd750989a93a6bc7e022f9",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "4b5a7db7a39349b09fda1df2a68f7b84a629124a19e43e1438b1c730af6af583",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/safety/__init__.py": {
       "source": "app/tools/safety/__init__.py",
       "source_sha256": "350963cbb31969d03d93893ff6c636e38d34b8965c44488dcb5634593b88f825",
-      "sha256": "350963cbb31969d03d93893ff6c636e38d34b8965c44488dcb5634593b88f825",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "1d8590f268ec715f4019ec4c7845e9582dc2083d6d0c74ced2b09f0c58dee28d",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/safety/toxicity_checker.py": {
       "source": "app/tools/safety/toxicity_checker.py",
       "source_sha256": "af4dfd28c7c57719cf81c326f750a467fcfb1a0239f21a6f147901d4b93207f0",
-      "sha256": "af4dfd28c7c57719cf81c326f750a467fcfb1a0239f21a6f147901d4b93207f0",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "68379a87a0210d305a7f0d29bebe6c56dfbe27b3dd107d8cbf42cfa152991e93",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/safety/utils.py": {
       "source": "app/tools/safety/utils.py",
       "source_sha256": "d10da1230f9cd71405223fbad245532b6f8daa8aa92304145546f9562dd11bb0",
-      "sha256": "d10da1230f9cd71405223fbad245532b6f8daa8aa92304145546f9562dd11bb0",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "9245e97d821b4d5e5941dd0c636aa67dcc4bc9b334a4af9a29c999e58007e628",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/tool_parameters.py": {
       "source": "app/tools/tool_parameters.py",
       "source_sha256": "c911ca0f39ffeea22908bd545acbe2161998b3c74878c4652c09d0ff51b3d548",
-      "sha256": "c911ca0f39ffeea22908bd545acbe2161998b3c74878c4652c09d0ff51b3d548",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "d1a526e77bdc7ddaa0ef3048f39834a42bb69e7298e7e5a3e00953a10e5402cb",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "app/tools/tool_runner.py": {
       "source": "app/tools/tool_runner.py",
       "source_sha256": "da004695b162e52f887a6c44ed2a5f429b43dbbd81bbe6e8a9fa72afb9e8e5e0",
-      "sha256": "da004695b162e52f887a6c44ed2a5f429b43dbbd81bbe6e8a9fa72afb9e8e5e0",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "c7054e277b3da78fe5fcd4b0546cca12333048ac54914b85d7a43636587a1e0b",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "data/README.md": {
       "source": "generated by scripts/export_open_source_release.py or release assets",
@@ -365,9 +358,9 @@
     "docs/BENCHMARK.md": {
       "source": "docs/open_source_release/assets/docs/BENCHMARK.md",
       "source_sha256": "c063052b7baa6a01dbe9c4c1a8c139e3ee634743836a2aa91b3ce1a5131460b9",
-      "sha256": "c063052b7baa6a01dbe9c4c1a8c139e3ee634743836a2aa91b3ce1a5131460b9",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "706a6fc613ec347c598454626607a2444fc8fe74fad95850ced40e10e1641474",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "docs/DATA_SOURCES.md": {
       "source": "docs/open_source_release/assets/docs/DATA_SOURCES.md",
@@ -379,16 +372,9 @@
     "docs/EXTERNAL_BASELINES_FORMAL_SCORING_V2_ZH.md": {
       "source": "docs/EXTERNAL_BASELINES_FORMAL_SCORING_V2_ZH.md",
       "source_sha256": "3b9c41e0948061cf8f1b10d8cef1714ee3f210578af86189bfab27cacc125126",
-      "sha256": "3b9c41e0948061cf8f1b10d8cef1714ee3f210578af86189bfab27cacc125126",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
-    },
-    "docs/EXTERNAL_BASELINES_MANUSCRIPT_ALIGNED_SCORING_20261003_ZH.md": {
-      "source": "docs/EXTERNAL_BASELINES_MANUSCRIPT_ALIGNED_SCORING_20261003_ZH.md",
-      "source_sha256": "a62373c065e20107d403dabc645934da0d768a6e3bfbc8373c2fdf69abb4e407",
-      "sha256": "a62373c065e20107d403dabc645934da0d768a6e3bfbc8373c2fdf69abb4e407",
-      "mode": "byte_exact_copy",
-      "reason": "source snapshot or published scoring protocol"
+      "sha256": "de7531b99b112a7d15101589e584c09aa4417d2fcce3c226f6b70a0ef46aaf8d",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "docs/INSTALLATION.md": {
       "source": "docs/open_source_release/assets/docs/INSTALLATION.md",
@@ -400,9 +386,9 @@
     "docs/RELEASE.md": {
       "source": "docs/open_source_release/assets/docs/RELEASE.md",
       "source_sha256": "ed8035cad377ebd9565b5c6c52f9978d950c582c119cc43679b8a69bb0ec8388",
-      "sha256": "979c6fef9045d392233d6ae6836e66f3c7705bdf628634806564faa215d6fdb6",
+      "sha256": "5e6bb7e73ae29335fc6c99b89b5c2e644d09d17c97c57651293d1b3a2b601cc4",
       "mode": "public_maintenance",
-      "reason": "public documentation/portable entry point"
+      "reason": "reviewed source documentation and release maintenance"
     },
     "docs/RELEASE_NOTES_v0.1.0.md": {
       "source": "public repository",
@@ -413,9 +399,15 @@
     "docs/REPRODUCIBILITY.md": {
       "source": "docs/open_source_release/assets/docs/REPRODUCIBILITY.md",
       "source_sha256": "ce01aedabbeffac64853c8efa60f1106fd8f4f57e5fe71b3bb578d94cac01b11",
-      "sha256": "ce01aedabbeffac64853c8efa60f1106fd8f4f57e5fe71b3bb578d94cac01b11",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "3534be06fb5b715267a09bf6d0d45ce08bb99b1afb558f5923a708818a65399b",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
+    },
+    "docs/SCORING.md": {
+      "source": "public repository",
+      "mode": "public_maintenance",
+      "reason": "public maintenance",
+      "sha256": "df04493d2dccc64ce58395abeab19d0d04e8a1faadd6b2bfe667d41b9a45e636"
     },
     "docs/THIRD_PARTY_NOTICES.md": {
       "source": "public repository",
@@ -1465,19 +1457,23 @@
       "mode": "byte_exact_copy",
       "reason": "public documentation/portable entry point"
     },
-    "reproduction/plotting/fig_results_selected_style.py": {
-      "source": "scripts/fig_results_selected_style.py",
-      "source_sha256": "c26e68898a62d7cdfade157513149d89ed4ff364f3d874e08d01e8903b8f10df",
-      "sha256": "c26e68898a62d7cdfade157513149d89ed4ff364f3d874e08d01e8903b8f10df",
-      "mode": "byte_exact_copy",
-      "reason": "original result rendering source; wrapper replaces local file-export checks"
+    "reproduction/README.md": {
+      "source": "public repository",
+      "mode": "public_maintenance",
+      "reason": "public maintenance",
+      "sha256": "c03c08c45292c4d436a7d24e4188ce81f302041869dad59879dff7a6ecced45a"
     },
-    "reproduction/plotting/fig_results_unified_style.py": {
-      "source": "scripts/fig_results_unified_style.py",
-      "source_sha256": "17f907d9e794c59aa1407eb47e50ef900c776a9138bf831fa2451abcfebe525a",
-      "sha256": "17f907d9e794c59aa1407eb47e50ef900c776a9138bf831fa2451abcfebe525a",
-      "mode": "byte_exact_copy",
-      "reason": "original result rendering source; wrapper replaces local file-export checks"
+    "reproduction/frozen_source.zip": {
+      "source": "b0dfd55f90a72a5cb3ee1385105191fd68ab979e",
+      "mode": "frozen_source_snapshot",
+      "reason": "original bytes of all 93 external-freeze source entries",
+      "sha256": "c9aa83fb559fbcd30ddfdff336c744f6c26e7b35d588137ec842b5c4e15201d4"
+    },
+    "reproduction/plotting/results.py": {
+      "source": "public repository",
+      "mode": "public_maintenance",
+      "reason": "public maintenance",
+      "sha256": "b1cc2ce0b5af16087ca2d22d210f78573b090cb47aa8c8868efe6f0cdadb47d1"
     },
     "requirements-agent.txt": {
       "source": "generated by scripts/export_open_source_release.py or release assets",
@@ -1750,9 +1746,9 @@
     "scripts/analyze_biotooleval.py": {
       "source": "scripts/analyze_biotooleval.py",
       "source_sha256": "e566c3cc74ca50a0e0ee0add812c13c7188a15d7f2fc3ef4a1fc73f54a7f0db0",
-      "sha256": "e566c3cc74ca50a0e0ee0add812c13c7188a15d7f2fc3ef4a1fc73f54a7f0db0",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "c544eddaf23c0893887bf5554f2d891e89ffbd7dee9b76ed827c935c3b9263d6",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/analyze_external_experiment.py": {
       "source": "scripts/analyze_external_experiment.py",
@@ -1764,51 +1760,51 @@
     "scripts/analyze_external_operational.py": {
       "source": "scripts/analyze_external_operational.py",
       "source_sha256": "1c079d85d3b86b0f7379e03d4865bb206d33d8a2b27582bffeb20b5e6d596783",
-      "sha256": "1c079d85d3b86b0f7379e03d4865bb206d33d8a2b27582bffeb20b5e6d596783",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "5f513acd48503bd92df74e04d59658abb5be273d262d7c008fbfb555f47ea313",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/analyze_factorial_biotooleval.py": {
       "source": "scripts/analyze_factorial_biotooleval.py",
       "source_sha256": "4d15b5a6e148d29d176f2f4e3f19304e68effd42c9bc2eaa0e1e509a5d1a6d96",
-      "sha256": "4d15b5a6e148d29d176f2f4e3f19304e68effd42c9bc2eaa0e1e509a5d1a6d96",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "8bd423d70176dfdd47fa9874c5d92ada2a4f04e40de18cfae30183dafdc681a6",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/analyze_gate3_primary_fast.py": {
       "source": "scripts/analyze_gate3_primary_fast.py",
       "source_sha256": "abab1d4ecbbd744d9fd68b733f5a64eb4982c2b2365a6fd0b2320d02dc137d97",
-      "sha256": "abab1d4ecbbd744d9fd68b733f5a64eb4982c2b2365a6fd0b2320d02dc137d97",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "01c5ca24f720e06b99dc0b04fb55c2703db184a1d0fe283ea9cb150a6d577d9d",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/analyze_hybrid_biotooleval.py": {
       "source": "scripts/analyze_hybrid_biotooleval.py",
       "source_sha256": "30e68bf151fdc4ab66aaaf5f834f0a3ea200a004f57875065aa97ce17f72cdcb",
-      "sha256": "30e68bf151fdc4ab66aaaf5f834f0a3ea200a004f57875065aa97ce17f72cdcb",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "62a8669a9ebf659dcb35bc6ecb99e7faf3fc51e214dfb40d8c3a205b43e093d0",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/artifact_pool.py": {
       "source": "scripts/artifact_pool.py",
       "source_sha256": "572cca00242c436c1b7ca51839d8a9957b169548928e7677b9c46d2a771b78a1",
-      "sha256": "572cca00242c436c1b7ca51839d8a9957b169548928e7677b9c46d2a771b78a1",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "d06fa5e4c96bf14b067fa2ac1142235743b60de44483092c8256bdd7662bd870",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/baseline_audit.py": {
       "source": "scripts/baseline_audit.py",
       "source_sha256": "5d58f301a4b6cdafc2c0ea5f6fb3ad4ffceb0c06b00a5900f0fe7b0a057a0db7",
-      "sha256": "5d58f301a4b6cdafc2c0ea5f6fb3ad4ffceb0c06b00a5900f0fe7b0a057a0db7",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "9f35489f18599e024b8a01e16b2847204480acad85b31a0cb1b3c5bcfdbae186",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/baseline_strategies.py": {
       "source": "scripts/baseline_strategies.py",
       "source_sha256": "98f8fd12ff1e56167874b96950ed2a376e77a53546e485093b1c59fd3ad6f88c",
-      "sha256": "98f8fd12ff1e56167874b96950ed2a376e77a53546e485093b1c59fd3ad6f88c",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "8c95f58aecc8f03438afde28d31fbdeae5789214f07908a67bb07ea3d9bdac70",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/build_release_archive.py": {
       "source": "docs/open_source_release/assets/scripts/build_release_archive.py",
@@ -1827,44 +1823,44 @@
     "scripts/controlled_repair_v2_runtime.py": {
       "source": "scripts/controlled_repair_v2_runtime.py",
       "source_sha256": "cba4825c8e67804a97f9be41f1898b6c346c375151722f827569fb536393830e",
-      "sha256": "cba4825c8e67804a97f9be41f1898b6c346c375151722f827569fb536393830e",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "346a985ae61eeff02d5a21230ef2f3f465eee2471596c4495dbcb30803f91fed",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/custom_kg_retrievers.py": {
       "source": "scripts/custom_kg_retrievers.py",
       "source_sha256": "08169c6b1eb25a3162de1dff1637f14db7d3b8fd41de81b9c2f363a102b61fcc",
-      "sha256": "08169c6b1eb25a3162de1dff1637f14db7d3b8fd41de81b9c2f363a102b61fcc",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "dabf6296c4934e6e48b4e36e0381ec26780461aa51d544a916eada7812351910",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/enrich_review_queue.py": {
       "source": "scripts/enrich_review_queue.py",
       "source_sha256": "6bd13bf166605310285c54f97c15e1e594428e1bb4f865bf130e567e1656ff84",
-      "sha256": "6bd13bf166605310285c54f97c15e1e594428e1bb4f865bf130e567e1656ff84",
-      "mode": "byte_exact_copy",
-      "reason": "static local-import closure of selected runtime/tests"
+      "sha256": "92a605fe46b3abc72a431d12e393b38a2c297c236f8a3970c9059c448de5b4f2",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/evaluation_metrics.py": {
       "source": "scripts/evaluation_metrics.py",
       "source_sha256": "09e6e9307b5ff6d546952829d9a368fa8665df62c354b05e12f604b981ec87fb",
-      "sha256": "09e6e9307b5ff6d546952829d9a368fa8665df62c354b05e12f604b981ec87fb",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "34cdf66450f1cc394a8512c4acdbbc747808a2aad44c6d086d16ed6b654510ae",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/evaluation_scoring.py": {
       "source": "scripts/evaluation_scoring.py",
       "source_sha256": "ce74a4b9592edfe1277550cf7d1e7111ecb119ac87b02691009b6cb03406221d",
-      "sha256": "ce74a4b9592edfe1277550cf7d1e7111ecb119ac87b02691009b6cb03406221d",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "03851e7c3565dbe8f420b0fcdeb925d4346c040235491ba183b22a4759820d62",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/evaluation_trace.py": {
       "source": "scripts/evaluation_trace.py",
       "source_sha256": "4a5c462d79e03f518db190f78abae9fd0866864791c51cdce653197e4fa77aa1",
-      "sha256": "4a5c462d79e03f518db190f78abae9fd0866864791c51cdce653197e4fa77aa1",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "ccb0617b547d743640e87471b56dd906126f2778443f1aee6e669a4b4c310512",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/__init__.py": {
       "source": "scripts/external_baselines/__init__.py",
@@ -1876,9 +1872,9 @@
     "scripts/external_baselines/audit.py": {
       "source": "scripts/external_baselines/audit.py",
       "source_sha256": "7cd3503005d1b6f172c2f6501b69f75943e2b2cb3de1aa1f097e17d834d18bd0",
-      "sha256": "7cd3503005d1b6f172c2f6501b69f75943e2b2cb3de1aa1f097e17d834d18bd0",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "372aec6e1871702725287cb881f8f2c126c7b7f842b42e68ce8bae0d461e07f8",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/biomni.py": {
       "source": "scripts/external_baselines/biomni.py",
@@ -1911,23 +1907,23 @@
     "scripts/external_baselines/codeact_upstream.py": {
       "source": "scripts/external_baselines/codeact_upstream.py",
       "source_sha256": "d304095d2bed39ebc10fe90f082e39932e8d0d70e29d6e64003ceb2d2b2046e2",
-      "sha256": "d304095d2bed39ebc10fe90f082e39932e8d0d70e29d6e64003ceb2d2b2046e2",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "b89b7d41d9ec358a28b67395def628301bfd65dbe944d21be02110ebc1a3a7fb",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/codeact_worker.py": {
       "source": "scripts/external_baselines/codeact_worker.py",
       "source_sha256": "c091b273d2b931dabeae6eeb29176df29e86021e61b19610f3dfc8580aa515ca",
-      "sha256": "c091b273d2b931dabeae6eeb29176df29e86021e61b19610f3dfc8580aa515ca",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "cddf1a98b7271e2d3fd6cb948e5a7bb1c4834e37e78687fcf44dbdc4a0629be5",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/common.py": {
       "source": "scripts/external_baselines/common.py",
       "source_sha256": "984d2b964b31c49a0c018d44dac42eb28259491def189d1066a181526acf3a83",
-      "sha256": "984d2b964b31c49a0c018d44dac42eb28259491def189d1066a181526acf3a83",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "c4310b94d8810a580b34c01e2c7c6144caf419de906b3610f3691e410eebb958",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/experiment.py": {
       "source": "scripts/external_baselines/experiment.py",
@@ -1960,9 +1956,9 @@
     "scripts/external_baselines/react.py": {
       "source": "scripts/external_baselines/react.py",
       "source_sha256": "6a43cdd412ea61d91f2aacf8f1278a4bb7041c17793beffc924a92c77cbe6eda",
-      "sha256": "6a43cdd412ea61d91f2aacf8f1278a4bb7041c17793beffc924a92c77cbe6eda",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "db4c38c021069209a80b27fd42f83945efc11c505c5aa29d3dcfd4f93ec4e6dd",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/resource_control.py": {
       "source": "scripts/external_baselines/resource_control.py",
@@ -1974,23 +1970,23 @@
     "scripts/external_baselines/scitoolagent.py": {
       "source": "scripts/external_baselines/scitoolagent.py",
       "source_sha256": "1361cf00b909264b7b76827fff6f0091f930d342a639366d78cf572509534c4e",
-      "sha256": "1361cf00b909264b7b76827fff6f0091f930d342a639366d78cf572509534c4e",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "12d9346f316aefda56ab2cb601d55c9edb4c5bfbe664efa023fe6b8e204f8f36",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/scitoolagent_upstream.py": {
       "source": "scripts/external_baselines/scitoolagent_upstream.py",
       "source_sha256": "ece25b524a839d80c2e4b62b805911144bc9a6779493f2cbd26c283b1ef93874",
-      "sha256": "ece25b524a839d80c2e4b62b805911144bc9a6779493f2cbd26c283b1ef93874",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "159efd6615ab8f63df6ed9f5e6481d74dba77509b4aa7dd6c2f60ca714729ffc",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/scoring.py": {
       "source": "scripts/external_baselines/scoring.py",
       "source_sha256": "c785bfd142b1f4f03319f61dbd1ff0441551b7423dff3b0ca1b7bed093d08998",
-      "sha256": "c785bfd142b1f4f03319f61dbd1ff0441551b7423dff3b0ca1b7bed093d08998",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "3732c0a44b0a78ba1e25a54a312b5565870f0db6184102df6ed2fe1649b9bff7",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/external_baselines/scoring_v2.py": {
       "source": "scripts/external_baselines/scoring_v2.py",
@@ -2009,23 +2005,23 @@
     "scripts/fix_my_index.py": {
       "source": "scripts/fix_my_index.py",
       "source_sha256": "ee7a1c292843e335bcfd3cc36deb29df10377df1e5b8df4f33e5d53f8d3d8373",
-      "sha256": "ee7a1c292843e335bcfd3cc36deb29df10377df1e5b8df4f33e5d53f8d3d8373",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "c8c960754a619d2343d916dd865a86fecb17bdc2ba3219a40213d075b3bb5dfb",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/hierarchical_recovery.py": {
       "source": "scripts/hierarchical_recovery.py",
       "source_sha256": "05f42685f3b7d1bcdb552b57e230c3a7ea5fe41b5e6f42edc453c4aa55507b5b",
-      "sha256": "05f42685f3b7d1bcdb552b57e230c3a7ea5fe41b5e6f42edc453c4aa55507b5b",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "88b7187460b0c10f80c576b86e7c6469c52196b09257710f40cc35dc1bfd1df9",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/initial_artifacts.py": {
       "source": "scripts/initial_artifacts.py",
       "source_sha256": "f12b4ac0688020d5aadfbab9cea9aac559cbe4842580b14d5a4e075aed8a3330",
-      "sha256": "f12b4ac0688020d5aadfbab9cea9aac559cbe4842580b14d5a4e075aed8a3330",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "63cda0f2b0d9d5f48d616eeebcbb89ce13f199a2c3402852bf444f6ce6631940",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/paper_identity_probe.py": {
       "source": "scripts/paper_identity_probe.py",
@@ -2037,9 +2033,9 @@
     "scripts/plan_sampling.py": {
       "source": "scripts/plan_sampling.py",
       "source_sha256": "9237582fa27ab9f5a2db11d1f21e6d99a2fc06fd78a0c90caaa5614a8ede44d9",
-      "sha256": "9237582fa27ab9f5a2db11d1f21e6d99a2fc06fd78a0c90caaa5614a8ede44d9",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "017d2c8c1ca006a5e906c3b7e97c8612ce3745084731bc49e88820688587cf43",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/prepare_external_resource_repair.py": {
       "source": "scripts/prepare_external_resource_repair.py",
@@ -2051,51 +2047,51 @@
     "scripts/r3_environment_preflight.py": {
       "source": "scripts/r3_environment_preflight.py",
       "source_sha256": "6184589ae72e4136a9aa2e9d946b545f2f7a9a0ecaab7373760037dadfc4e76e",
-      "sha256": "6184589ae72e4136a9aa2e9d946b545f2f7a9a0ecaab7373760037dadfc4e76e",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "cde050c0c02aea1e2742701a58d5f8d4cf825a09f3eb74010f3137acadce3358",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/reproduce_paper_results.py": {
       "source": "docs/open_source_release/assets/scripts/reproduce_paper_results.py",
       "source_sha256": "96dac625f9d9f348e32d0b7e4b19d2409d251a5e0f2d89fdb57b5fa114efbd68",
-      "sha256": "96dac625f9d9f348e32d0b7e4b19d2409d251a5e0f2d89fdb57b5fa114efbd68",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "7db4df0e2bb161bda67d8159f85acf8e5bc29772428b3358410e34098a76e5cd",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/retrieve_tool_info.py": {
       "source": "scripts/retrieve_tool_info.py",
       "source_sha256": "2e8bb4bcb6504797a43929941930502dabe6a67a933f4f54b8e720f2934ac4da",
-      "sha256": "2e8bb4bcb6504797a43929941930502dabe6a67a933f4f54b8e720f2934ac4da",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "3f3bde9b8cecd051e6c61262260aec85f7b981d7ce7fc10aa21a4b3dfc57201b",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/run_biotooleval.py": {
       "source": "scripts/run_biotooleval.py",
       "source_sha256": "59e1774017480be19ded69b483483818b52a552f5190544d492eaf1b4579f3b2",
-      "sha256": "59e1774017480be19ded69b483483818b52a552f5190544d492eaf1b4579f3b2",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "8c94fc497fe556745d5242a7f3295e18db40b6118db5840e8e09c9c59a39b84b",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/run_controlled_repair.py": {
       "source": "scripts/run_controlled_repair.py",
       "source_sha256": "dca487a0415bde4cf98fcd59d115d853a0ac4fc3ec9a70dd23a890889ac76383",
-      "sha256": "dca487a0415bde4cf98fcd59d115d853a0ac4fc3ec9a70dd23a890889ac76383",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "ac8060c9438ee4691812b1a4a71423198cc17129d6ab40cbe5a2b1947c205127",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/run_controlled_repair_v2.py": {
       "source": "scripts/run_controlled_repair_v2.py",
       "source_sha256": "71c08eecaa087085be2e326596b0edb2352614e70e6e2bd1da0f7b9475f2ac56",
-      "sha256": "71c08eecaa087085be2e326596b0edb2352614e70e6e2bd1da0f7b9475f2ac56",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "8a698c025e01d6bafa5808b0ed933b51903c2a6dd8121c5badd6ce79302f2ff0",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/run_external_baselines.py": {
       "source": "scripts/run_external_baselines.py",
       "source_sha256": "322e09fe1675915d8682b18ba104ce4ea93481528d73380b0c4caa411334d2e7",
-      "sha256": "322e09fe1675915d8682b18ba104ce4ea93481528d73380b0c4caa411334d2e7",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "8e3fe95a2501195f2cde50e7f0bb8e7b8497e157c7f16724b912590d5973f8c6",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/run_external_calibration.py": {
       "source": "scripts/run_external_calibration.py",
@@ -2114,9 +2110,9 @@
     "scripts/run_release_tests.py": {
       "source": "docs/open_source_release/assets/scripts/run_release_tests.py",
       "source_sha256": "90bacc6c56991a18d6cba32fb0a094a60dcdbe50be9160e06b01d90e62eaa638",
-      "sha256": "b0916e24f3a5579cc46ba8be1ed6129995d616e26f4ff7cc6e9ffa6cf486aca3",
+      "sha256": "cb2cbd6a66065558ef7d67653a312e503260b6394520fbe42dce3bd3eca1fe9e",
       "mode": "public_maintenance",
-      "reason": "public documentation/portable entry point"
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/score_external_baselines.py": {
       "source": "scripts/score_external_baselines.py",
@@ -2142,9 +2138,15 @@
     "scripts/score_gate3_structured_v2.py": {
       "source": "scripts/score_gate3_structured_v2.py",
       "source_sha256": "8dffe6d753b8d907df43f88333383e506a9bc4802e295cbdb8552d548cd98c44",
-      "sha256": "8dffe6d753b8d907df43f88333383e506a9bc4802e295cbdb8552d548cd98c44",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "0bee2435caf36eba59ad0eeb08a2b3e06c97d3a7beb3a6b84f3e8dd0ca590e07",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
+    },
+    "scripts/source_provenance.py": {
+      "source": "public repository",
+      "mode": "public_maintenance",
+      "reason": "public maintenance",
+      "sha256": "24e6233585a37abf7da71619e293fe55299f4ba6c96f9bddd077059d57d0b161"
     },
     "scripts/start_agent.py": {
       "source": "docs/open_source_release/assets/scripts/start_agent.py",
@@ -2163,64 +2165,64 @@
     "scripts/structured_plan.py": {
       "source": "scripts/structured_plan.py",
       "source_sha256": "928fe7ff26feebf0085dbe977896e544acbf669f68b426912348e4611b88ddc0",
-      "sha256": "928fe7ff26feebf0085dbe977896e544acbf669f68b426912348e4611b88ddc0",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "42b300008c8db21fed47655bf3a6b8fbe544361d3ffc622cef863693f67595cc",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/type_checker.py": {
       "source": "scripts/type_checker.py",
       "source_sha256": "ae2800b92c8d5c51401c8d19861029e05a0dadd91078fa22ae80d04ecdfe7fd0",
-      "sha256": "ae2800b92c8d5c51401c8d19861029e05a0dadd91078fa22ae80d04ecdfe7fd0",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "82e6a13207d36aa6ba08583f12579a5939498057d6d3db30cb70110d85abc0a4",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/typed_executor.py": {
       "source": "scripts/typed_executor.py",
       "source_sha256": "32f295f505201d030873924f3b74db538daa0d5bd48a7aa7f2d3692ada7312da",
-      "sha256": "32f295f505201d030873924f3b74db538daa0d5bd48a7aa7f2d3692ada7312da",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "76864e2717efbbf11fc0e6f27fd1c13b032c1fdd45705de04ceed2685877652a",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/typed_planning_runtime.py": {
       "source": "scripts/typed_planning_runtime.py",
       "source_sha256": "a53fae66d6001ba5a9972a57c3f9912cf4e995e0c0a423b9de8c8ab9b2573dde",
-      "sha256": "a53fae66d6001ba5a9972a57c3f9912cf4e995e0c0a423b9de8c8ab9b2573dde",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "749b27e06eec09b93d4fdc8906bb07819afdb3f942995b74d1a6f592f732c437",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/update_release_manifest.py": {
       "source": "public repository",
       "mode": "public_maintenance",
-      "reason": "public documentation, maintenance or regression test",
-      "sha256": "209747ae91589779c2b23f13d47c50a1335edf8cfd1443b322a464380685378a"
+      "reason": "reviewed source documentation and release maintenance",
+      "sha256": "c24ddc30f94a572224e4d391bf151f7d13b3ec085384528b743cb0297adca24f"
     },
     "scripts/utils.py": {
       "source": "scripts/utils.py",
       "source_sha256": "76c4484000562b462931b48a5ac108b1ce7a8b794af5014c27d3248252529509",
-      "sha256": "76c4484000562b462931b48a5ac108b1ce7a8b794af5014c27d3248252529509",
-      "mode": "byte_exact_copy",
-      "reason": "historical frozen execution/scoring source"
+      "sha256": "5d4abd1312ce805d0f1f6335edcfd4d63d53c17d4a0db9a7131acf7ef7e5a0e4",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/validate_biotooleval_dataset.py": {
       "source": "scripts/validate_biotooleval_dataset.py",
       "source_sha256": "65160d251f520aaa5351f9f48a0596d11ac0bb2fbe3c54175df14ff4d30da21c",
-      "sha256": "65160d251f520aaa5351f9f48a0596d11ac0bb2fbe3c54175df14ff4d30da21c",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "1dbc47def5240c1273048be06ccd1ace0b4c52f94c257590a4e9891e9998a146",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/validate_biotooleval_test150_v5_3.py": {
       "source": "scripts/validate_biotooleval_test150_v5_3.py",
       "source_sha256": "2500e5efa8f8a949455c9f05975f35929388ff08a0dac69deec233aa6d3a8344",
-      "sha256": "2500e5efa8f8a949455c9f05975f35929388ff08a0dac69deec233aa6d3a8344",
-      "mode": "byte_exact_copy",
-      "reason": "runtime/source"
+      "sha256": "98d6a4dd950f83b321fe3b427137e24f0db69af7122b44400ee4d901d643399f",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "scripts/verify_release_assets.py": {
       "source": "docs/open_source_release/assets/scripts/verify_release_assets.py",
       "source_sha256": "d3498b857cfb06b614ee00ed9ca8063114ed359f59e8c201e6be752c84ab428a",
-      "sha256": "d3498b857cfb06b614ee00ed9ca8063114ed359f59e8c201e6be752c84ab428a",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "3641144de4275de3fa7d1f71a3ce115f5e810459141ce0f79677b936b2bf3395",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/fixtures/biotooleval_dry_run.json": {
       "source": "tests/fixtures/biotooleval_dry_run.json",
@@ -2267,9 +2269,9 @@
     "tests/test_artifact_pool.py": {
       "source": "tests/test_artifact_pool.py",
       "source_sha256": "93024db765d8403228296ce02ffb2152e8afc276243ed596d875b6cd6ce054c0",
-      "sha256": "93024db765d8403228296ce02ffb2152e8afc276243ed596d875b6cd6ce054c0",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "00a6ce1ba3b7ce1931824bdbe0681c5131de717743d3a8a44a0a7e32618b8a82",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_biomni_adapter.py": {
       "source": "tests/test_biomni_adapter.py",
@@ -2288,44 +2290,44 @@
     "tests/test_controlled_repair.py": {
       "source": "tests/test_controlled_repair.py",
       "source_sha256": "f7eea7ba53b78373493b5c634741a771dab8f21c1de303824b459dc5c7601945",
-      "sha256": "f7eea7ba53b78373493b5c634741a771dab8f21c1de303824b459dc5c7601945",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "8fb7bb7f3666ee11ae662d23ff087bb466078da2f7ee073967b74f10e118fc0a",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_controlled_repair_v2.py": {
       "source": "tests/test_controlled_repair_v2.py",
       "source_sha256": "6561de5d52bc0e02181b90cda66e2d68f6abe2a40d36b09805295f3ccd604317",
-      "sha256": "6561de5d52bc0e02181b90cda66e2d68f6abe2a40d36b09805295f3ccd604317",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "5042517fa14c6ac4621a0dd73fc2c4a30e64e81388441265ec6a25a86ad0aeca",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_embedding_runtime.py": {
       "source": "tests/test_embedding_runtime.py",
       "source_sha256": "e140ca980ce70bb010fcf3efeeb91f3384c76c029a0881fb6c3d93b6eef7c286",
-      "sha256": "e140ca980ce70bb010fcf3efeeb91f3384c76c029a0881fb6c3d93b6eef7c286",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "736e1dfa1b1ffd5dadfe2d6edd7956ba4d86a5f50f4679b0cb29f17fde3ab4a7",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_evaluation_metrics.py": {
       "source": "tests/test_evaluation_metrics.py",
       "source_sha256": "f0841913a9b18249ca3263eacf829205e7222d258c0bbb207c85a7f5c7a52bd8",
-      "sha256": "f0841913a9b18249ca3263eacf829205e7222d258c0bbb207c85a7f5c7a52bd8",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "970bac254dc251e9eaa2a0da97d512f958b8c52f00104519d287355a1004d95d",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_evaluation_scoring.py": {
       "source": "tests/test_evaluation_scoring.py",
       "source_sha256": "dd32ba42c2c7ede02b3113f5f41af9f826ed119e03694f48d4931f3dabaf6709",
-      "sha256": "dd32ba42c2c7ede02b3113f5f41af9f826ed119e03694f48d4931f3dabaf6709",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "0cf84901363c4e225e44e4109953271e5c12e6b51d98fdf090e927289902f8b0",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_evaluation_trace.py": {
       "source": "tests/test_evaluation_trace.py",
       "source_sha256": "1f315f5b759ace8250a94f8c64c674fca8c0b7fbab60429c98bef26dde8d1423",
-      "sha256": "1f315f5b759ace8250a94f8c64c674fca8c0b7fbab60429c98bef26dde8d1423",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "d7a8657d28f9f1a6ba466c528e1be63490fc01886119fef70dc3c70faf9de8ed",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_external_baselines.py": {
       "source": "tests/test_external_baselines.py",
@@ -2344,9 +2346,9 @@
     "tests/test_external_operational_analysis.py": {
       "source": "tests/test_external_operational_analysis.py",
       "source_sha256": "d22da9e280215e9c885f4b6978bd9b728a30246af29fe6f4b2f47add3f7d46d7",
-      "sha256": "d22da9e280215e9c885f4b6978bd9b728a30246af29fe6f4b2f47add3f7d46d7",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "a17259cf4e37ee29ab7979f6bb195ebed3757da608a840dd5080302e5b2f29f2",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_external_resources.py": {
       "source": "tests/test_external_resources.py",
@@ -2372,37 +2374,37 @@
     "tests/test_fasta_analysis.py": {
       "source": "tests/test_fasta_analysis.py",
       "source_sha256": "04527d849574527958c45d318b77f6895669047cc9e4cd5970868d530859a5ee",
-      "sha256": "04527d849574527958c45d318b77f6895669047cc9e4cd5970868d530859a5ee",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "a53c69f98e1f54748abe45caf5b738d8b49e10796c3ae87ce677125f67e30c0c",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_hierarchical_recovery.py": {
       "source": "tests/test_hierarchical_recovery.py",
       "source_sha256": "3b32321fcd5402b6daa59e267f7275c4891cd84258b00463baff52fe8096f0d7",
-      "sha256": "3b32321fcd5402b6daa59e267f7275c4891cd84258b00463baff52fe8096f0d7",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "76816c5ee4a1e061f077312e5f7e60142e3b144b3c917a1833b6cd4a22507628",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_initial_artifacts.py": {
       "source": "tests/test_initial_artifacts.py",
       "source_sha256": "d203a49412f87771e2dad92aa586e3f0a80caa5a2de3477b316090d9a2a50f42",
-      "sha256": "d203a49412f87771e2dad92aa586e3f0a80caa5a2de3477b316090d9a2a50f42",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "05be7eff8114fb5f23ff22d78a63a7fcc8be6a82031ed0004fbdd6c3e26c3d9c",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_llm_client.py": {
       "source": "tests/test_llm_client.py",
       "source_sha256": "e35e1b7cafda6e3840c76a3e1951b6b6c4b8f1d408b7ef53819f602bb01ddabb",
-      "sha256": "e35e1b7cafda6e3840c76a3e1951b6b6c4b8f1d408b7ef53819f602bb01ddabb",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "5f334e1337de8d8ed799e21c66810ddbac6e979156c4de9c440ab869781150a7",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_plan_sampling.py": {
       "source": "tests/test_plan_sampling.py",
       "source_sha256": "ef9dd7b39e83da2c3dda298be4ad83a17199e3c1e99502e8efa787ca1adb091b",
-      "sha256": "ef9dd7b39e83da2c3dda298be4ad83a17199e3c1e99502e8efa787ca1adb091b",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "f8c4ae6d48cfa6c233e25b31a7571aa21d8972cfbb7704d2db224628b279a4b0",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_release_entrypoints.py": {
       "source": "docs/open_source_release/assets/tests/test_release_entrypoints.py",
@@ -2424,54 +2426,60 @@
       "mode": "byte_exact_copy",
       "reason": "offline regression test"
     },
+    "tests/test_source_provenance.py": {
+      "source": "public repository",
+      "mode": "public_maintenance",
+      "reason": "public maintenance",
+      "sha256": "20f27e9fec9ca8432e143cd900a48df591737598f88019a900d1e647e0689989"
+    },
     "tests/test_structured_plan.py": {
       "source": "tests/test_structured_plan.py",
       "source_sha256": "6a282e3cebcd8a2d2bc54fdabf6f72706aecacbaa140d71977d8dc29c162a95a",
-      "sha256": "6a282e3cebcd8a2d2bc54fdabf6f72706aecacbaa140d71977d8dc29c162a95a",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "e83f396afef786a3b3772f54b6d23a7a0f25b82b0c1898445083d65d07bf30af",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_tool_parameters.py": {
       "source": "tests/test_tool_parameters.py",
       "source_sha256": "6be83dec0f773c3b91778120c7f80c63c19cbef5652164aa5efb46c5c520da99",
-      "sha256": "6be83dec0f773c3b91778120c7f80c63c19cbef5652164aa5efb46c5c520da99",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "57a0ab715aa6d4553dd73e41dc7607816c9977fae973e61c03f90b9687909772",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_tool_request_guard.py": {
       "source": "tests/test_tool_request_guard.py",
       "source_sha256": "2feea4544e16628050751f825142041cebb6c3c93fc5f9eb78d03845decff790",
-      "sha256": "2feea4544e16628050751f825142041cebb6c3c93fc5f9eb78d03845decff790",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "0603fcfd13913705f8cf84d64494a1204c3e284d9df6d35bd0538c2ed6454f8c",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_topology_v2_tools.py": {
       "source": "tests/test_topology_v2_tools.py",
       "source_sha256": "5fa9c22716b303c558e2e9cec480cc9d58b8c1d64a83e16be52e3b4dada5a9bf",
-      "sha256": "5fa9c22716b303c558e2e9cec480cc9d58b8c1d64a83e16be52e3b4dada5a9bf",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "7e8774538e60a68f45af3a27e12cb0ee59b06c42a02511bf987f5ccfff0e680a",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_type_checker.py": {
       "source": "tests/test_type_checker.py",
       "source_sha256": "1f24d95870771b277d42c4daccf35c96fcd3f28fa3c5be318005b8fc231fdb39",
-      "sha256": "1f24d95870771b277d42c4daccf35c96fcd3f28fa3c5be318005b8fc231fdb39",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "8cea98ceb471cc69b3d9118da99707b008f9d779f0e01593288ad57d6b1fb535",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_typed_executor.py": {
       "source": "tests/test_typed_executor.py",
       "source_sha256": "316b49a6cb40e15a9ab10dc6430e6c02a6d15cfeecd6d1bfbc16f60380b0d5cc",
-      "sha256": "316b49a6cb40e15a9ab10dc6430e6c02a6d15cfeecd6d1bfbc16f60380b0d5cc",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "2530feea0fba110e551ff0fe1883692f784fd07648264ab53744e28155ecacdc",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "tests/test_typed_planning_runtime.py": {
       "source": "tests/test_typed_planning_runtime.py",
       "source_sha256": "6043bec233305b030f3a9a9ad607fc5726022343bd18df615629b6ff04288986",
-      "sha256": "6043bec233305b030f3a9a9ad607fc5726022343bd18df615629b6ff04288986",
-      "mode": "byte_exact_copy",
-      "reason": "offline regression test"
+      "sha256": "435c5e2d38294c6babba394d1c543af341bbce277246be3c24bb78c74d809892",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "third_party/biomni_a1_core/LICENSE": {
       "source": "third_party/biomni_a1_core/LICENSE",
@@ -2553,9 +2561,9 @@
     "third_party/codeact_m3tooleval/README_BIOAGENT.md": {
       "source": "third_party/codeact_m3tooleval/README_BIOAGENT.md",
       "source_sha256": "d930b8cfae12e58d1c8ac8c6694b17fc9cb6a75cdb051b4bbc83a5a79510d558",
-      "sha256": "d930b8cfae12e58d1c8ac8c6694b17fc9cb6a75cdb051b4bbc83a5a79510d558",
-      "mode": "byte_exact_copy",
-      "reason": "official pinned baseline source/license"
+      "sha256": "309ab20a02ecae0a4acf81e436c44daa38b0a32a4be48e18a0ff435bdd7f561c",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     },
     "third_party/codeact_m3tooleval/UPSTREAM.json": {
       "source": "third_party/codeact_m3tooleval/UPSTREAM.json",
@@ -2665,9 +2673,9 @@
     "web_demo.py": {
       "source": "docs/open_source_release/assets/web_demo.py",
       "source_sha256": "52eec6c6c1a289e039c92f23f6a464674070af300ea518eb6b6a50237d603508",
-      "sha256": "52eec6c6c1a289e039c92f23f6a464674070af300ea518eb6b6a50237d603508",
-      "mode": "byte_exact_copy",
-      "reason": "public documentation/portable entry point"
+      "sha256": "1cadc19bd1be775db98a59d725d0410623bfe6de081c4aa91d822158942ba729",
+      "mode": "public_maintenance",
+      "reason": "reviewed source documentation and release maintenance"
     }
   },
   "frozen_methods_modified": false,

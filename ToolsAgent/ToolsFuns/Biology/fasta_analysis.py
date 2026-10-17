@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-单记录Protein FASTA本地解析工具。
-
-修改记录：
-- 2026-07-24：新增单记录Protein FASTA文件解析；严格拒绝多记录、
-  非标准氨基酸、项目目录外路径和超限文件。
-- 2026-08-14：复用fasta_common统一安全边界和错误结构，保留原成功输出
-  契约，避免单记录与多记录工具产生两套校验语义。
-"""
+"""Parse single-record protein FASTA files."""
 
 from __future__ import annotations
 
@@ -39,7 +31,7 @@ MAX_FASTA_FILE_BYTES = Config().MAX_FASTA_UPLOAD_MB * 1024 * 1024
 
 
 def parse_protein_fasta(file_path: Any) -> dict[str, Any]:
-    """解析恰好一条Protein FASTA记录，返回标准氨基酸序列。"""
+    """Read exactly one standard protein FASTA record."""
     try:
         parsed = read_protein_fasta_records(file_path)
         if parsed.get("status") != "success":

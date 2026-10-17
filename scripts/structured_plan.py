@@ -1,23 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent 结构化工具计划适配层。
-
-修改记录：
-- 2026-09-01：空或不可解析计划也保留类型规划、校验与修复开关证据，
-  避免E1/E3自然规划失败被误记为实验条件Trace不一致。
-- 2026-08-27：新增不启用类型门禁的确定性Artifact绑定计划，支持把
-  类型化运行时、类型校验和修复拆成可归因的E1/E2/E3实验因素。
-- 2026-08-15：透传安全剪枝/桥接修复策略与脱敏操作证明，供运行时和实验Trace审计。
-- 2026-07-25：新增v0.2结构化Plan Step、旧Plan Chain确定性适配、
-  保守修复编排、配置开关和统一计划追踪日志。
-- 2026-07-26：由v0.3b协调层接入主链路，模块本身仍保持可独立测试。
-
-设计边界：
-1. 本模块只把已提取的工具名列表转换为显式数据来源，不调用LLM猜测来源；
-2. 输入来源唯一时才生成结构化步骤，多来源歧义必须拒绝；
-3. 可选修复只复用type_checker.py中已验收的确定性桥接或安全剪枝；
-4. v0.3b通过协调层调用本模块；配置关闭时run_SciToolAgent保持baseline。
-"""
+"""Bind tool plans to explicit artifact sources."""
 
 from __future__ import annotations
 
@@ -43,11 +25,7 @@ PLAN_STEP_PREFIX = "step_"
 
 @dataclass(frozen=True)
 class StructuredPlanStep:
-    """可序列化的结构化计划步骤。
-
-    `input_type`始终使用列表，以兼容select_pdb_chain等多输入工具；
-    `input_from`按输入类型记录唯一来源，值为initial_input或step_N。
-    """
+    """A tool step with input types and explicit source references."""
 
     step_id: str
     step_index: int
@@ -58,7 +36,6 @@ class StructuredPlanStep:
     inserted_by_repair: bool = False
 
     def to_dict(self) -> dict[str, Any]:
-        """转换为可写入JSON和日志的字典；失败时返回标准错误结构。"""
         try:
             return asdict(self)
         except Exception as exc:
@@ -70,7 +47,6 @@ class StructuredPlanStep:
 
 
 def _normalize_tool_path(tool_path: Any) -> list[str]:
-    """规范化旧工具名列表；任一元素非法时返回空列表。"""
     try:
         if not isinstance(tool_path, (list, tuple)) or not tool_path:
             return []
@@ -86,7 +62,6 @@ def _normalize_tool_path(tool_path: Any) -> list[str]:
 
 
 def _normalize_source_reference(source: Any) -> str:
-    """把v0.1来源标记转换为稳定的initial_input或step_N引用。"""
     try:
         if source == INITIAL_INPUT_SOURCE:
             return INITIAL_INPUT_SOURCE
@@ -111,7 +86,6 @@ def _structured_error(
     original_plan: list[str] | None = None,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """生成结构化计划层统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -138,7 +112,7 @@ def build_structured_plan(
     tool_path: Any,
     available_input_types: Any,
 ) -> dict[str, Any]:
-    """把合法旧Plan Chain确定性转换为结构化Plan Step列表。"""
+    """Bind a valid tool path to explicit input sources."""
     try:
         normalized_plan = _normalize_tool_path(tool_path)
         if not normalized_plan:
@@ -262,12 +236,7 @@ def build_runtime_binding_plan(
     tool_path: Any,
     available_input_types: Any,
 ) -> dict[str, Any]:
-    """只构造Artifact来源绑定，不执行类型合法性门禁。
-
-    该函数仅用于E1消融：来源选择是确定性的（优先最近上游输出，其次初始
-    输入）；若所需类型并不存在，仍绑定到initial_input，让Artifact Pool在
-    真实执行时自然失败，从而不把类型门禁的收益混入运行时基线。
-    """
+    """Bind sources for E1 without the pre-execution type gate."""
     try:
         normalized_plan = _normalize_tool_path(tool_path)
         if not normalized_plan:
@@ -361,7 +330,6 @@ def build_runtime_binding_plan(
 
 
 def _get_inserted_positions(inserted_steps: Any) -> list[int]:
-    """把修复器的原计划位置转换为修复后计划中的真实下标。"""
     try:
         if not isinstance(inserted_steps, list):
             return []
@@ -387,7 +355,7 @@ def prepare_structured_plan(
     *,
     enable_repair: bool = False,
 ) -> dict[str, Any]:
-    """记录检查前、修复后和结构化后的完整计划追踪。"""
+    """Validate, optionally repair and bind a tool plan."""
     try:
         normalized_plan = _normalize_tool_path(tool_path)
         if not normalized_plan:
@@ -482,7 +450,7 @@ def parse_llm_plan_response(
     *,
     enable_repair: bool = False,
 ) -> dict[str, Any]:
-    """从旧LLM文本中的Plan Chain生成结构化计划，不再调用第二次LLM。"""
+    """Parse the existing Plan Chain without another model call."""
     try:
         if not isinstance(response_text, str) or not response_text.strip():
             return _structured_error(
@@ -516,7 +484,6 @@ def prepare_structured_plan_from_config(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """根据统一配置开关执行或旁路v0.2结构化计划层。"""
     try:
         cfg = config if config is not None else Config()
         planning_enabled = bool(
@@ -536,8 +503,7 @@ def prepare_structured_plan_from_config(
 
         normalized_plan = _normalize_tool_path(tool_path)
         if not normalized_plan:
-            # 空计划是可评分的自然规划失败；即使不能进入类型校验，仍必须
-            # 记录当前实验条件的开关，避免把方法失败误判为评测管线失败。
+            # Keep condition switches on empty-plan failures.
             result = _structured_error(
                 "工具计划必须是仅含非空工具名的列表",
                 "INVALID_PLAN",

@@ -18,24 +18,13 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.core import Settings
 from app.core.config import Config
 
-# 导入工具字典
 from ToolsAgent.ToolsFuns.Biology.tool_name_dict import BIOLOGY_TOOLS_DESC
 
-# 统一配置读取
 _cfg = Config()
 
-# 修改记录：
-# - 2026-08-31：KG 构建改用本地 MockLLM，不再读取 API Key 或初始化
-#   云端客户端，保证离线构建不会外发工具注册表与类型拓扑。
-# - 2026-07-19：从工具注册表的 output_types 字段读取明确输出类型，
-#   避免新增 Biology 工具在 KG 中退化为通用 analysis result。
-# - 2026-07-19：改为临时目录构建并在成功后替换旧索引，避免构建失败
-#   导致当前可用 storage 被提前删除。
-# - 2026-07-20：从注册表读取 input_types，使PDB文件与氨基酸序列在KG中
-#   成为不同输入类型，并支持PDB到序列的工具连接。
+# Read output types from the registry.
 
 def _resolve_persist_dir() -> Path:
-    """把配置中的索引路径稳定解析为绝对路径。"""
     try:
         configured = Path(str(_cfg.PERSIST_DIR)).expanduser()
         if not configured.is_absolute():
@@ -46,7 +35,6 @@ def _resolve_persist_dir() -> Path:
 
 
 def _resolve_bge_model_path() -> Path:
-    """把本地 BGE 配置解析到项目目录，并禁止意外回退到网络下载。"""
     try:
         configured = Path(str(_cfg.BGE_MODEL_PATH)).expanduser()
         if not configured.is_absolute():
@@ -60,7 +48,6 @@ def _resolve_bge_model_path() -> Path:
 
 
 def refresh_biology_index():
-    """离线重建 Biology KG；仅在新索引完整落盘后替换旧索引。"""
     staging_dir = None
     backup_dir = None
     try:
@@ -72,22 +59,20 @@ def refresh_biology_index():
         print("  fix_my_index.py — 编程式确定性图谱构建")
         print("=" * 60)
 
-        # 1. 配置本地 Embedding（BGE 模型，完全离线，不消耗 API）
         print("\n[1/4] 正在加载本地 BGE 向量模型...")
         Settings.embed_model = HuggingFaceEmbedding(
             model_name=str(_resolve_bge_model_path())
         )
 
-        # 2. 只用本地 MockLLM 满足 LlamaIndex 初始化，不读取密钥或访问网络。
+        # Use MockLLM for offline index construction.
         Settings.llm = MockLLM(max_tokens=1)
 
-        # 3. 只清理上次失败遗留的临时目录，绝不提前删除当前索引。
+        # Remove stale temporary output, keeping the current index.
         if staging_dir.exists():
             print(f"清理上次未完成的临时目录: {staging_dir}")
             shutil.rmtree(staging_dir)
         staging_dir.mkdir(parents=True)
 
-        # 4. 从唯一工具注册表组装兼容 custom_kg_retrievers 的三元组。
         triplets = []
         print("\n[2/4] 正在解析 tool_name_dict.py 并生成标准三元组...")
         for tool_name, info in BIOLOGY_TOOLS_DESC.items():
@@ -97,35 +82,28 @@ def refresh_biology_index():
 
             print(f"  [+] {tool_name}")
 
-            # 关系 1: has the functionality that (用于检索器相似度匹配)
             triplets.append((tool_name, "has the functionality that", info["description"]))
 
-            # 关系 2: is a
             triplets.append((tool_name, "is a", "Biology Tool"))
 
-            # 关系 3: inputs & is the input of (BFS 寻路必需)
             input_types = info.get("input_types") or ["amino acid sequence"]
             for input_type in input_types:
                 triplets.append((tool_name, "inputs", input_type))
                 triplets.append((input_type, "is the input of", tool_name))
 
-            # 关系 4: outputs & is the output of (BFS 寻路必需)
-            # 明确输出类型由唯一工具注册表维护，避免脚本用名称猜测工具语义。
+            # Read output types from the registry.
             output_types = info.get("output_types") or ["analysis result"]
 
             for output_type in output_types:
                 triplets.append((tool_name, "outputs", output_type))
                 triplets.append((output_type, "is the output of", tool_name))
 
-            # 关系 5: is sourced from
             triplets.append((tool_name, "is sourced from", "Local computation"))
 
-            # 关系 6: 安全验证
             triplets.append((tool_name, "does not need", "Security Check"))
 
         print(f"\n  [OK] total triplets: {len(triplets)}")
 
-        # 5. 构建空图谱并手动插入组装好的三元组
         print("\n[3/4] 正在构建知识图谱并计算向量...")
         graph_store = SimpleGraphStore()
         storage_context = StorageContext.from_defaults(graph_store=graph_store)
@@ -133,14 +111,12 @@ def refresh_biology_index():
 
         embed_count = 0
         for triplet in triplets:
-            # 只对含有功能描述的关系计算 Embedding
             include_embeddings = (triplet[1] == 'has the functionality that')
             kg_index.upsert_triplet(triplet, include_embeddings=include_embeddings)
             if include_embeddings:
                 embed_count += 1
                 print(f"  [EMB] ({triplet[0]}, {triplet[1]}, {triplet[2][:30]}...)")
 
-        # 6. 持久化到本地
         print("\n[4/4] 正在保存到磁盘...")
         kg_index.storage_context.persist(persist_dir=str(staging_dir))
         required_files = {"graph_store.json", "index_store.json", "docstore.json"}
@@ -148,7 +124,7 @@ def refresh_biology_index():
         if missing_files:
             raise RuntimeError(f"新索引缺少必要文件: {', '.join(missing_files)}")
 
-        # 新索引完整后再切换；切换异常时自动恢复旧索引。
+        # Replace the index only after a successful build; restore it on failure.
         if backup_dir.exists():
             shutil.rmtree(backup_dir)
         if persist_dir.exists():

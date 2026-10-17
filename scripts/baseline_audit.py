@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
-"""六条件 baseline 的干预后诊断与额外重规划成本审计。
-
-修改记录：
-- 2026-09-05：只要 Trace 同时证明未触发重规划且额外调用数为零，缺省 token
-  即为结构性零；不再把合法的前置拒绝误记为成本缺失。
-- 2026-09-03：区分未纠正错误与纠正后执行，逐单元核对 L1 账本；
-  缺失用量保留未知，不改写 Trace、旧 H1–H3 或人工标签。
-
-本模块只衡量额外重规划，不代表整场实验账单；类型有效不等于答案正确。
-"""
+"""Summarize baseline interventions and replanning cost."""
 
 from __future__ import annotations
 
@@ -20,7 +11,6 @@ from scripts.evaluation_metrics import _TYPE_II_CODES, _error_result
 
 
 AUDIT_SCHEMA_VERSION = "baseline-audit-1.0"
-# 协议常量，不绑定模型、实验路径、价格或具体题目。
 NON_REPLAN_CONDITIONS = frozenset({"E0", "E1", "E2", "E3"})
 COST_FIELDS = (
     "extra_llm_calls", "extra_llm_input_tokens", "extra_llm_output_tokens",
@@ -36,7 +26,6 @@ LATENCY_ABS_TOLERANCE_MS = 1e-6
 
 
 def _number(value: Any, *, integer: bool = False) -> bool:
-    """排除布尔、负数及非有限值，调用数和 token 必须为整数。"""
     return (
         type(value) in ((int,) if integer else (int, float))
         and value >= 0 and math.isfinite(value)
@@ -44,7 +33,6 @@ def _number(value: Any, *, integer: bool = False) -> bool:
 
 
 def extra_replan_cost_value(record: Any, field: str) -> int | float | None:
-    """仅凭显式用量或协议确定的未调用状态取值，缺失不冒充零。"""
     try:
         if field not in COST_FIELDS:
             return None
@@ -66,7 +54,6 @@ def extra_replan_cost_value(record: Any, field: str) -> int | float | None:
 
 
 def classify_type_ii_execution(record: Any) -> str:
-    """按初始错误、干预后类型和实际调用分类；证据矛盾时保留 unknown。"""
     try:
         plan = record["observation"]["plan"]
         before = plan.get("issue_codes_before")
@@ -97,7 +84,6 @@ def classify_type_ii_execution(record: Any) -> str:
 
 
 def _summary(values: list[int | float | None]) -> dict[str, Any]:
-    """同时报告已知小计、完整总数和覆盖率，禁止缺失值缩小分母后冒充总数。"""
     known = [value for value in values if value is not None]
     complete = len(known) == len(values)
     return {
@@ -110,7 +96,6 @@ def _summary(values: list[int | float | None]) -> dict[str, Any]:
 
 
 def _key(record: dict[str, Any], *, ledger: bool = False) -> tuple[str, str, int]:
-    """用题目、模型、轮次定位单元；禁止空键、布尔轮次或静默跨轮次拼接。"""
     model = record.get("model") if ledger else record.get("context", {}).get("model")
     question, repeat = record.get("question_id"), record.get("repeat_index")
     if not isinstance(question, str) or not question or not isinstance(model, str) or not model:
@@ -121,7 +106,6 @@ def _key(record: dict[str, Any], *, ledger: bool = False) -> tuple[str, str, int
 
 
 def _ledger_cost(row: dict[str, Any]) -> dict[str, int | float | None]:
-    """汇总所有尝试（包括失败）；任一次 usage 缺失则该维度总量未知。"""
     attempts = row.get("attempts")
     if not isinstance(attempts, list) or not attempts:
         raise ValueError("重规划账本必须保留尝试记录")
@@ -154,7 +138,6 @@ def _ledger_cost(row: dict[str, Any]) -> dict[str, int | float | None]:
 def audit_baselines(
     records: Any, *, experiment_id: str, replan_ledger: Any = None,
 ) -> dict[str, Any]:
-    """只读审计干预后诊断、成本完整性与可选 L1 账本；身份冲突失败关闭。"""
     try:
         if not isinstance(records, list) or not records or not isinstance(experiment_id, str) or not experiment_id:
             return _error_result("审计需要非空 Trace 和实验 ID", "INVALID_BASELINE_AUDIT_INPUT")

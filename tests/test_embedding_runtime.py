@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""本地嵌入模型资产预检测试。
-
-修改记录：
-- 2026-08-27：覆盖完整模型、缺失配置、非法配置和缺失权重的精确诊断。
-"""
+"""Tests for embedding runtime."""
 
 import json
 import tempfile
@@ -14,7 +10,6 @@ from app.core.embedding_runtime import validate_local_embedding_model
 
 
 class EmbeddingRuntimeTests(unittest.TestCase):
-    """验证资产错误在加载模型前被稳定识别。"""
 
     def _model_dir(self, root: Path) -> Path:
         model_dir = root / "model"

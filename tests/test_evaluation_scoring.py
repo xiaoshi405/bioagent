@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3e确定性评分、盲评队列和人工标签回填测试。
-
-修改记录：
-- 2026-08-09：验证盲审队列在保持条件与题号盲化的同时，提供原始计划、
-  初始对象类型和非敏感输入内容证据。
-- 2026-07-30：覆盖数值容差、错误值、缺失证据、Type-III人工边界、
-  repair/reject标签、条件盲化和非覆盖式人工标签回填。
-"""
+"""Tests for evaluation scoring."""
 
 import json
 import tempfile
@@ -39,7 +31,6 @@ TRACE_SCHEMA = (
 
 
 def _config(results_dir: Path) -> SimpleNamespace:
-    """构造评分测试配置。"""
     try:
         return SimpleNamespace(
             EXPERIMENT_TRACE_SCHEMA_PATH=str(TRACE_SCHEMA),
@@ -54,7 +45,6 @@ def _question(
     expected_behavior: str = "execute",
     expected_status: str = "success",
 ) -> dict:
-    """构造包含结构化Gold的最小题目。"""
     try:
         return {
             "id": "bte_801",
@@ -101,7 +91,6 @@ def _agent_result(
     attempted_steps: int = 1,
     plan_chain: list[str] | None = None,
 ) -> dict:
-    """构造不依赖真实模型和工具服务的Agent结果。"""
     try:
         chain = (
             list(plan_chain)
@@ -142,7 +131,6 @@ def _agent_result(
 
 
 def _trace(question: dict, agent_result: dict, config: object) -> dict:
-    """构造未评分B0 Trace。"""
     try:
         result = build_experiment_trace(
             question,
@@ -170,7 +158,6 @@ def _trace(question: dict, agent_result: dict, config: object) -> dict:
 
 
 class DeterministicScoringTests(unittest.TestCase):
-    """验证自动标签只在证据充分时给出布尔值。"""
 
     def test_structured_numeric_gold_matches_within_tolerance(self):
         try:
@@ -391,7 +378,6 @@ class DeterministicScoringTests(unittest.TestCase):
 
 
 class ReviewWorkflowTests(unittest.TestCase):
-    """验证私有盲评资料与公开Trace严格分离。"""
 
     def test_review_queue_hides_condition_and_audit_hides_raw_answer(self):
         try:

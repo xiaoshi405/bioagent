@@ -17,7 +17,6 @@ def load_index_from_storage_dir(persist_dir):
         print(f"Failed to load Knowledge Graph Index from {persist_dir}: {e}")
         return None
 
-#重构问题，如果用户发了文件的话，把文件名提取出来放进提示词里
 def construct_question(question, file_path_list, is_add_filename=False):
     if not is_add_filename or not file_path_list:
         return question
@@ -109,7 +108,4 @@ def check_tool_in_list(triplets: list, tool_name: str) -> list:
     else:
         return [f"No information found for tool '{tool_name}'."]
 
-# tool_to_check = "SMILESToCAS"
-# res = check_tool_in_list(tools_retrieved, tool_to_check)
 # for item in res:
-#     print(item)

@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Controlled Repair Track v1 回归测试。
-
-修改记录：
-- 2026-08-13：覆盖冻结数据契约、B1/B2 配对闭环、no-overwrite、失败隔离，
-  以及缺失 chain_id、多记录 FASTA、合法计划、未知工具和多桥接歧义等反例。
-- 2026-08-14：多记录FASTA现在注册为独立类型；没有record_id时仍保持
-  可审计告警，后续类型计划不得自动选择记录。
-"""
+"""Tests for controlled repair."""
 
 import asyncio
 import copy
@@ -46,7 +38,6 @@ MULTI_FASTA = DATASET_DIR / "fixtures" / "fasta" / "challenge_multirecord.fasta"
 
 
 def _test_config(results_dir: Path, dataset_path: Path = DATASET_PATH) -> SimpleNamespace:
-    """构造只写临时目录且不读取环境配置的测试对象。"""
     return SimpleNamespace(
         CONTROLLED_REPAIR_DATASET_PATH=str(dataset_path),
         CONTROLLED_REPAIR_DATASET_SCHEMA_PATH=str(DATASET_SCHEMA),
@@ -57,7 +48,6 @@ def _test_config(results_dir: Path, dataset_path: Path = DATASET_PATH) -> Simple
 
 
 class ControlledRepairDatasetTests(unittest.TestCase):
-    """验证微基准只接纳冻结、语义一致且指纹匹配的样例。"""
 
     def test_frozen_dataset_has_balanced_bridge_families(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -102,7 +92,6 @@ class ControlledRepairDatasetTests(unittest.TestCase):
 
 
 class ControlledRepairExperimentTests(unittest.TestCase):
-    """验证同一非法计划在 B1 阻断、在 B2 修复并执行。"""
 
     def test_complete_paired_run_produces_estimable_component_metrics(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -245,7 +234,6 @@ class ControlledRepairExperimentTests(unittest.TestCase):
 
 
 class ControlledRepairBoundaryTests(unittest.TestCase):
-    """验证修复器在没有唯一证据时保持保守，而不是猜测。"""
 
     def test_missing_chain_id_is_not_repairable(self):
         result = repair_tool_plan(["compute_gravy"], [PDB_STRUCTURE_FILE])

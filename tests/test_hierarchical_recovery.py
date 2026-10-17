@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""F1 分层恢复状态机与 v1.3 Trace 回归测试。
-
-修改记录：
-- 2026-09-05：增加目标工具保真契约回归，验证适配器可替换而
-  分析目标不得被类型合法的重规划静默删除。
-- 2026-09-04：覆盖原计划直行、确定性快速路径、一次 LLM 升级、失败关闭、
-  Artifact 前置阻断和公开 Trace 记账。
-"""
+"""Tests for hierarchical recovery."""
 
 from __future__ import annotations
 
@@ -30,7 +23,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 
 def _frozen_plan(chain: list[str], *, question_id: str = "bte_901") -> dict:
-    """构造不包含真实题面或生物数据的冻结计划。"""
     raw_response = f"Plan Chain: {chain!r}"
     digest = sha256_text(raw_response)
     return {
@@ -71,7 +63,6 @@ def _frozen_plan(chain: list[str], *, question_id: str = "bte_901") -> dict:
 
 
 def _trace_config() -> SimpleNamespace:
-    """构造包含 F1 v1.3 扩展的只读测试配置。"""
     root = PROJECT_ROOT / "evaluation" / "biotooleval"
     return SimpleNamespace(
         EXPERIMENT_TRACE_SCHEMA_PATH=str(root / "experiment_trace_schema_v1.json"),
@@ -86,7 +77,6 @@ def _trace_config() -> SimpleNamespace:
 
 
 class HierarchicalRecoveryTests(unittest.IsolatedAsyncioTestCase):
-    """验证 F1 的四条互斥路径及单次调用上限。"""
 
     async def test_valid_original_plan_uses_no_recovery_call(self):
         calls = []
@@ -302,7 +292,6 @@ class HierarchicalRecoveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result["recovery"]["replan_outcome"], "blocked_initial_artifact")
 
     async def test_invalid_artifact_precedes_empty_type_check(self):
-        """初始输入已有精确错误时，空类型集合不得被误报为 F1 故障。"""
         calls = []
 
         async def forbidden(**kwargs):
@@ -425,7 +414,6 @@ class HierarchicalRecoveryTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(plan["extra_llm_calls"], 0)
 
     async def test_controlled_30_all_use_deterministic_path_without_llm(self):
-        """受控分母必须仍是 30/30，且不能偷用 LLM 完成。"""
         loaded = load_controlled_repair_v2_dataset(
             PROJECT_ROOT / "evaluation" / "biotooleval" / "controlled_repair_v2.json"
         )

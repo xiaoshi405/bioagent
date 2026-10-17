@@ -1,8 +1,4 @@
-"""Load original SciToolAgent algorithms without global SDK/config side effects.
-
-Selected definitions are compiled from the archived upstream AST, unmodified.
-The full original KGTableRetriever module is imported directly.
-"""
+"""Load original SciToolAgent algorithms without global SDK/config side effects."""
 from __future__ import annotations
 
 import ast

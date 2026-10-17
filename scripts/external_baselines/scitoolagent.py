@@ -1,8 +1,4 @@
-"""Official SciToolAgent KG retrieval / planner / executor / summarizer adapter.
-
-Only provider, literal API arguments, tool transport, resource limits and passive
-logging are adapted. No BioAgent object binding, validation or repair is called.
-"""
+"""Official SciToolAgent KG retrieval / planner / executor / summarizer adapter."""
 from __future__ import annotations
 
 import asyncio

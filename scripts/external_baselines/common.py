@@ -1,9 +1,4 @@
-"""Shared literal tool transport, explicit references and private audit logs.
-
-No typed binding, biological selection, bridge insertion or plan validation.
-Call IDs identify log entries, not scientific artifacts. Error results remain
-available for explicit references, just as ordinary program variables would.
-"""
+"""Shared literal tool transport, explicit references and private audit logs."""
 from __future__ import annotations
 
 import copy

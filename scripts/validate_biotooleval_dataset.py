@@ -1,29 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioToolEval 数据集离线验收器。
-
-修改记录：
-- 2026-08-29：新增Test-150 ``final150`` 预注册Profile、候选/正式冻结分层
-  门禁、精确来源与输入配额、工具覆盖上下界和方法冻结一致性检查。
-- 2026-07-31：新增全量问题收集、Schema/Gold/类型链/来源/近重复/分布检查，
-  并支持生成不泄露问题正文、序列和本地绝对路径的 JSON 与 Markdown 报告。
-- 2026-08-05：升级题目治理Schema v1.2，新增作者/来源、Gold复核状态、开发者
-  暴露状态、模板组泄漏检查、输入复用预警和challenge30覆盖Profile。
-- 2026-08-05：区分候选开发集的“结构验收通过”与正式基准就绪，避免非正式
-  数据集因状态字段被误判失败，也禁止其候选题计入正式ready数量。
-- 2026-08-07：预注册dev40与dev70 Profile，固定题型、难度、预期行为、真实来源、
-  FASTA/PDB、类型敏感题和工具覆盖门槛，防止后续按实验结果修改开发集标准。
-- 2026-08-14：工具覆盖按预注册拓扑代际验收；legacy Dev/Challenge继续
-  对冻结的16工具集合负责，新Topology v2-lite工具不得追溯污染旧数据集。
-- 2026-08-14：识别Topology v2-lite题目的显式FASTA基数与record ID语义，
-  使多记录Gold链按真实初始Artifact验收，而非继续假定所有FASTA都是单记录。
-
-设计边界：
-1. ``status=success`` 仅表示验收器正常完成，数据能否入库由 ``verdict`` 判断；
-2. 本模块只做确定性的结构检查，不替代 A 的工具链复核和 D 的生物学复核；
-3. 不自动修正 Gold，避免检查器悄悄改变评测标准；
-4. 报告不保存问题正文、完整序列或绝对文件路径。
-"""
+"""Validate benchmark tasks and source records offline."""
 
 from __future__ import annotations
 
@@ -290,7 +266,6 @@ _PROFILE_RULES: dict[str, dict[str, Any]] = {
 
 
 def _runtime_error(message: str, code: str = "VALIDATOR_EXCEPTION") -> dict[str, Any]:
-    """构造验收器自身失败的统一返回结构。"""
     try:
         return {
             "status": "error",
@@ -320,7 +295,6 @@ def _add_issue(
     path: Any = None,
     details: dict[str, Any] | None = None,
 ) -> None:
-    """追加一条脱敏问题；异常只写日志，不中断其他题目的验收。"""
     try:
         issue: dict[str, Any] = {
             "severity": severity if severity in {"error", "warning", "info"} else "error",
@@ -343,7 +317,6 @@ def _add_issue(
 
 
 def _load_schema(schema_path: Any) -> dict[str, Any]:
-    """加载题目 JSON Schema；失败时返回标准错误结构。"""
     try:
         path = Path(str(schema_path or "")).expanduser()
         if not path.is_file():
@@ -361,7 +334,6 @@ def _load_schema(schema_path: Any) -> dict[str, Any]:
 
 
 def _normalize_text(value: Any) -> str:
-    """把中英文题面转换为近重复检测使用的稳定文本。"""
     try:
         text = str(value or "").casefold()
         return re.sub(r"[\W_]+", "", text, flags=re.UNICODE)
@@ -371,7 +343,6 @@ def _normalize_text(value: Any) -> str:
 
 
 def _contains_placeholder(value: Any) -> bool:
-    """判断输入是否含有禁止用于正式数据的占位文本。"""
     try:
         text = str(value or "")
         return any(pattern.search(text) is not None for pattern in _PLACEHOLDER_PATTERNS)
@@ -381,7 +352,6 @@ def _contains_placeholder(value: Any) -> bool:
 
 
 def _schema_error_path(error: Any) -> str:
-    """把 jsonschema 路径转换成稳定点号路径。"""
     try:
         parts = [str(part) for part in list(error.absolute_path)]
         return ".".join(parts) if parts else "$"
@@ -391,7 +361,6 @@ def _schema_error_path(error: Any) -> str:
 
 
 def _schema_error_message(error: Any) -> str:
-    """生成不复述原始字段值的Schema错误说明。"""
     try:
         validator_name = str(getattr(error, "validator", "") or "")
         messages = {
@@ -412,7 +381,6 @@ def _schema_error_message(error: Any) -> str:
 
 
 def _initial_types(input_data: Any) -> list[str]:
-    """把评测输入类型映射到规划器的初始类型化对象池。"""
     try:
         if not isinstance(input_data, dict):
             return []
@@ -446,7 +414,6 @@ def _initial_types(input_data: Any) -> list[str]:
 
 
 def _iter_numeric_leaf_paths(value: Any, prefix: str = "") -> list[str]:
-    """递归收集 expected_output 中数值叶子字段的点号路径。"""
     try:
         paths: list[str] = []
         if isinstance(value, dict):
@@ -466,7 +433,6 @@ def _iter_numeric_leaf_paths(value: Any, prefix: str = "") -> list[str]:
 
 
 def _has_semantic_leaf(value: Any) -> bool:
-    """判断 expected_output 是否包含需要语义复核的非数值叶子。"""
     try:
         if isinstance(value, dict):
             return any(_has_semantic_leaf(child) for child in value.values())
@@ -482,7 +448,6 @@ def _has_semantic_leaf(value: Any) -> bool:
 
 
 def _tolerance_for_path(tolerance: Any, numeric_path: str) -> Any:
-    """按完整路径、叶子字段名或顶层字段名查找数值容差。"""
     try:
         if not isinstance(tolerance, dict):
             return None
@@ -501,7 +466,6 @@ def _tolerance_for_path(tolerance: Any, numeric_path: str) -> Any:
 
 
 def _safe_fixture_path(dataset_path: Path, fixture: Any) -> dict[str, Any]:
-    """校验夹具路径必须位于数据集目录内，并返回脱敏结果。"""
     try:
         raw = str(fixture or "").strip()
         if not raw:
@@ -546,7 +510,6 @@ def _check_input(
     dataset_path: Path,
     issues: list[dict[str, Any]],
 ) -> None:
-    """检查序列、FASTA/PDB文件和来源元数据。"""
     try:
         question_id = item.get("id")
         input_data = item.get("input")
@@ -654,7 +617,6 @@ def _check_gold(
     signatures: dict[str, Any],
     issues: list[dict[str, Any]],
 ) -> None:
-    """检查Gold完整性、工具名、行为约束、类型兼容性与容差。"""
     try:
         question_id = item.get("id")
         if "submitted_gold" in item:
@@ -845,7 +807,6 @@ def _check_governance(
     dataset_status: str,
     issues: list[dict[str, Any]],
 ) -> None:
-    """检查题目来源、Gold复核、开发者暴露状态和盲测释放边界。"""
     try:
         question_id = item.get("id")
         split = str(item.get("split") or "").strip()
@@ -960,7 +921,6 @@ def _check_governance(
 
 
 def _input_fingerprint(item: dict[str, Any]) -> str:
-    """生成不泄露序列或路径的稳定输入指纹，用于跨split复用预警。"""
     try:
         input_data = item.get("input")
         if not isinstance(input_data, dict):
@@ -987,7 +947,6 @@ def _check_duplicates(
     issues: list[dict[str, Any]],
     threshold: float,
 ) -> None:
-    """检查题面、模板组和输入复用；跨split模板近重复阻断正式入库。"""
     try:
         exact_seen: dict[str, tuple[str, str]] = {}
         normalized_records: list[tuple[str, str, str]] = []
@@ -1102,7 +1061,6 @@ def _compute_summary(
     items: list[dict[str, Any]],
     signatures: dict[str, Any],
 ) -> dict[str, Any]:
-    """计算不含题面与原始输入的安全统计摘要。"""
     try:
         categories = Counter()
         difficulties = Counter()
@@ -1189,7 +1147,6 @@ def _coverage_signatures_for_profile(
     profile: str,
     signatures: dict[str, Any],
 ) -> dict[str, Any]:
-    """按预注册profile选择其应覆盖的工具代际，不改写旧数据集。"""
     try:
         if profile in {"challenge30", "dev40", "dev70"}:
             return {
@@ -1205,7 +1162,6 @@ def _coverage_signatures_for_profile(
 
 
 def _infer_profile(items: list[dict[str, Any]]) -> str:
-    """依据数量和split自动推断验收结构；无法确定时不强加分布。"""
     try:
         splits = {str(item.get("split") or "") for item in items}
         if len(items) == 30 and splits == {"dev"}:
@@ -1237,7 +1193,6 @@ def _check_profile(
     summary: dict[str, Any],
     issues: list[dict[str, Any]],
 ) -> None:
-    """按预注册的pilot/dev/test/final结构检查数量和覆盖率。"""
     try:
         if profile == "none":
             return
@@ -1461,7 +1416,6 @@ def _check_final150_governance(
     items: list[dict[str, Any]],
     issues: list[dict[str, Any]],
 ) -> None:
-    """检查Test-150候选封存与正式线上运行之间的治理边界。"""
     try:
         if profile != "final150":
             return
@@ -1543,7 +1497,6 @@ def _build_dataset_readiness(
     dataset_status: str,
     verdict: str,
 ) -> dict[str, Any]:
-    """输出机器候选验收与正式线上实验就绪的分层状态。"""
     try:
         machine_passed = verdict == "pass"
         formal = dataset_status in _FORMAL_DATASET_STATUSES
@@ -1590,7 +1543,6 @@ def validate_biotooleval_dataset(
     near_duplicate_threshold: float = 0.88,
     config: Any = None,
 ) -> dict[str, Any]:
-    """全量验收BioToolEval并收集全部问题，不在第一处错误提前停止。"""
     try:
         cfg = config if config is not None else Config()
         path = Path(str(dataset_path or "")).expanduser()
@@ -1827,7 +1779,6 @@ def validate_biotooleval_dataset(
 
 
 def _markdown_report(result: dict[str, Any]) -> str:
-    """把脱敏验收结果转换为Markdown报告。"""
     try:
         dataset = result.get("dataset") if isinstance(result.get("dataset"), dict) else {}
         summary = result.get("summary") if isinstance(result.get("summary"), dict) else {}
@@ -1907,7 +1858,6 @@ def _markdown_report(result: dict[str, Any]) -> str:
 
 
 def _write_text_atomic(path: Path, content: str) -> dict[str, Any]:
-    """原子写入文本文件，避免中途失败留下半份报告。"""
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_name(f".{path.name}.tmp")
@@ -1926,7 +1876,6 @@ def write_validation_reports(
     markdown_report_path: Any = None,
     protected_dataset_path: Any = None,
 ) -> dict[str, Any]:
-    """写入可提交的脱敏JSON/Markdown报告，且禁止覆盖原数据集。"""
     try:
         if not isinstance(result, dict) or result.get("status") not in {"success", "error"}:
             return _runtime_error("验收结果结构无效", "INVALID_REPORT_RESULT")
@@ -1969,7 +1918,6 @@ def write_validation_reports(
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    """构造命令行解析器。"""
     try:
         parser = argparse.ArgumentParser(description="离线验收BioToolEval数据集")
         parser.add_argument("--dataset", required=True, help="待验收JSON数据集")
@@ -1994,7 +1942,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """CLI入口：通过返回0，数据阻断返回2，运行异常返回1。"""
     try:
         args = _build_parser().parse_args(argv)
         result = validate_biotooleval_dataset(

@@ -1,33 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3b 类型约束规划主链路协调层。
-
-修改记录：
-- 2026-09-05：空或不可解析计划的拒绝响应改为复用类型化运行时的
-  结构化错误；对无初始对象请求补充输入缺失与能力缺口提示。
-- 2026-08-27：安全轨迹新增类型门禁状态，支持E1运行时基线与E2校验
-  条件的正交比较。
-- 2026-09-04：从原始用户问题构造请求级工具参数上下文，并在类型化执行
-  全程保留显式ANM参数；不把数值参数注册成数据Artifact。
-- 2026-08-15：安全轨迹新增修复策略和固定字段操作证明，支持区分桥接插入与
-  注册表授权的重复无效步骤剪枝。
-- 2026-08-12：把非法氨基酸字符、标准错误码和修改建议转换为可操作反馈，
-  避免安全拒绝退化成泛化的“没有初始Artifact”。
-- 2026-08-14：为多记录FASTA的单record_id与record_id pair缺失问题增加
-  精确、可执行反馈，替代旧版“请拆成单记录文件”的限制。
-- 2026-08-09：保留类型检查器的完整结构化问题，并把缺失PDB链标识、
-  多记录FASTA等机器诊断转换为可操作的用户反馈。
-- 2026-08-08：初始Artifact构建失败时仍记录当前repair开关，避免B2拒绝
-  响应因安全轨迹条件不一致而被实验运行器丢弃。
-- 2026-07-26：串联初始Artifact构建、结构化计划检查/保守修复和v0.3a
-  执行器，为run_SciToolAgent提供单一、可测试的类型化执行入口。
-
-设计边界：
-1. 本模块不负责KG检索和LLM规划，只消费已经提取的旧Plan Chain；
-2. TYPE_PLANNING_ENABLED关闭时返回旁路状态，不执行任何工具；
-3. 计划或工具失败时返回结构化失败，不调用LLM粉饰错误；
-4. safe_trace只包含类型、对象ID和耗时，不包含真实序列或完整文件路径。
-"""
+"""Coordinate artifact construction, validation and execution."""
 
 from __future__ import annotations
 
@@ -51,11 +23,7 @@ logger = get_logger("TypedPlanningRuntime", "typed_planning_runtime.log")
 
 
 def _requested_unavailable_capabilities(question: Any) -> list[str]:
-    """从问题中提取少量明示的非当前能力提示，仅用于拒绝解释。
-
-    该函数不参与工具选择或执行决策，避免把关键词规则变成
-    第二套规划器。
-    """
+    """Find explicit capability gaps for rejection messages, not tool selection."""
     try:
         if not isinstance(question, str):
             return []
@@ -96,7 +64,6 @@ def _explain_runtime_issue(
     *,
     question: Any = None,
 ) -> dict[str, Any]:
-    """把结构化机器问题转换为确定性、可操作且不泄露原始数据的反馈。"""
     try:
         normalized_issue = copy.deepcopy(issue) if isinstance(issue, dict) else {}
         code = str(normalized_issue.get("code") or "UNKNOWN_RUNTIME_ISSUE")
@@ -252,7 +219,7 @@ def _explain_runtime_issue(
 
 
 def build_actionable_empty_plan_rejection(typed_result: Any) -> dict[str, Any]:
-    """将空计划与类型化诊断合并为统一、可执行的拒绝结构。"""
+    """Combine an empty plan with input diagnostics."""
     try:
         generic_message = "模型未生成可解析且非空的注册工具计划，已拒绝执行"
         diagnostic = typed_result if isinstance(typed_result, dict) else {}
@@ -320,7 +287,6 @@ def _runtime_error(
     detail_code: str | None = None,
     required_user_inputs: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """构造协调层统一失败结构。"""
     try:
         return {
             "status": "error",
@@ -351,7 +317,7 @@ def _runtime_error(
 
 
 def build_safe_typed_trace(result: Any) -> dict[str, Any]:
-    """从协调结果提取可供前端和论文统计使用的脱敏轨迹。"""
+    """Return trace metadata without raw input values."""
     try:
         if not isinstance(result, dict):
             return {}
@@ -419,7 +385,7 @@ async def run_typed_planning(
     runner: Any = None,
     tool_parameters: Any = None,
 ) -> dict[str, Any]:
-    """执行v0.3b“初始对象—结构化计划—对象池执行”闭环。"""
+    """Construct artifacts, prepare a plan and execute its bound steps."""
     try:
         cfg = config if config is not None else Config()
         if not bool(getattr(cfg, "TYPE_PLANNING_ENABLED", False)):

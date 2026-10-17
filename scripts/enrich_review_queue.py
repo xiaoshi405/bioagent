@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""为已冻结实验的盲审队列补充原始计划与初始对象证据。
-
-修改记录：
-- 2026-08-09：新增只读回填工具；不覆盖原队列，不输出题号、实验条件、
-  原始序列或完整文件路径，保持既有review_id与人工标签模板兼容。
-"""
+"""Add plan and input evidence to blinded review queues."""
 
 from __future__ import annotations
 
@@ -23,7 +18,6 @@ logger = get_logger("EnrichReviewQueue", "enrich_review_queue.log")
 
 
 def _error_result(message: str, code: str) -> dict[str, Any]:
-    """构造统一错误结构。"""
     try:
         return {
             "status": "error",
@@ -36,7 +30,6 @@ def _error_result(message: str, code: str) -> dict[str, Any]:
 
 
 def _read_jsonl(path: Path, key_field: str) -> dict[str, Any]:
-    """读取JSONL并按唯一键建立索引。"""
     try:
         if not path.is_file():
             return _error_result(f"输入文件不存在: {path.name}", "INPUT_NOT_FOUND")
@@ -73,7 +66,6 @@ def _read_jsonl(path: Path, key_field: str) -> dict[str, Any]:
 
 
 def _trace_execution_key(trace: Any) -> str:
-    """生成与私有review map一致的实验单元键。"""
     try:
         if not isinstance(trace, dict):
             return ""
@@ -96,7 +88,6 @@ def enrich_review_queue(
     trace_path: Any,
     output_path: Any,
 ) -> dict[str, Any]:
-    """把冻结Trace中的计划证据写入新的条件盲化队列。"""
     try:
         queue = Path(str(queue_path or "")).expanduser().resolve()
         review_map = Path(str(review_map_path or "")).expanduser().resolve()
@@ -140,7 +131,7 @@ def enrich_review_queue(
                 matched_trace,
                 question_text=copied.get("question"),
             )
-            # 防御性检查：输出队列不得包含会揭示实验条件的字段。
+            # Do not expose experiment conditions in the blinded queue.
             serialized = json.dumps(copied, ensure_ascii=False)
             if any(
                 forbidden in serialized
@@ -185,7 +176,6 @@ def enrich_review_queue(
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    """构造命令行参数。"""
     try:
         parser = argparse.ArgumentParser(
             description="为冻结BioToolEval盲审队列补充原始计划证据"
@@ -201,7 +191,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """执行命令并只输出不含题面和答案的摘要。"""
     try:
         args = _build_parser().parse_args(argv)
         result = enrich_review_queue(

@@ -1,22 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3e 正式实验双服务预检工具。
-
-修改记录：
-- 2026-09-05：数据集摘要统一为 UTF-8/LF 文本哈希，与运行器及冻结清单
-  口径一致，避免 Windows CRLF 产生两个看似冲突的数据集指纹。
-- 2026-08-27：正式预检新增本地BGE配置、权重和tokenizer资产校验，
-  在启动实验前给出精确阻断原因，避免首题Trace之前导入崩溃。
-- 2026-08-10：新增根目录、Git、数据集哈希和fixture静态检查。
-- 2026-08-11：改为正式模式默认失败关闭；新增真实Agent/Biology服务身份、
-  FASTA/PDB HTTP贯通、脏工作树、Python版本和题目Schema阻断。
-
-设计原则：
-1. 正式模式必须查询实际运行的两个服务，不能信任调用者填写的路径；
-2. 任一身份、版本、数据或HTTP检查失败均返回error和非零退出码；
-3. ``--static-only`` 与 ``--allow-dirty`` 仅用于本地诊断，不代表实验放行；
-4. 所有异常转换为标准错误结构，预检本身不得导致主进程崩溃。
-"""
+"""Check agent and tool services before an experiment."""
 
 from __future__ import annotations
 
@@ -42,7 +25,6 @@ logger = get_logger("R3EnvironmentPreflight", "r3_preflight.log")
 
 
 def _get_git_info(repo_dir: Path) -> dict[str, Any]:
-    """保留旧接口名称，统一调用共享Git身份采集器。"""
     try:
         return collect_git_identity(repo_dir)
     except Exception as exc:
@@ -56,7 +38,6 @@ def _get_git_info(repo_dir: Path) -> dict[str, Any]:
 
 
 def _calc_sha256(file_path: Path) -> str | None:
-    """按 UTF-8/LF 计算数据集SHA-256；失败返回None。"""
     try:
         if not file_path.is_file():
             return None
@@ -74,7 +55,6 @@ def _calc_sha256(file_path: Path) -> str | None:
 
 
 def _version_matches(actual: str, expected: str) -> bool:
-    """支持完整版本或主次版本前缀，例如3.14匹配3.14.4。"""
     try:
         actual_value = str(actual or "").strip()
         expected_value = str(expected or "").strip()
@@ -95,7 +75,6 @@ def _append_check(
     passed: bool,
     detail: str,
 ) -> None:
-    """追加单项检查；失败项同步写入阻断原因。"""
     try:
         checks.append(
             {
@@ -114,7 +93,6 @@ def _load_and_validate_dataset(
     dataset_path: Path,
     schema_path: Path,
 ) -> dict[str, Any]:
-    """验证数据集顶层结构、题目Schema、题目ID唯一性和声明题量。"""
     try:
         if not dataset_path.is_file():
             return {
@@ -216,7 +194,6 @@ def _resolve_fixture(
     dataset_dir: Path,
     project_root: Path,
 ) -> dict[str, Any]:
-    """在安全根目录内解析fixture，禁止绝对路径和父目录越界。"""
     try:
         raw_value = str(raw_fixture or "").strip()
         if not raw_value:
@@ -265,7 +242,6 @@ def _resolve_fixture(
 
 
 def _normalize_base_url(value: str) -> str:
-    """规范化本地服务地址，避免localhost与127.0.0.1造成假不一致。"""
     try:
         parsed = urlsplit(str(value or "").strip().rstrip("/"))
         hostname = parsed.hostname or ""
@@ -285,7 +261,6 @@ def _http_json(
     payload: dict[str, Any] | None = None,
     timeout_seconds: float = 60.0,
 ) -> dict[str, Any]:
-    """执行有超时的JSON HTTP请求，并把网络异常转换为标准结构。"""
     try:
         body = None
         headers = {"Accept": "application/json"}
@@ -351,7 +326,6 @@ def _validate_runtime_identity(
     expected_port: int | None,
     allow_dirty: bool,
 ) -> dict[str, Any]:
-    """校验服务真实身份是否与冻结的本地实验环境一致。"""
     try:
         if not isinstance(identity, dict):
             return {"status": "error", "message": "运行身份响应不是JSON对象"}
@@ -435,7 +409,6 @@ def _run_live_service_checks(
     pdb_fixture: Path | None,
     pdb_chain_id: str | None,
 ) -> dict[str, Any]:
-    """查询两个真实服务，并通过Biology HTTP执行FASTA/PDB贯通检查。"""
     try:
         checks: list[dict[str, Any]] = []
         blockers: list[str] = []
@@ -650,7 +623,6 @@ def run_environment_preflight(
     allow_dirty: bool = False,
     output_path: str | Path | None = None,
 ) -> dict[str, Any]:
-    """执行正式实验环境预检；默认要求真实双服务和干净工作树。"""
     checks: list[dict[str, Any]] = []
     blockers: list[str] = []
     try:
@@ -999,7 +971,6 @@ def run_environment_preflight(
 
 
 def main(argv: list[str] | None = None) -> int:
-    """命令行入口；正式模式默认启用真实双服务检查。"""
     try:
         config = Config()
         parser = argparse.ArgumentParser(description="BioAgent正式实验双服务预检工具")

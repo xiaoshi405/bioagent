@@ -27,7 +27,7 @@ git add RELEASE_MANIFEST.json
 python scripts/verify_release_assets.py
 ```
 
-The default mode previews changes. Only tracked files enter the manifest; local untracked notes and credentials are excluded. The updater rejects changed or removed frozen code, benchmark inputs, archived results, source plots, vendored sources and source licenses. It also rejects environment files, runtime directories and manuscript administration. Historical changes require a separately versioned research preparation, rather than replacing historical hashes. The command requires a Git checkout; an extracted ZIP can be verified without Git.
+The default mode previews changes. Only tracked files enter the manifest; local untracked notes and credentials are excluded. The updater rejects changes to benchmark inputs, archived results, source plots, vendored sources, source licenses and the original frozen-source snapshot. Frozen working Python files may change comments and docstrings only; executable syntax and runtime strings are checked against the snapshot. It also rejects environment files, runtime directories and manuscript administration. Historical changes require a separately versioned research preparation, rather than replacing historical hashes. The command requires a Git checkout; an extracted ZIP can be verified without Git.
 
 ## Build a source package
 

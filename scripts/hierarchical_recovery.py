@@ -1,20 +1,5 @@
 # -*- coding: utf-8 -*-
-"""F1 分层恢复：确定性快速路径、一次类型约束重规划、失败关闭。
-
-修改记录：
-- 2026-09-05：新增基于工具注册表的计划意图保真门禁；允许替换
-  Artifact 适配器，但不允许一次重规划删掉原计划中的目标工具。
-- 2026-09-04：修正初始 Artifact 已非法时的判定顺序；在空类型集合计划检查前
-  保留精确输入错误并失败关闭，避免误报 F1 检查器故障。
-- 2026-09-04：首次建立 F1。复用既有确定性修复器和 L1 单次重规划器，
-  不增加针对题目的路线规则；所有候选计划执行前必须通过同一类型验证器。
-
-设计边界：
-1. 初始 Artifact 非法、空计划和未注册工具不交给 LLM 猜测；
-2. 确定性修复成功后立即返回，不产生额外 LLM 调用；
-3. 确定性修复失败后最多调用一次既有重规划器；
-4. 重规划仍不合法时保留原计划，由类型门禁零调用拒绝。
-"""
+"""Try deterministic repair before bounded model replanning."""
 
 from __future__ import annotations
 
@@ -40,11 +25,7 @@ HIERARCHICAL_RECOVERY_KIND = "deterministic_then_typed_llm_replan"
 
 
 def derive_required_goal_tools(original_chain: Any) -> dict[str, Any]:
-    """从注册表派生重规划必须保留的目标工具。
-
-    只有注册表显式授权 ``allow_drop`` 的 Artifact 适配器可被替换；
-    其他工具保留次数，以防止类型合法但任务不完整的计划进入执行。
-    """
+    """Preserve goal tools unless the registry explicitly permits their replacement."""
     try:
         if not isinstance(original_chain, (list, tuple)):
             return _error_result(
@@ -94,7 +75,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造统一错误结构，避免异常逃逸到批量实验主进程。"""
     try:
         issue: dict[str, Any] = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -105,7 +85,6 @@ def _error_result(
 
 
 def _issue_codes(value: Any) -> list[str]:
-    """从类型问题中提取稳定、去重的错误码。"""
     try:
         return sorted(
             {
@@ -124,7 +103,6 @@ def _base_recovery_metadata(
     type_valid_before: bool,
     issue_codes_before: list[str],
 ) -> dict[str, Any]:
-    """建立可公开审计、但不包含问题正文或模型原文的 F1 元数据。"""
     chain = list(original.get("planned_chain") or [])
     return {
         "recovery_kind": HIERARCHICAL_RECOVERY_KIND,
@@ -158,7 +136,6 @@ def _freeze_deterministic_plan(
     repaired_chain: list[str],
     repair_operations: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """把确定性产物构造成只在本次执行内使用的可校验冻结计划。"""
     try:
         namespace = f"{original.get('experiment_id', '')}-f1-deterministic"
         proof = json.dumps(
@@ -235,7 +212,7 @@ async def prepare_hierarchical_recovery(
     replan_callable: Any,
     max_output_tokens: Any,
 ) -> dict[str, Any]:
-    """选择原计划、确定性修复计划或一次 LLM 重规划计划。"""
+    """Use the original plan, deterministic repair or one bounded replan."""
     try:
         frozen_validation = validate_frozen_plan(frozen_plan)
         if frozen_validation.get("status") != "success":
@@ -273,8 +250,8 @@ async def prepare_hierarchical_recovery(
             }
 
         if artifact_issues:
-            # 初始对象构建失败时可能没有可用类型；这是已知输入错误，
-            # 不应再被空类型集合误报为检查器故障，也不交给 LLM 猜测修复。
+            # Input errors stay input errors, even with no available types.
+            # Do not send invalid inputs to model-based recovery.
             metadata = _base_recovery_metadata(
                 original,
                 type_valid_before=False,

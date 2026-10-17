@@ -1,10 +1,4 @@
-"""
-SciToolAgent 主服务入口。
-
-修改记录：
-- 2026-08-31：运行身份改为进程启动时快照，禁止旧进程随磁盘 HEAD 漂移。
-- 2026-08-11：新增只读运行身份端点，供正式实验核对实际运行工作树。
-"""
+"""Agent API."""
 
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,7 +40,6 @@ def create_app():
 
     @app.get("/api/runtime-info")
     def runtime_info():
-        """返回不含密钥的运行身份，供实验预检核对真实服务。"""
         try:
             return read_runtime_identity_snapshot(_SERVICE_RUNTIME_IDENTITY)
         except Exception as exc:
@@ -64,7 +57,6 @@ def create_app():
         try:
             result = await run_SciToolAgent(question, file_path_list, is_add_filename=is_add_filename)
             latency = time.time() - start_time
-            # result 现在是 dict{"answer": str, "reasoning": dict}
             answer = result.get("answer", "") if isinstance(result, dict) else str(result)
             reasoning = result.get("reasoning", {}) if isinstance(result, dict) else {}
             logger.info(f"Successfully processed chat request in {latency:.2f}s | Answer preview: {answer[:150]}...")

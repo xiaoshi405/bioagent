@@ -1,33 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent Planner / Executor / Summarizer 主链路。
-
-修改记录：
-- 2026-09-05：空或不可解析计划拒绝时复用类型化运行时的精确
-  错误码、非法字符和所需输入，不再统一降级为泛化文案。
-- 2026-09-05：单次重规划入口可选接收目标工具保真契约，并交由
-  统一 Prompt 构造器输出；L1 不传该参数时行为不变。
-- 2026-08-30：新增实验专用单次LLM重规划入口，返回脱敏Token
-  用量与延迟，不在本模块判定是否应触发。
-- 2026-09-04：从原始问题只构造一次请求级工具参数上下文，并同时传给
-  baseline与类型化执行，防止执行分支造成ANM参数不公平。
-- 2026-08-27：BGE改为仅在KG检索前按配置延迟加载；冻结计划重放不再
-  依赖嵌入模型，缺失资产返回结构化错误而不在模块导入时崩溃。
-- 2026-08-15：新增实验专用原始计划采样入口；只重试网络故障，首个模型
-  内容响应立即冻结，并允许B0/B1/B2重放同一个plan_sample_id。
-- 2026-08-11：在KG加载和LLM规划前接入显式命名工具注册门禁；未注册
-  工具请求确定性拒绝，禁止Planner用其他工具冒充。
-- 2026-08-09：向错误响应透传类型协调层的detail_code和缺失用户输入，
-  使前端能说明chain_id等具体阻断原因。
-- 2026-08-09：把可识别的空计划与闭集外工具计划作为可评分的规划拒绝，
-  不再把它们一律升级为Agent基础设施崩溃；B1/B2仍保留类型化安全轨迹。
-- 2026-08-08：为索引加载失败和Agent重试耗尽增加显式顶层错误状态，
-  防止实验运行器把基础设施故障误记为有效Trace。
-- 2026-07-26：接入v0.3b类型约束执行分支。开关开启时使用初始Artifact、
-  结构化计划和Artifact Pool执行；开关关闭时完整保留旧baseline路径。
-- 2026-07-28：增加不改变执行决策的统一execution_summary观测字段，
-  为v0.3c的B0/B1/B2逐题实验Trace提供一致数据。
-"""
+"""Retrieve tools, plan workflows and execute requests."""
 
 import asyncio
 import json
@@ -35,9 +7,7 @@ import os
 import time
 import traceback
 
-# 修改记录：2026-08-11，在加载 Embedding 前固定 llama-index 缓存目录。
-# 修改记录：2026-08-14，baseline执行器向结构化工具显式传递前序JSON对象；
-# 该通道只负责参数绑定，不检查或修复工具计划。
+# This channel binds parameters without validation or repair.
 from scripts.custom_kg_retrievers import KGTableRetriever
 from scripts.utils import load_index_from_storage_dir, construct_question
 from scripts.typed_planning_runtime import (
@@ -65,19 +35,14 @@ from llama_index.core import QueryBundle, Settings
 from llama_index.llms.openai import OpenAI
 from app.core.embedding_runtime import configure_llama_index_embedding
 
-# ============================================================
-# 所有配置统一从 Config（即 .env 文件）读取，不再硬编码
-# ============================================================
 _cfg = Config()
 logger = get_logger("AgentService", "agent.log")
 
-# 1. 环境变量（部分三方库仍会读 os.environ）
 os.environ["OPENAI_API_KEY"] = _cfg.API_KEY
 os.environ["OPENAI_API_BASE"] = _cfg.API_BASE
 os.environ["HF_ENDPOINT"] = _cfg.HF_ENDPOINT
 os.environ["LLAMA_INDEX_CACHE_DIR"] = _cfg.LLAMA_INDEX_CACHE_DIR
 
-# 2. LlamaIndex 全局设置
 Settings.llm = OpenAI(
     model=_cfg.LLAMAINDEX_FAKE_MODEL,
     api_key=_cfg.API_KEY,
@@ -87,7 +52,6 @@ Settings.llm = OpenAI(
 
 
 def _ensure_embedding_runtime():
-    """仅在需要KG检索时初始化嵌入模型，返回统一可诊断结果。"""
     return configure_llama_index_embedding(
         _cfg.BGE_MODEL_PATH,
         cache_dir=_cfg.LLAMA_INDEX_CACHE_DIR,
@@ -95,11 +59,8 @@ def _ensure_embedding_runtime():
 
 
 def _get_tool_io_types(tool_name, triples):
-    """从检索到的知识图谱三元组中提取工具的输入/输出类型。
-    用于为 generate_plan_input 提供 input_type 和 output_type 参数。
-    """
-    input_type = "amino acid sequence"  # 生物工具默认输入
-    output_type = "analysis result"     # 默认输出
+    input_type = "amino acid sequence"
+    output_type = "analysis result"
     for triple in triples:
         if len(triple) >= 3 and triple[0] == tool_name:
             if triple[1] == 'inputs':
@@ -110,7 +71,6 @@ def _get_tool_io_types(tool_name, triples):
 
 
 def _inspect_tool_output(tool_output):
-    """只读检查工具JSON状态，供实验记录使用，不改变原执行流程。"""
     try:
         if isinstance(tool_output, dict):
             result = tool_output
@@ -135,7 +95,6 @@ def _inspect_tool_output(tool_output):
 
 
 def _normalize_retrieved_triples(triples):
-    """把检索三元组转换为可写入私有JSONL账本的纯字符串列表。"""
     try:
         normalized = []
         for triple in triples or []:
@@ -148,7 +107,6 @@ def _normalize_retrieved_triples(triples):
 
 
 def _retrieved_tool_names(triples):
-    """从三元组中稳定去重工具名，供执行Trace与诊断复用。"""
     try:
         names = []
         for triple in triples or []:
@@ -176,7 +134,6 @@ async def _capture_plan_from_retrieved(
     planner_callable=generate_tools_plan,
     config=None,
 ):
-    """对已检索工具采样一次内容计划；网络故障可重试，内容结果绝不重抽。"""
     cfg = config if config is not None else _cfg
     max_attempts = int(
         getattr(cfg, "EXPERIMENT_PLAN_NETWORK_MAX_ATTEMPTS", 3)
@@ -188,7 +145,6 @@ async def _capture_plan_from_retrieved(
     backoff_seconds = min(30.0, max(0.0, backoff_seconds))
     normalized_triples = _normalize_retrieved_triples(tools_retrieved)
     async def invoke_planner():
-        """绑定本题检索上下文，交给轻量状态机控制重试边界。"""
         return await planner_callable(
             question=question,
             tools_retrieved_list=tools_retrieved,
@@ -257,7 +213,6 @@ async def capture_SciToolAgent_plan(
     repeat_index=0,
     model=None,
 ):
-    """实验专用规划入口：检索一次，并冻结首个LLM内容响应及全部尝试。"""
     original_question = question
     request_guard = evaluate_explicit_tool_request(original_question)
     if request_guard.get("decision") == "reject":
@@ -372,11 +327,6 @@ async def capture_SciToolAgent_replan(
     max_output_tokens,
     required_tool_names=None,
 ):
-    """发起且仅发起一次 L1 重规划请求。
-
-    是否触发、响应是否类型合法由实验运行器和
-    baseline_strategies 决定，避免把无限重试隐藏在LLM客户端中。
-    """
     started = time.perf_counter()
     try:
         prompt_result = build_replan_prompt(
@@ -433,15 +383,14 @@ async def run_SciToolAgent(
     original_question = question
     tool_parameter_context = build_tool_parameter_context(original_question)
 
-    # 结构化推理链数据，用于前端可视化
     reasoning = {
-        "retrieved_tools": [],   # 检索到的工具名列表
-        "plan_chain": [],        # LLM 规划的工具调用链
-        "tool_steps": [],        # 每步工具的执行详情
-        "typed_planning": None,  # v0.3b脱敏类型计划与Artifact轨迹
-        "request_guard": None,   # 显式命名工具规划前注册检查
+        "retrieved_tools": [],
+        "plan_chain": [],
+        "tool_steps": [],
+        "typed_planning": None,
+        "request_guard": None,
         "plan_sampling": safe_plan_trace(frozen_plan),
-        "execution_summary": {   # v0.3c统一观测，不包含原始序列
+        "execution_summary": {
             "completed": False,
             "attempted_steps": 0,
             "successful_steps": 0,
@@ -450,8 +399,7 @@ async def run_SciToolAgent(
         },
     }
 
-    # --- [Step 0] 规划前显式工具注册门禁 ---
-    # 该门禁是三个实验条件共有的安全前置条件，不属于B1/B2类型干预。
+    # Apply the explicit-tool guard in all experiment conditions.
     request_guard = evaluate_explicit_tool_request(original_question)
     reasoning["request_guard"] = request_guard
     if request_guard.get("decision") == "reject":
@@ -557,7 +505,6 @@ async def run_SciToolAgent(
 
     while retry_attempts > 0:
         try:
-            # --- [Step 2] 混合检索 ---
             if active_frozen_plan is not None:
                 tools_retrieved = active_frozen_plan.get(
                     "retrieved_triples",
@@ -612,7 +559,6 @@ async def run_SciToolAgent(
                 retry_attempts -= 1
                 continue
 
-            # 记录 Plan Chain
             reasoning["plan_chain"] = tools_path
 
             unknown_tools = find_unknown_tool_names(tools_path)
@@ -644,8 +590,7 @@ async def run_SciToolAgent(
                     "reasoning": reasoning,
                 }
 
-            # --- [Step 3.5] v0.3b类型约束执行分支 ---
-            # 默认开关关闭时完全旁路，继续执行下面的旧baseline循环。
+            # Use the legacy executor when typed planning is disabled.
             if _cfg.TYPE_PLANNING_ENABLED:
                 logger.info(
                     "[Step 3.5] 类型约束规划已开启，构建初始Artifact并执行结构化计划"
@@ -758,15 +703,13 @@ async def run_SciToolAgent(
                     "reasoning": reasoning,
                 }
 
-            # --- [Step 4] 逐步调用工具（支持多步参数动态传递）---
             previous_tool_output = ""
             baseline_step_statuses = []
             for i, tool_name in enumerate(tools_path):
                 logger.info(f"[Step 4] 正在调用本地工具 ({i+1}/{len(tools_path)}): {tool_name}")
 
-                # 动态参数提取：
-                # - 第一个工具：直接使用用户原始问题（tool_runner 内部 regex 提取序列）
-                # - 后续工具：调用 generate_plan_input 让 LLM 根据前驱输出提取参数
+                # The first tool receives the original request.
+                # Later tools use model-extracted parameters from prior output.
                 if i > 0 and previous_tool_output:
                     input_type, output_type = _get_tool_io_types(tool_name, tools_retrieved)
                     logger.info(f"[Step 4.1] 正在让 LLM 提取 {tool_name} 的输入参数 (input_type={input_type})...")
@@ -802,7 +745,6 @@ async def run_SciToolAgent(
                 output_status = _inspect_tool_output(current_output)
                 baseline_step_statuses.append(output_status)
 
-                # 记录每步工具执行详情
                 reasoning["tool_steps"].append({
                     "tool_name": tool_name,
                     "args_preview": tool_args[:200] if len(tool_args) > 200 else tool_args,
@@ -811,7 +753,6 @@ async def run_SciToolAgent(
                     "error_message": output_status.get("message"),
                 })
 
-            # --- [Step 5] 总结答案 ---
             failed_steps = sum(
                 item.get("status") != "success"
                 for item in baseline_step_statuses

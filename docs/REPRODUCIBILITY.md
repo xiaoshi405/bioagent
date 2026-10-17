@@ -19,7 +19,7 @@ The component plot uses archived per-repeat metrics from the 6,300-run shared-pl
 
 ## Evidence levels
 
-1. **Source and input verification:** `scripts/verify_release_assets.py` verifies release-file SHA256, frozen external code and Test-150 input byte hashes, and vendored official-source hashes. New-clone line endings are protected by `.gitattributes`.
+1. **Source and input verification:** `scripts/verify_release_assets.py` verifies release-file SHA256, original frozen sources in `reproduction/frozen_source.zip`, Test-150 input byte hashes, and vendored official-source hashes. Working Python sources must retain the original executable syntax and runtime strings; comments and docstrings may differ. New-clone line endings are protected by `.gitattributes`.
 2. **Archived-label reconstruction:** the offline reproduction reconstructs tables and plot values from released per-run/repeat records. The retained scientific-score files preserve their original labels and coverage.
 3. **Raw event rescoring:** historical raw events contain the planning and execution observations used to obtain those labels. They are not bundled into the lightweight code repository. Original raw-result/event hashes are retained for provenance. No external archive URL is invented; one must be provided with the eventual archival release before claiming independent raw-trace rescoring is available.
 4. **New online execution:** historical runners and adapters are provided, but a new installation needs a new versioned preparation/freeze and its own resources/API authorization. A new execution is not the archived experiment.

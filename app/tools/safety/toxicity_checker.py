@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-修改记录补充：
-- 2026-08-07：避免对 Biopython 惰性比对集合调用 len() 导致并列最优路径数量溢出；
-  本工具只读取第一条确定性最优比对。
-蛋白质毒性序列相似性检测。
-
-修改记录：
-- 2026-07-19：改为完全本地的 k-mer 候选预筛选 + Smith-Waterman 精确比对；
-  增加数据库缓存、路径解析、输入校验和标准 JSON 错误返回，兼容 Python 3.14。
-"""
+"""Screen sequences against the local toxicity reference database."""
 
 from functools import lru_cache
 from pathlib import Path
@@ -36,7 +27,6 @@ ToxinRecord = Tuple[str, str, frozenset[str]]
 
 
 def _error(message: str) -> ToxicityResult:
-    """构造统一错误返回，避免毒性检测异常传到 Agent 主进程。"""
     try:
         return {"status": "error", "message": str(message)}
     except Exception as exc:
@@ -44,7 +34,7 @@ def _error(message: str) -> ToxicityResult:
 
 
 def _normalize_sequence(sequence: str) -> Tuple[Optional[str], Optional[ToxicityResult]]:
-    """清理并校验氨基酸序列，只接受20种标准氨基酸。"""
+    """Normalize whitespace and case; accept the 20 standard amino acids."""
     try:
         if not isinstance(sequence, str):
             return None, _error("序列必须是字符串")
@@ -67,7 +57,6 @@ def _normalize_sequence(sequence: str) -> Tuple[Optional[str], Optional[Toxicity
 
 
 def _resolve_database_path(db_path: Optional[str]) -> Optional[Path]:
-    """把 .env 中的相对数据库路径稳定解析到项目根目录。"""
     try:
         configured = str(db_path or Config().TOXIN_PROTEIN or "").strip()
         if not configured:
@@ -82,7 +71,6 @@ def _resolve_database_path(db_path: Optional[str]) -> Optional[Path]:
 
 
 def _kmers(sequence: str, size: int = KMER_SIZE) -> frozenset[str]:
-    """生成用于候选预筛选的固定长度 k-mer 集合。"""
     try:
         if not sequence:
             return frozenset()
@@ -101,9 +89,8 @@ def _kmers(sequence: str, size: int = KMER_SIZE) -> frozenset[str]:
 def _load_toxin_database(
     resolved_path: str, modified_time_ns: int
 ) -> Tuple[ToxinRecord, ...]:
-    """按路径和修改时间加载数据库，文件更新后自动刷新缓存。"""
     try:
-        # modified_time_ns 作为缓存键；变量本身无需参与文件解析。
+        # Include the modification time in the database cache key.
         _ = modified_time_ns
         path = Path(resolved_path)
         if not path.is_file():
@@ -133,7 +120,6 @@ def _candidate_score(
     query_kmers: frozenset[str],
     target_kmers: frozenset[str],
 ) -> float:
-    """综合 k-mer overlap 与长度相近性计算候选预筛分数。"""
     try:
         if not query_kmers or not target_kmers:
             return 0.0
@@ -150,7 +136,7 @@ def _candidate_score(
 def _smith_waterman_similarity(
     query: str, target: str
 ) -> Tuple[float, float, float, float]:
-    """返回双向覆盖度校正相似度、恒等度、查询覆盖度和目标覆盖度。"""
+    """Return similarity, identity and coverage for both aligned sequences."""
     try:
         aligner = PairwiseAligner()
         aligner.mode = "local"
@@ -160,9 +146,7 @@ def _smith_waterman_similarity(
         aligner.extend_gap_score = -1.0
 
         alignments = aligner.align(query, target)
-        # Biopython 会惰性枚举所有并列最优比对；某些长序列的最优路径数可能
-        # 超过 Py_ssize_t 上限，因此调用 len(alignments) 会触发 OverflowError。
-        # 本工具只需要一个确定性的最优解，直接读取第一条即可避免枚举总数。
+        # Read only the first optimal alignment; counting ties can overflow.
         alignment = next(iter(alignments), None)
         if alignment is None:
             return 0.0, 0.0, 0.0, 0.0
@@ -186,7 +170,7 @@ def _smith_waterman_similarity(
         identity = matches / aligned_length * 100.0
         query_coverage = min(100.0, aligned_length / max(1, len(query)) * 100.0)
         target_coverage = min(100.0, aligned_length / max(1, len(target)) * 100.0)
-        # 同时要求查询和数据库目标被充分覆盖，避免长蛋白偶然包含4肽就被判为毒性。
+        # Require coverage of both sequences to avoid short incidental matches.
         similarity = identity * min(query_coverage, target_coverage) / 100.0
         return (
             round(similarity, 2),
@@ -204,7 +188,7 @@ def check_protein_toxicity_bio(
     db_path: Optional[str] = None,
     threshold: float = PROTEIN_SIMILARITY_THRESHOLD,
 ) -> ToxicityResult:
-    """检测输入序列是否与本地已知毒性蛋白高度相似。"""
+    """Check for high similarity to proteins in the local toxicity database."""
     try:
         sequence, error = _normalize_sequence(input_sequence)
         if error or sequence is None:
@@ -289,7 +273,7 @@ def check_protein_toxicity_bio(
 
 
 def check_toxicity_by_type(sequences) -> bool:
-    """兼容旧安全检查入口；任一序列命中毒性数据库即返回 True。"""
+    """Return true if any supplied sequence matches the toxicity reference."""
     try:
         if not sequences:
             return False
@@ -305,5 +289,5 @@ def check_toxicity_by_type(sequences) -> bool:
         return False
     except Exception as exc:
         logger.error("批量毒性检查失败: %s", exc, exc_info=True)
-        # 安全检查异常时采用 fail-closed：阻止后续操作，而不是把未知状态当无毒。
+        # Fail closed if toxicity screening raises an error.
         return True

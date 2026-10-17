@@ -1,43 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-app/tools/tool_runner.py
-Agent 工具执行出口 —— 将 KG 规划出的工具名转发给 Biology FastAPI 服务 (:8000)
+"""Build tool payloads and call the protein API."""
 
-修改记录
-1. 新增 TOOL_NAME_TO_API 映射表，解决 KG 工具名与 B 接口路径不一致问题
-2. 新增 extract_sequence() 函数，从用户自然语言中提取氨基酸序列，
-   避免把整句话传给 sequence 字段导致计算失败
-3. 全面包裹 try-except + 超时控制，B 服务未启动或网络异常时
-   返回标准 error JSON，主进程不崩溃
-4. 2026-07-19：注册六个新增序列工具；统一返回合法 JSON；未知工具不再
-   静默兜底到综合分析接口，避免执行错误功能。
-5. 2026-07-20：增加PDB文件工具分流，使用file_path_list构造请求，避免把
-   文件问题错误地按氨基酸序列解析。
-6. 2026-07-21：修复疑似序列中的数字/分隔符被静默删除的问题；Runner只
-   负责定位候选token，保留非法字符交给Biology服务统一拒绝。
-7. 2026-07-24：增加单记录Protein FASTA文件分流和解析接口映射。
-8. 2026-07-24：增加显式PDB链选择分流；缺少chain_id时拒绝调用。
-9. 2026-07-24：PDB链ID按用户原样传递，并兼容chain_id=B等显式写法；
-10. 2026-08-09：补充“A链/A 链”等前置链ID中文写法，消除链参数抽取的
-   空格与语序敏感性；仍只接受用户显式给出的单字符链ID。
-   禁止执行层擅自转换大小写，避免选中错误链或把有效小写链改成无效链。
-10. 2026-07-26：增加typed_inputs精确输入通道，使v0.3a执行器可直接
-    使用Artifact Pool真实对象，避免再次让LLM或正则猜测前序输出。
-11. 2026-07-26：拆出严格的extract_sequence_candidate()，供v0.3b在
-    请求开始时识别初始序列对象；旧extract_sequence()保留原有回退行为。
-12. 2026-08-11：工具别名规范化同时忽略大小写、下划线、连字符和点号，
-    供规划前显式工具注册门禁复用。
-13. 2026-08-12：将序列候选定位与字符合法性校验分离；仅对带序列标签、
-    引号或代码边界的短token放宽定位，并排除PDB ID与chain ID上下文。
-14. 2026-08-14：接入Topology v2-lite的多记录FASTA与比对对象映射；
-    类型化通道按精确类型构造结构化JSON，baseline通道保守传递前序对象。
-15. 2026-09-02：结构化序列代码块优先于题面标识符；排除UniProt accession，
-    并收紧非显式非法候选，避免数据库名称遮蔽真实序列或上传文件。
-16. 2026-09-04：普通与类型化执行共用请求级工具参数上下文；ANM显式
-    n_modes、cutoff和chain_id不再因Artifact Pool执行而丢失。
-"""
-
-#执行层（executor），请求生物计算的Fastapi服务的端口
 import json
 import re
 from pathlib import Path
@@ -55,20 +18,11 @@ from app.tools.tool_parameters import (
 _cfg = Config()
 logger = get_logger("AgentService", "agent.log")
 
-
-# ------------------------------------------------------------------ #
-#  1. KG工具名  →  B后端接口路径  映射表
-#     KG检索返回的是 tools_dict.py 里的原始名（大驼峰）
-#     B的接口路径是小写+下划线，两者必须在这里对齐
-#     后续B新增接口时，在此表里补一行即可，无需改其他代码
-# ------------------------------------------------------------------ #
 TOOL_NAME_TO_API: dict[str, str] = {
-    # ---------- 核心计算接口 ----------
     "ComputePiMw":                    "/api/compute_pi_mw",
     "compute_pI_mw":                  "/api/compute_pi_mw",
     "ProteinIsoelectricPointCalculator": "/api/compute_pi_mw",
 
-    # ---------- 本地序列描述 ----------
     "compute_gravy":                   "/api/compute_gravy",
     "ComputeGRAVY":                    "/api/compute_gravy",
     "compute_secondary_structure_fraction": "/api/compute_secondary_structure_fraction",
@@ -80,24 +34,19 @@ TOOL_NAME_TO_API: dict[str, str] = {
     "compute_extinction_coefficient":  "/api/compute_extinction_coefficient",
     "ComputeExtinctionCoefficient":    "/api/compute_extinction_coefficient",
 
-    # ---------- 信号肽预测 ----------
     "PredictSignalPeptide":           "/api/predict_signalpeptide",
     "predict_signalpeptide":          "/api/predict_signalpeptide",
 
-    # ---------- 跨膜区预测 ----------
     "PredictTransmembraneRegion":     "/api/predict_transmembrane",
     "predict_transmembrane":          "/api/predict_transmembrane",
 
-    # ---------- 溶解度预测 ----------
     "ProteinSolubilityPredictor":     "/api/predict_solubility",
     "PredictProteinSolubility":       "/api/predict_solubility",
     "predict_solubility":             "/api/predict_solubility",
 
-    # ---------- 本地毒性蛋白相似性筛查 ----------
     "check_protein_toxicity":         "/api/check_protein_toxicity",
     "CheckProteinToxicity":           "/api/check_protein_toxicity",
 
-    # ---------- 本地PDB结构分析 ----------
     "analyze_pdb_structure":          "/api/analyze_pdb_structure",
     "AnalyzeProteinStructure":        "/api/analyze_pdb_structure",
     "extract_pdb_sequences":          "/api/extract_pdb_sequences",
@@ -107,7 +56,6 @@ TOOL_NAME_TO_API: dict[str, str] = {
     "calculate_protein_anm":          "/api/calculate_protein_anm",
     "CalculateProteinANM":            "/api/calculate_protein_anm",
 
-    # ---------- 本地Protein FASTA解析 ----------
     "parse_protein_fasta":            "/api/parse_protein_fasta",
     "ParseProteinFASTA":               "/api/parse_protein_fasta",
     "parse_multi_protein_fasta":       "/api/parse_multi_protein_fasta",
@@ -119,7 +67,6 @@ TOOL_NAME_TO_API: dict[str, str] = {
     "summarize_pairwise_alignment":    "/api/summarize_pairwise_alignment",
     "SummarizePairwiseAlignment":      "/api/summarize_pairwise_alignment",
 
-    # ---------- 一站式全分析（Agent最常走这条路）----------
     "protein_analysis":               "/api/protein_analysis",
     "ComputeProtPara":                "/api/protein_analysis",
 }
@@ -159,10 +106,8 @@ FASTA_RECORD_IDENTIFIER_TYPE = "FASTA record identifier"
 FASTA_RECORD_IDENTIFIER_PAIR_TYPE = "FASTA record identifier pair"
 PAIRWISE_PROTEIN_ALIGNMENT_TYPE = "pairwise protein alignment"
 
-# Biology FastAPI 服务地址，统一从 .env 配置读取
 BIO_API_BASE = _cfg.BIO_API_BASE
 
-# 单次请求超时（秒），答辩演示时给充裕时间
 REQUEST_TIMEOUT = aiohttp.ClientTimeout(total=60)
 
 _VALID_AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
@@ -175,7 +120,6 @@ _UNIPROT_ACCESSION_PATTERN = re.compile(
 
 
 def _configured_sequence_threshold(name: str, fallback: int) -> int:
-    """读取正整数序列定位阈值；配置异常时安全回退。"""
     try:
         return max(1, int(getattr(_cfg, name, fallback)))
     except (TypeError, ValueError):
@@ -183,7 +127,6 @@ def _configured_sequence_threshold(name: str, fallback: int) -> int:
 
 
 def _has_identifier_context(text: str, start: int, end: int) -> bool:
-    """判断短token是否属于PDB、chain或FASTA record标识语境。"""
     try:
         prefix = text[max(0, start - 40):start]
         suffix = text[end:min(len(text), end + 20)]
@@ -203,7 +146,6 @@ def _has_identifier_context(text: str, start: int, end: int) -> bool:
 
 
 def _looks_like_non_sequence_identifier(token: str) -> bool:
-    """识别不应进入氨基酸内容校验的常见生物标识符或文件名。"""
     try:
         normalized = str(token or "").strip().strip("`'\"“”‘’")
         if not normalized:
@@ -226,7 +168,6 @@ def _looks_like_non_sequence_identifier(token: str) -> bool:
 
 
 def _extract_explicit_sequence_candidate(text: str) -> str | None:
-    """定位具有明确序列语义的短token，不在此函数判断氨基酸是否合法。"""
     try:
         minimum_length = _configured_sequence_threshold(
             "EXPLICIT_SEQUENCE_CANDIDATE_MIN_LENGTH",
@@ -239,9 +180,8 @@ def _extract_explicit_sequence_candidate(text: str) -> str | None:
         )
         token_pattern = re.compile(_SEQUENCE_TOKEN_PATTERN)
 
-        # 结构化代码块是最强数据边界，必须先于题面中的“真实序列 P69905”
-        # 等描述性标识符。块内允许大小写和空白，定位后统一压缩空白；
-        # X/Z/数字等内容仍原样保留给后续标准字符校验。
+        # Prefer explicit code blocks over descriptive identifiers.
+        # Keep invalid characters for downstream validation.
         block_pattern = re.compile(
             r"```(?:(?:sequence|protein|amino[_ -]?acid)[ \t]*)?\r?\n"
             r"\s*([A-Za-z0-9*._\-\s]+?)\s*\r?\n```",
@@ -255,8 +195,7 @@ def _extract_explicit_sequence_candidate(text: str) -> str | None:
             ):
                 return token.upper()
 
-        # 行内代码和引号也是明确数据边界；短候选要求大写，避免把普通
-        # 引用英文误当序列。PDB/chain/UniProt标识语境优先排除。
+        # Quoted short candidates must be uppercase; exclude identifier contexts.
         delimited_patterns = (
             re.compile(rf"`({_SEQUENCE_TOKEN_PATTERN})`"),
             re.compile(rf"[\"'“‘]({_SEQUENCE_TOKEN_PATTERN})[\"'”’]"),
@@ -273,7 +212,7 @@ def _extract_explicit_sequence_candidate(text: str) -> str | None:
                 ):
                     return token.upper()
 
-        # 标签本身提供序列语义，例如“序列 X”或“sequence: X”。
+        # A sequence label provides an explicit sequence boundary.
         for label_match in label_pattern.finditer(text):
             remainder = text[label_match.end():]
             strong_match = re.match(
@@ -289,8 +228,7 @@ def _extract_explicit_sequence_candidate(text: str) -> str | None:
                     and not _looks_like_non_sequence_identifier(token)
                 ):
                     return token.upper()
-            # 兼容“序列的pI：MKW...”这类标签与数据之间带简短字段说明的
-            # 明确语义；必须存在冒号边界，避免从普通英文叙述中猜测单词。
+            # Allow a short field label before a colon-delimited sequence.
             scoped_match = re.match(
                 rf"[^\r\n:：]{{0,40}}[:：]\s*[`'\"“‘]?({_SEQUENCE_TOKEN_PATTERN})",
                 remainder,
@@ -319,18 +257,8 @@ def _extract_explicit_sequence_candidate(text: str) -> str | None:
         logger.error("定位显式短序列候选失败: %s", exc, exc_info=True)
         return None
 
-
-# ------------------------------------------------------------------ #
-#  2. 从自然语言 query 里提取氨基酸序列
-#     B 的接口只接受纯序列，不能把整句话传进去
-#     规则：连续 10 个以上标准单字母氨基酸字符视为序列
-# ------------------------------------------------------------------ #
 def extract_sequence_candidate(text: str) -> str | None:
-    """严格定位第一段疑似氨基酸序列；找不到时返回None。
-
-    合法序列会标准化为大写；疑似序列中的数字、X/Z等非法字符必须完整
-    保留，让Biology服务统一校验。该函数不把普通自然语言回退成序列。
-    """
+    """Locate a sequence candidate and preserve invalid characters for validation."""
     try:
         if not isinstance(text, str):
             return None
@@ -383,8 +311,7 @@ def extract_sequence_candidate(text: str) -> str | None:
                 raw_match.end(),
             ):
                 continue
-            # 英文问题常在序列后直接接句号；句末标点不属于序列内容。
-            # 仅移除两端句号，内部句号仍保留并由后端判为非法字符。
+            # Strip sentence periods at the ends, not inside the sequence.
             raw_token = raw_token.strip(".")
             if _looks_like_non_sequence_identifier(raw_token):
                 continue
@@ -400,10 +327,8 @@ def extract_sequence_candidate(text: str) -> str | None:
             has_explicit_invalid_marker = any(
                 char.isdigit() or char in "*._-" for char in token
             )
-            # 数字/分隔符是本次问题的关键：必须把整个候选token传给后端，
-            # 不能让后续正则只取到前面的合法氨基酸片段。
-            # 纯字母非法候选只由上面的显式语义规则定位；否则大写英文单词
-            # 与蛋白序列在字符层不可区分，贸然接收会制造假拒绝。
+            # Keep the whole invalid candidate instead of extracting a valid prefix.
+            # Require explicit context for invalid alphabetic candidates.
             if (
                 valid_count >= minimum_valid_residues
                 and valid_count / len(token) >= minimum_valid_ratio
@@ -419,12 +344,7 @@ def extract_sequence_candidate(text: str) -> str | None:
 
 
 def extract_sequence(text: str) -> str:
-    """
-    从用户输入文本中定位第一段疑似氨基酸序列。
-
-    兼容旧baseline：找到候选时返回候选；未找到时仍原样返回text，
-    由下游接口生成标准错误。v0.3b不使用该自然语言回退。
-    """
+    """Locate a sequence; retain the legacy text fallback if none is found."""
     try:
         if not isinstance(text, str):
             return ""
@@ -439,7 +359,6 @@ def extract_sequence(text: str) -> str:
 
 
 def select_pdb_file(file_path_list: list) -> str | None:
-    """从上传文件列表中选择第一份存在的PDB文件。"""
     try:
         if not isinstance(file_path_list, list):
             return None
@@ -456,7 +375,6 @@ def select_pdb_file(file_path_list: list) -> str | None:
 
 
 def select_fasta_file(file_path_list: list) -> str | None:
-    """从上传文件列表中选择第一份存在的Protein FASTA文件。"""
     try:
         if not isinstance(file_path_list, list):
             return None
@@ -471,24 +389,14 @@ def select_fasta_file(file_path_list: list) -> str | None:
         logger.error("选择FASTA上传文件失败: %s", exc, exc_info=True)
         return None
 
-
-# ------------------------------------------------------------------ #
-#  3. 工具名解析：KG名 → 接口路径
-#     先精确匹配，再做大小写/下划线的模糊兜底
-# ------------------------------------------------------------------ #
 def resolve_api_path(tool_name: str) -> str | None:
-    """
-    返回工具对应的接口路径，找不到返回 None。
-    优先精确匹配，其次做去格式化后的模糊匹配。
-    """
     try:
         if not isinstance(tool_name, str) or not tool_name.strip():
             return None
-        # 精确匹配
         if tool_name in TOOL_NAME_TO_API:
             return TOOL_NAME_TO_API[tool_name]
 
-        # 兼容历史大小写和格式分隔符差异，但不猜测不存在的工具功能。
+        # Allow legacy spelling separators, but do not infer unknown tools.
         normalized = re.sub(r"[^a-z0-9]", "", tool_name.lower())
         for key, path in TOOL_NAME_TO_API.items():
             key_normalized = re.sub(r"[^a-z0-9]", "", key.lower())
@@ -501,7 +409,6 @@ def resolve_api_path(tool_name: str) -> str | None:
 
 
 def find_unknown_tool_names(tool_names: object) -> list[str]:
-    """返回计划中无法映射到本地注册接口的去重工具名。"""
     try:
         if not isinstance(tool_names, (list, tuple)):
             return []
@@ -526,7 +433,6 @@ def _validate_typed_file(
     allowed_suffixes: set[str],
     label: str,
 ) -> dict:
-    """校验对象池传入的文件对象，并返回受控绝对路径。"""
     try:
         if not isinstance(value, str) or not value.strip():
             return {
@@ -562,7 +468,6 @@ def _validate_typed_object(
     *,
     schema_version: str | None = None,
 ) -> dict:
-    """校验Artifact Pool传入的结构化对象及可选schema版本。"""
     try:
         if not isinstance(value, dict) or not value:
             return {
@@ -589,10 +494,7 @@ def build_typed_tool_payload(
     typed_inputs: object,
     tool_parameters: object = None,
 ) -> dict:
-    """把Artifact Pool真实对象转换为Biology接口请求体。
-
-    本函数只做类型到参数的确定性映射，不从自然语言再次提取数据。
-    """
+    """Map artifact values to API parameters without parsing natural language again."""
     try:
         if not isinstance(api_path, str) or not api_path.strip():
             return {"status": "error", "message": "接口路径不能为空"}
@@ -752,7 +654,6 @@ def build_typed_tool_payload(
 
 
 def _parse_json_object(value: object) -> dict:
-    """从Runner输入或前序结果中保守解析一个JSON对象，不执行任意代码。"""
     try:
         if isinstance(value, dict):
             return value
@@ -785,7 +686,6 @@ def _build_untyped_structured_payload(
     tool_args: str,
     previous_tool_output: object,
 ) -> dict:
-    """为baseline保守绑定前序结构对象和用户显式记录ID，不做类型修复。"""
     try:
         args_object = _parse_json_object(tool_args)
         previous_object = _parse_json_object(previous_tool_output)
@@ -847,9 +747,7 @@ def _build_untyped_structured_payload(
             "code": "STRUCTURED_PAYLOAD_EXCEPTION",
             "message": f"构造baseline结构化请求失败: {exc}",
         }
-# ------------------------------------------------------------------ #
-#  4. 主函数：异步调用工具
-# ------------------------------------------------------------------ #
+
 async def run_tool(
     tool_name: str,
     tool_args: str,
@@ -858,22 +756,8 @@ async def run_tool(
     previous_tool_output: object = None,
     tool_parameters: dict | None = None,
 ) -> str:
-    """
-    将 Agent 规划出的工具调用转发给 Biology FastAPI 服务。
-
-    Args:
-        tool_name:      KG 检索返回的工具名
-        tool_args:      用户原始问题或上一步工具输出（会自动提取序列）
-        file_path_list: 上传文件列表（文件工具按扩展名选择PDB或FASTA）
-        typed_inputs:   可选的类型到真实值映射；提供后禁止再次从文本猜测输入
-        previous_tool_output: baseline可选的前序工具JSON；仅供结构对象确定性传递
-        tool_parameters: 可选的请求级显式参数上下文；普通与类型化路径共用
-
-    Returns:
-        str: 工具执行结果（成功时为 JSON 字符串，失败时为 error 描述）
-    """
+    """Build a request and call the registered protein tool endpoint."""
     try:
-        # --- Step 1: 解析接口路径；参数解析也必须处于异常边界内。---
         api_path = resolve_api_path(tool_name)
         if api_path is None:
             msg = (f"工具 '{tool_name}' 未在 Biology 模块接口映射表中，"
@@ -883,7 +767,6 @@ async def run_tool(
 
         url = f"{BIO_API_BASE}{api_path}"
 
-        # --- Step 2: 根据工具输入类型构造请求。---
         normalized_args = tool_args if isinstance(tool_args, str) else str(tool_args or "")
         parameter_context = (
             tool_parameters
@@ -998,7 +881,6 @@ async def run_tool(
                 len(normalized_args),
             )
 
-        # --- Step 3: 发起请求，全面捕获异常。---
         async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
             async with session.post(url, json=json_data) as response:
                 if response.status == 200:
@@ -1006,7 +888,7 @@ async def run_tool(
                     logger.info(f"[tool_runner] 调用成功: {tool_name}")
                     return json.dumps(res, ensure_ascii=False)
                 else:
-                    # HTTP 错误（4xx/5xx），读取错误体返回，不抛异常
+                    # Return the error body for HTTP failures.
                     err_text = await response.text()
                     msg = (f"Biology服务返回HTTP {response.status}，"
                            f"接口: {api_path}，详情: {err_text[:200]}")

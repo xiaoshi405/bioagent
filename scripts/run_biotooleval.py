@@ -1,49 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3e BioToolEval B0/B1/B2 可恢复批量实验与保守评分运行器。
-
-修改记录：
-- 2026-09-05：离线重规划器兼容 F1 目标工具保真参数，不改变 L1 默认调用。
-- 2026-09-04：新增 F1 分层恢复调度；原计划有效时直行，确定性修复失败时
-  最多进行一次受类型验证约束的重规划，仍非法则由类型门禁拒绝。
-- 2026-09-04：Gate2参数保真P0将值参数契约与类型化执行器
-  纳入开发方法快照，防止未来实验静默回退旧执行路径。
-- 2026-09-02：开发冻结清单补充Agent工具输入解析器哈希，确保输入边界
-  修复不会在实验方法快照之外静默漂移。
-- 2026-09-02：结构化氨基酸序列使用显式代码块传入Agent，保留单残基、
-  大小写与空白边界，并避免题面accession遮蔽真实输入。
-- 2026-08-30：新增S1 Schema/runtime与L1单次有界LLM重规划baseline；
-  两者与E0-E3共享同一原始冻结计划，重规划原文另写私有账本。
-- 2026-08-27：调度器支持E0-E3正交条件，逐题临时应用并恢复类型化
-  运行时、类型门禁和修复三个开关。
-- 2026-08-24：实验文本摘要统一规范为 UTF-8/LF，避免 Windows CRLF 检出导致
-  同一 Git 内容被误判为冻结漂移；冻结题面、Gold 与旧 Trace 均保持不变。
-- 2026-08-15：将显式实验模型临时绑定到Agent运行时配置，保证计划采样、
-  参数提取与答案总结使用同一模型，并在每题执行后恢复原配置。
-- 2026-08-15：把原始计划采样从条件执行中分离；每题×重复轮次只采样一次，
-  B0/B1/B2共享冻结计划，网络重试与内容重规划分别记账。
-- 2026-08-09：每题执行前冻结实际初始Artifact类型与内容校验问题码，供B0/B1/B2
-  共用同一离线类型复核上下文；失败账本后续可显式统计缺失实验单元。
-- 2026-08-08：拒绝把Agent显式报告的系统错误写成有效实验Trace，
-  同时保留类型拒绝和工具失败等可评分响应。
-- 2026-07-30：新增数据集准入检查、固定条件调度、单题超时与失败隔离、
-  JSONL断点续跑、重复键去重、运行清单和完全离线dry-run。
-- 2026-07-30：接入确定性三态评分、评分审计和条件盲化人工复核队列。
-- 2026-08-08：新增显式development-run与题目ID子集选择；开发候选集可用于
-  Go/No-Go预实验，但运行清单强制标记development_only，不能冒充正式指标。
-- 2026-08-14：按repeat循环平移B0/B1/B2顺序并写入清单，落实R3-prime
-  反平衡约束，避免固定条件顺序与API时间漂移完全重合。
-- 2026-08-14：开发实验允许以逐文件SHA-256冻结清单替代干净工作树门禁；
-  正式实验仍必须绑定干净提交，冻结清单不授权Test-100或B3。
-
-设计边界：
-1. 仅对结构化Gold和Trace可确定的事实自动评分，语义不确定项保持null；
-2. 正式运行拒绝candidate/submitted_gold，避免把未验收题目混入论文指标；
-3. 单题失败只记录一次，不在同次或恢复运行中自动重试；
-4. B0/B1/B2按同一题相邻执行，并跨repeat循环反平衡条件顺序；
-5. 公开Trace不保存问题正文、原始序列、完整答案或完整文件路径；
-6. 原文只进入.gitignore下的私有盲评队列，不能作为公开实验产物提交。
-"""
+"""Run resumable component experiments and score traces."""
 
 from __future__ import annotations
 
@@ -111,7 +67,6 @@ def _condition_order_for_repeat(
     conditions: list[str] | tuple[str, ...],
     repeat_index: int,
 ) -> list[str]:
-    """按repeat循环平移条件顺序，降低固定B0→B1→B2造成的顺序混杂。"""
     try:
         ordered = [str(value).strip() for value in conditions]
         if not ordered:
@@ -129,7 +84,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造运行器统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -149,7 +103,6 @@ def _error_result(
 
 
 def _utc_now_text() -> str:
-    """返回可排序的UTC时间文本。"""
     try:
         return datetime.now(timezone.utc).isoformat()
     except Exception as exc:
@@ -163,7 +116,6 @@ def _execution_key(
     condition: Any,
     repeat_index: Any,
 ) -> tuple[str, str, str, int]:
-    """构造断点续跑唯一键，防止同一实验单元被重复计数。"""
     try:
         return (
             str(question_id or "").strip(),
@@ -177,7 +129,6 @@ def _execution_key(
 
 
 def _load_json_schema(schema_path: Any) -> dict[str, Any]:
-    """加载并检查一个JSON Schema。"""
     try:
         path = Path(str(schema_path or "")).expanduser()
         if not path.is_file():
@@ -202,11 +153,10 @@ def _load_json_schema(schema_path: Any) -> dict[str, Any]:
 
 
 def _sha256_file(file_path: Any) -> str:
-    """按 UTF-8/LF 规范计算实验文本摘要，避免平台换行制造伪漂移。"""
     try:
         digest = hashlib.sha256()
         path = Path(str(file_path or ""))
-        # newline=None 会把 CRLF/CR 统一解码为 LF；再编码即可对应 Git 文本内容。
+        # Universal newline decoding matches Git text normalization.
         with path.open("r", encoding="utf-8", newline=None) as handle:
             while True:
                 chunk = handle.read(1024 * 1024)
@@ -232,7 +182,6 @@ def _verify_development_freeze_manifest(
     trace_path: Path,
     plan_source_path: Path | None = None,
 ) -> dict[str, Any]:
-    """校验dirty开发运行的逐文件冻结清单；任一控制量漂移都拒绝启动。"""
     try:
         if freeze_manifest_path is None:
             return _error_result(
@@ -274,7 +223,6 @@ def _verify_development_freeze_manifest(
         mismatches: list[dict[str, Any]] = []
 
         def check_file(relative_path: Any, expected_sha256: Any, label: str) -> None:
-            """只核验项目内显式文件，不展开目录或读取未登记数据。"""
             try:
                 candidate = (project_root / Path(str(relative_path or ""))).resolve()
                 candidate.relative_to(project_root)
@@ -412,7 +360,6 @@ def load_biotooleval_dataset(
     development_run: bool = False,
     config: Any = None,
 ) -> dict[str, Any]:
-    """加载并验收数据集；候选集仅能在显式开发模式下进入预实验。"""
     try:
         cfg = config if config is not None else Config()
         path = Path(str(dataset_path or "")).expanduser()
@@ -570,7 +517,6 @@ def prepare_agent_request(
     *,
     dataset_dir: Any,
 ) -> dict[str, Any]:
-    """把结构化题目转换为Agent文本和上传文件列表，仅在内存中保留原始输入。"""
     try:
         if not isinstance(question_item, dict):
             return _error_result(
@@ -648,7 +594,6 @@ def prepare_agent_request(
 
 
 def _resolve_git_state() -> dict[str, Any]:
-    """读取当前提交和工作区状态，正式实验必须绑定干净的代码快照。"""
     try:
         project_root = Path(__file__).resolve().parents[1]
         commit_result = subprocess.run(
@@ -683,7 +628,6 @@ def _resolve_git_state() -> dict[str, Any]:
 
 
 def _load_default_agent_runtime() -> dict[str, Any]:
-    """延迟导入真实Agent，保证dry-run不加载KG或调用网络。"""
     try:
         from scripts import retrieve_tool_info
 
@@ -705,7 +649,6 @@ def _load_default_agent_runtime() -> dict[str, Any]:
 def create_offline_mock_agent(
     runtime_config: Any,
 ) -> AgentCallable:
-    """创建与真实Agent同签名的离线Mock，用于验证实验调度而非效果。"""
     try:
         async def offline_mock_agent(
             question: str,
@@ -714,7 +657,6 @@ def create_offline_mock_agent(
             *,
             frozen_plan: dict[str, Any] | None = None,
         ) -> dict[str, Any]:
-            """根据内置标记返回确定性响应，不调用LLM、KG或HTTP服务。"""
             try:
                 del file_path_list, is_add_filename
                 default_tool = (
@@ -825,7 +767,6 @@ def create_offline_mock_agent(
             file_path_list: list[str],
             is_add_filename: bool = False,
         ) -> dict[str, Any]:
-            """在Mock构造失败时返回标准错误响应。"""
             try:
                 del question, file_path_list, is_add_filename
                 raise RuntimeError("offline mock unavailable")
@@ -836,7 +777,6 @@ def create_offline_mock_agent(
 
 
 def create_offline_mock_plan_sampler() -> PlanCallable:
-    """创建离线确定性计划采样器，用于验证共享计划调度协议。"""
     async def offline_plan_sampler(
         question: str,
         file_path_list: list[str],
@@ -910,7 +850,6 @@ def create_offline_mock_plan_sampler() -> PlanCallable:
 
 
 def create_offline_mock_replanner() -> PlanCallable:
-    """创建无网络L1占位重规划器，只用于验证调度与记账。"""
     async def offline_replanner(
         *,
         question,
@@ -921,7 +860,6 @@ def create_offline_mock_replanner() -> PlanCallable:
         max_output_tokens,
         required_tool_names=None,
     ) -> dict[str, Any]:
-        """返回原链；效果测试必须显式注入真实或可控replanner。"""
         del (
             question,
             available_input_types,
@@ -960,7 +898,6 @@ async def _execute_under_condition(
     initial_artifact_issue_codes: list[str] | None = None,
     replan_max_output_tokens: int = 256,
 ) -> dict[str, Any]:
-    """临时应用实验条件和模型，执行后无论成功失败都恢复原配置。"""
     original_planning = getattr(
         runtime_config,
         "TYPE_PLANNING_ENABLED",
@@ -1144,8 +1081,8 @@ async def _execute_under_condition(
                     "INVALID_BASELINE_REASONING",
                 )
             reasoning["baseline"] = copy.deepcopy(baseline_trace)
-            # 公开Trace的配对ID始终指向原始冻结计划，
-            # L1的修订计划ID单独记录，避免伪装成原计划。
+            # Pairing always uses the original frozen plan ID.
+            # Record the revised L1 plan ID separately.
             reasoning["plan_sampling"] = safe_plan_trace(frozen_plan)
         if recovery_trace is not None:
             reasoning = result.setdefault("reasoning", {})
@@ -1155,7 +1092,7 @@ async def _execute_under_condition(
                     "INVALID_F1_REASONING",
                 )
             reasoning["recovery"] = copy.deepcopy(recovery_trace)
-            # F1 可能执行派生计划，但公开配对ID始终指向原始冻结计划。
+            # Keep the original paired plan ID when F1 executes a derived plan.
             reasoning["plan_sampling"] = safe_plan_trace(frozen_plan)
         return {
             "status": "success",
@@ -1212,7 +1149,6 @@ async def _capture_frozen_plan(
     model: str,
     timeout_seconds: float,
 ) -> dict[str, Any]:
-    """在条件执行前采样并校验一个共享计划，超时与异常按基础设施失败返回。"""
     try:
         result = await asyncio.wait_for(
             plan_callable(
@@ -1262,7 +1198,6 @@ def _read_completed_keys(
     *,
     config: Any,
 ) -> dict[str, Any]:
-    """读取已完成Trace的唯一键；不存在的输出视为首次运行。"""
     try:
         if not output_path.exists():
             return {"status": "success", "keys": set(), "record_count": 0}
@@ -1297,7 +1232,6 @@ def _read_completed_keys(
 
 
 def _read_failure_keys(failure_path: Path) -> dict[str, Any]:
-    """读取失败账本的最新状态；failed默认不自动重试，resolved会解除失败键。"""
     try:
         if not failure_path.exists():
             return {"status": "success", "keys": set(), "record_count": 0}
@@ -1337,7 +1271,6 @@ def _read_failure_keys(failure_path: Path) -> dict[str, Any]:
 
 
 def _count_jsonl_records(path: Path) -> int | None:
-    """统计JSONL非空记录数；读取失败返回None并记录日志。"""
     try:
         if not path.exists():
             return 0
@@ -1351,7 +1284,6 @@ def _count_jsonl_records(path: Path) -> int | None:
 
 
 def _summarize_scoring_audit(path: Path) -> dict[str, Any]:
-    """汇总完整评分审计，保证断点恢复后清单仍报告累计标签数。"""
     try:
         if not path.exists():
             return {
@@ -1417,7 +1349,6 @@ def _append_failure_record(
     failure_category: str | None = None,
     exception_type: str | None = None,
 ) -> dict[str, Any]:
-    """追加不含问题、序列、答案和绝对路径的失败/恢复记录。"""
     try:
         if status not in {"failed", "resolved"}:
             return _error_result(
@@ -1451,7 +1382,6 @@ def _append_failure_record(
 
 
 def _classify_failure(error_code: Any, detail_code: Any) -> str:
-    """把失败单元归入稳定类别，禁止在汇总时静默删除。"""
     try:
         outer = str(error_code or "UNKNOWN")
         detail = str(detail_code or "")
@@ -1480,7 +1410,6 @@ def _write_manifest(
     manifest_path: Path,
     manifest: dict[str, Any],
 ) -> dict[str, Any]:
-    """原子写入实验运行清单，避免中断留下半个JSON。"""
     try:
         manifest_path.parent.mkdir(parents=True, exist_ok=True)
         temp_path = manifest_path.with_suffix(
@@ -1507,7 +1436,6 @@ def _validate_resume_manifest(
     trace_path: Path,
     failure_path: Path,
 ) -> dict[str, Any]:
-    """校验恢复运行没有改变模型、数据、代码或实验设计等控制变量。"""
     try:
         has_previous_artifact = trace_path.exists() or failure_path.exists()
         if not manifest_path.exists():
@@ -1572,7 +1500,6 @@ def _validate_resume_manifest(
         )
 
         def value_at(source: dict[str, Any], path: tuple[str, ...]) -> Any:
-            """安全读取嵌套清单字段。"""
             try:
                 current: Any = source
                 for part in path:
@@ -1640,7 +1567,6 @@ async def run_biotooleval_experiment(
     git_commit: str | None = None,
     git_dirty: bool | None = None,
 ) -> dict[str, Any]:
-    """按题目×重复轮次×固定条件顺序运行BioToolEval，并支持安全恢复。"""
     try:
         cfg = config if config is not None else Config()
         normalized_id = str(experiment_id or "").strip()
@@ -2499,7 +2425,6 @@ async def run_biotooleval_experiment(
 
 
 def _build_cli_parser() -> argparse.ArgumentParser:
-    """构建命令行参数解析器。"""
     try:
         parser = argparse.ArgumentParser(
             description="运行BioToolEval历史、E0-E3、S1/L1或F1分层恢复实验"
@@ -2547,7 +2472,6 @@ def _build_cli_parser() -> argparse.ArgumentParser:
 
 
 def _default_experiment_id(dry_run: bool) -> str:
-    """生成默认实验ID；正式论文运行仍建议显式命名。"""
     try:
         prefix = "dry-run" if dry_run else "biotooleval"
         stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -2558,7 +2482,6 @@ def _default_experiment_id(dry_run: bool) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """命令行入口；打印脱敏摘要并以退出码表示成功或失败。"""
     try:
         parser = _build_cli_parser()
         args = parser.parse_args(argv)

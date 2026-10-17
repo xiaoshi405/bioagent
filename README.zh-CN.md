@@ -81,6 +81,8 @@ BioToolEval 包含 150 道冻结的蛋白质分析题，其中 125 道执行或�
 
 [复现指南](docs/REPRODUCIBILITY.md)说明证据层级、冻结代码和输入校验、离线表图重建，以及另行版本化的新实验流程。
 
+[评分说明](docs/SCORING.md)介绍执行与正确性标签。原始冻结源码保存在 `reproduction/frozen_source.zip`；日常使用的代码采用简短英文注释和文档字符串。
+
 ## 主要目录
 
 ```text

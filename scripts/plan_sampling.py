@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioToolEval 原始计划采样、冻结与私有账本工具。
-
-修改记录：
-- 2026-08-15：新增计划尝试分类、确定性 sample ID、冻结计划校验与 JSONL
-  账本；公开 Trace 只保存哈希和安全摘要，原始模型响应仅进入本地私有账本。
-
-设计边界：
-1. 网络/基础设施失败可以按配置重试，但内容计划一旦返回便立即冻结；
-2. 空计划、无法解析和未知工具都属于模型计划结果，不得通过重新规划静默覆盖；
-3. 本模块不调用 LLM、不执行工具，也不修改任何冻结实验 Trace。
-"""
+"""Sample plans and record their frozen identities."""
 
 from __future__ import annotations
 
@@ -38,7 +27,6 @@ _INFRASTRUCTURE_OUTCOMES = {
 
 
 def sha256_text(value: Any) -> str:
-    """返回 UTF-8 文本的 SHA-256；异常输入按空字符串处理。"""
     try:
         return hashlib.sha256(str(value or "").encode("utf-8")).hexdigest()
     except Exception:
@@ -46,7 +34,6 @@ def sha256_text(value: Any) -> str:
 
 
 def classify_planning_exception(exc: BaseException) -> str:
-    """把外部规划异常分成网络超时、网络错误和其他规划异常。"""
     try:
         text = f"{type(exc).__name__} {exc}".lower()
         if "timeout" in text or "超时" in text:
@@ -76,7 +63,6 @@ async def collect_first_content_response(
     backoff_seconds: float,
     sleep_callable: Any = asyncio.sleep,
 ) -> dict[str, Any]:
-    """执行轻量规划重试状态机：基础设施可重试，首个内容响应立即返回。"""
     attempts: list[dict[str, Any]] = []
     try:
         max_attempts = min(5, max(1, int(max_network_attempts)))
@@ -168,7 +154,6 @@ def build_plan_sample_id(
     model: Any,
     response_sha256: Any,
 ) -> str:
-    """由实验键和首个内容响应哈希生成不可逆、可配对的计划样本 ID。"""
     try:
         payload = json.dumps(
             {
@@ -188,7 +173,6 @@ def build_plan_sample_id(
 
 
 def validate_frozen_plan(value: Any) -> dict[str, Any]:
-    """防御性校验冻结计划；拒绝缺失 ID、非法状态和非字符串工具链。"""
     try:
         if not isinstance(value, dict):
             return {
@@ -306,7 +290,6 @@ def validate_frozen_plan(value: Any) -> dict[str, Any]:
 
 
 def safe_plan_trace(value: Any) -> dict[str, Any]:
-    """构造可进入公开实验 Trace 的无原文计划摘要。"""
     validation = validate_frozen_plan(value)
     if validation.get("status") != "success":
         return {
@@ -353,7 +336,6 @@ def safe_plan_trace(value: Any) -> dict[str, Any]:
 
 
 def append_plan_sample(path: Any, record: Any) -> dict[str, Any]:
-    """把一次完整计划采样写入私有 JSONL 账本，不覆盖既有记录。"""
     try:
         record_status = (
             str(record.get("record_status") or "captured").strip()
@@ -401,7 +383,6 @@ def append_plan_sample(path: Any, record: Any) -> dict[str, Any]:
 
 
 def load_plan_samples(path: Any) -> dict[str, Any]:
-    """读取私有计划账本并按 question_id/repeat_index 建立唯一索引。"""
     try:
         input_path = Path(str(path)).expanduser()
         if not input_path.exists():
@@ -462,7 +443,6 @@ def load_plan_samples(path: Any) -> dict[str, Any]:
 
 
 def is_infrastructure_outcome(value: Any) -> bool:
-    """判断尝试结果是否属于可单独统计的基础设施失败。"""
     try:
         return str(value or "").strip() in _INFRASTRUCTURE_OUTCOMES
     except Exception:

@@ -1,32 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-app/llms/planning/prompt_templates.py
-
-修改记录
-- generate_tools_plan_template：注入生物领域专属 System 约束，
-  限定 Agent 只能从已知 Biology 工具中规划，杜绝编造工具名或
-  跨领域调用 Chemical/Material 工具。
-- 2026-07-19：工具清单改为从 BIOLOGY_TOOLS_DESC 自动生成，避免新增工具后
-  Planner 提示词与注册表不同步。
-- 2026-07-20：允许已上传PDB文件作为第二类输入，禁止Planner编造文件路径。
-- 2026-07-24：加入单记录Protein FASTA输入规则，禁止多记录自动选取。
-- 2026-07-24：明确PDB按链提取规则；未给chain_id时禁止规划单链序列分析。
-- 2026-08-14：允许多记录FASTA经集合解析后按显式record_id选择或按显式
-  ID pair比对；仍禁止自动选择记录。
-- 其余函数保持原样不动。
-"""
+"""Planning and answer prompt templates."""
 
 import json
 
 from ToolsAgent.ToolsFuns.Biology.tool_name_dict import BIOLOGY_TOOLS_DESC
 
-# ------------------------------------------------------------------ #
-#  D 整理的生物工具清单（防幻觉核心）
-#  来源：tool_name_dict.py → BIOLOGY_TOOLS_DESC
-#  作用：明确告诉 Agent "只有这些工具可以用"
-# ------------------------------------------------------------------ #
+# Use BIOLOGY_TOOLS_DESC as the tool list.
+
 def _build_biology_tool_prompt() -> str:
-    """从唯一工具注册表生成 Planner 可调用工具清单。"""
     try:
         blocks = []
         for tool_name, info in BIOLOGY_TOOLS_DESC.items():
@@ -44,9 +25,6 @@ def _build_biology_tool_prompt() -> str:
 
 BIOLOGY_TOOL_PROMPT = _build_biology_tool_prompt()
 
-# ------------------------------------------------------------------ #
-#  D 提供的防幻觉 System Prompt 模板（四条硬规则）
-# ------------------------------------------------------------------ #
 BIOLOGY_AGENT_SYSTEM_PROMPT = f"""你是生物蛋白分析Agent，只能调用以下工具，禁止编造参数与功能：
 
 {BIOLOGY_TOOL_PROMPT}
@@ -60,11 +38,6 @@ BIOLOGY_AGENT_SYSTEM_PROMPT = f"""你是生物蛋白分析Agent，只能调用�
 6. 结果只返回工具输出，不编造未计算的属性
 7. Plan Chain 中的工具名必须与上方列表完全一致，不得自行缩写或变形
 """
-
-
-# ------------------------------------------------------------------ #
-#  以下函数保持原始逻辑，仅 generate_tools_plan_template 有改动
-# ------------------------------------------------------------------ #
 
 def generate_plan_input_template(question, current_output, tool_name,
                                   input_type, output_type, previous_answer):
@@ -119,16 +92,6 @@ def generate_output_template(question, output):
 
 
 def generate_tools_plan_template(question, tools_retrieved):
-    """
-    【改动说明】在原有 Planner 的基础上，头部注入 D 提供的防幻觉 System Prompt。
-
-    答辩话术：
-    "为了解决 LLM 在工具规划阶段的幻觉问题，我们引入了一个
-    Biology-only 的 System Prompt 约束层（由成员D设计）。
-    它明确列出了所有可调用工具的名称、参数格式和使用规则，
-    强制 Agent 只能从已注册的生物工具中规划，从根本上杜绝
-    了跨域调用或编造工具名的问题。"
-    """
     return f"""{BIOLOGY_AGENT_SYSTEM_PROMPT}
 
 ---

@@ -81,6 +81,8 @@ Natural recovery and the controlled bridge suite are separate evidence sources. 
 
 See [reproduction](docs/REPRODUCIBILITY.md) for the evidence levels, frozen code/input verification, offline table/plot reconstruction and instructions for a separately versioned new run.
 
+The [scoring guide](docs/SCORING.md) describes the execution and correctness labels. Original frozen sources are kept in `reproduction/frozen_source.zip`; the working code uses shorter English comments and docstrings.
+
 ## Main modules
 
 ```text

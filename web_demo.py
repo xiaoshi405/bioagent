@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent Web Demo — 带推理链可视化的生命科学智能助手前端。
-
-修改记录：
-- 2026-07-20：增加受控PDB文件上传，把结构文件路径传入Agent工具链。
-- 2026-07-24：增加受控单记录Protein FASTA上传。
-- 2026-07-26：展示v0.3b脱敏类型规划轨迹、修复后计划和Artifact流转。
-"""
+"""Streamlit interface for the agent and execution trace."""
 import hashlib
 import re
 from pathlib import Path
@@ -19,7 +12,6 @@ _cfg = Config()
 
 
 def save_uploaded_pdb(uploaded_file):
-    """把前端PDB保存到受控目录，返回绝对路径或错误信息。"""
     try:
         if uploaded_file is None:
             return None, None
@@ -48,7 +40,6 @@ def save_uploaded_pdb(uploaded_file):
 
 
 def save_uploaded_fasta(uploaded_file):
-    """把前端Protein FASTA保存到受控目录，返回绝对路径或错误信息。"""
     try:
         if uploaded_file is None:
             return None, None
@@ -78,7 +69,6 @@ def save_uploaded_fasta(uploaded_file):
 
 
 # ─────────────────────────────────────────────
-# 页面配置
 # ─────────────────────────────────────────────
 st.set_page_config(
     page_title="BioAgent · 蛋白质工具智能助手",
@@ -88,7 +78,6 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
-# 全局 CSS：渐变标题 + 消息气泡 + 卡片样式
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
@@ -159,7 +148,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# 侧边栏
 # ─────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### ⚙️ 服务配置")
@@ -209,13 +197,11 @@ with st.sidebar:
     st.caption("启动命令：python scripts/start_demo.py")
 
 # ─────────────────────────────────────────────
-# 主区域：标题
 # ─────────────────────────────────────────────
 st.markdown('<div class="hero-title">🧬 BioAgent</div>', unsafe_allow_html=True)
 st.markdown('<div class="hero-subtitle">知识图谱驱动的生命科学多模态智能体 · 自动规划工具链 · 多步串联推理</div>', unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-# 会话初始化
 # ─────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -224,7 +210,6 @@ if "pending_input" not in st.session_state:
 
 
 # ─────────────────────────────────────────────
-# 辅助：渲染推理链面板
 # ─────────────────────────────────────────────
 def render_reasoning(reasoning: dict, latency: float = None):
     retrieved = reasoning.get("retrieved_tools", [])
@@ -238,7 +223,6 @@ def render_reasoning(reasoning: dict, latency: float = None):
         header += f"  <span class='latency-tag'>⏱ {latency}s</span>"
 
     with st.expander(header, expanded=False):
-        # --- 检索到的工具 ---
         st.markdown("**① 知识图谱检索结果**")
         if retrieved:
             badges_html = "".join(
@@ -269,7 +253,6 @@ def render_reasoning(reasoning: dict, latency: float = None):
 
         st.markdown("---")
 
-        # --- 工具执行详情 ---
         st.markdown("**③ 工具逐步执行详情**")
         if tool_steps:
             for idx, step in enumerate(tool_steps, 1):
@@ -343,7 +326,6 @@ def render_reasoning(reasoning: dict, latency: float = None):
 
 
 # ─────────────────────────────────────────────
-# 历史消息渲染
 # ─────────────────────────────────────────────
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
@@ -353,18 +335,15 @@ for msg in st.session_state.messages:
 
 
 # ─────────────────────────────────────────────
-# 用户输入（支持侧边栏示例按钮填入）
 # ─────────────────────────────────────────────
 pending = st.session_state.pop("pending_input", None)
 prompt = st.chat_input("输入生物学问题，例如：计算序列 MASKL... 的等电点") or pending
 
 if prompt:
-    # 显示用户消息
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # 调用后端
     with st.chat_message("assistant"):
         with st.spinner("🧠 Agent 正在检索知识图谱并调用生物工具..."):
             try:
@@ -396,13 +375,10 @@ if prompt:
                     reasoning = data.get("reasoning", {})
                     latency = data.get("latency", None)
 
-                    # 渲染答案
                     st.markdown(ans)
 
-                    # 渲染推理链
                     render_reasoning(reasoning, latency)
 
-                    # 存入历史
                     st.session_state.messages.append({
                         "role": "assistant",
                         "content": ans,

@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-显式工具调用请求的规划前安全门禁。
-
-修改记录：
-- 2026-08-11：新增显式命名工具注册检查；用户要求调用未注册工具时，
-  在KG检索和LLM规划之前确定性拒绝，禁止用其他工具冒充。
-
-设计边界：
-1. 只检查“调用/使用某个命名工具”的明确执行意图；
-2. “某工具是什么”等知识问答不属于调用请求；
-3. 不对自然语言能力需求进行猜测式语义分类；
-4. 工具是否注册统一复用执行层注册表，不维护第二份闭集名单；
-5. 所有公开函数捕获异常并返回标准结构，主进程不得崩溃。
-"""
+"""Check explicitly requested tool names before planning."""
 
 from __future__ import annotations
 
@@ -28,8 +15,8 @@ logger = get_logger("ExplicitToolRequestGuard", "agent.log")
 GUARD_VERSION = "1.0"
 _MAX_TOOL_NAME_LENGTH = 128
 
-# 中文和英文模式都要求出现明确的调用动词。带“工具/API/接口/函数”后缀时，
-# 允许普通CamelCase名称；没有后缀时只接受代码风格名称或已注册别名。
+# Both languages require an explicit call verb.
+# Without a tool suffix, require a code-style name or registered alias.
 _EXPLICIT_INVOCATION_PATTERNS = (
     re.compile(
         r"(?:调用|使用|运行|执行|请用|请使用|请调用)\s*"
@@ -55,7 +42,6 @@ _EXPLICIT_INVOCATION_PATTERNS = (
 
 
 def _looks_like_explicit_identifier(value: Any) -> bool:
-    """判断无“工具”后缀的候选是否像代码标识符而非普通英文词。"""
     try:
         if not isinstance(value, str):
             return False
@@ -77,7 +63,7 @@ def _looks_like_explicit_identifier(value: Any) -> bool:
 
 
 def extract_explicit_tool_invocations(question: Any) -> dict[str, Any]:
-    """提取用户明确要求调用的命名工具，不处理一般能力描述。"""
+    """Extract named tool calls explicitly requested by the user."""
     try:
         if not isinstance(question, str) or not question.strip():
             return {
@@ -94,7 +80,7 @@ def extract_explicit_tool_invocations(question: Any) -> dict[str, Any]:
                 candidate = str(match.group(1) or "").strip()
                 if not candidate or len(candidate) > _MAX_TOOL_NAME_LENGTH:
                     continue
-                # 第三个模式没有“工具/API”等后缀，必须满足更严格的代码标识符判断。
+                # The suffix-free pattern requires a code-style identifier.
                 if pattern_index == 2 and not _looks_like_explicit_identifier(candidate):
                     continue
                 if candidate.casefold() not in {
@@ -119,7 +105,7 @@ def extract_explicit_tool_invocations(question: Any) -> dict[str, Any]:
 
 
 def evaluate_explicit_tool_request(question: Any) -> dict[str, Any]:
-    """检查显式命名工具是否注册，并给出allow/reject确定性决策。"""
+    """Allow registered tool names and reject unknown explicit calls."""
     try:
         extraction = extract_explicit_tool_invocations(question)
         if extraction.get("status") != "success":

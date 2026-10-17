@@ -1,28 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioToolEval B0/B1/B2实验分析入口。
-
-修改记录：
-- 2026-08-27：历史B0-B2分析显式绑定旧条件集合，防止新增E条件改变
-  已冻结分析口径。
-- 2026-08-10：主要假设升级为不安全Type-II执行、真实修复恢复和行为感知
-  任务成功；删除H2回退指标，并显式报告not_estimable。
-- 2026-08-09：主要假设改为H1的B1对B0未解决Type-II比较、H2的
-  repair-eligible子集B2对B1恢复比较和H3的B2对B0最终答案比较；
-  H2分析尚未实现时显式保持null，使主要假设族标记为不完整。
-- 2026-08-09：把失败账本作为正式分析输入，报告失败类别、条件失败率和
-  已解释/未解释缺失单元，避免只对成功形成Trace的样本计算而产生幸存者偏差。
-- 2026-08-08：完整性统计优先使用Manifest中预注册的question_ids子集，
-  避免开发子集实验被错误地按整个数据集题数计算缺失Trace。
-- 2026-08-03：新增控制变量审计、逐轮指标、题目级重复聚合、主要假设
-  Holm校正，以及JSON/Markdown可复现报告导出。
-
-统计边界：
-1. 单轮二元结果使用精确McNemar；
-2. 多次重复先在同一题内求均值，再以题目为单位bootstrap，禁止扩充样本量；
-3. null保持未评分并报告丢失配对；
-4. 本模块只生成描述性结果，不自动宣布假设成立或期刊Go/No-Go。
-"""
+"""Aggregate component experiment traces."""
 
 from __future__ import annotations
 
@@ -82,7 +59,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造分析模块统一错误结构。"""
     try:
         issue = {"code": str(code), "message": str(message)}
         if isinstance(details, dict):
@@ -102,7 +78,6 @@ def _error_result(
 
 
 def _sha256_file(path: Path) -> str:
-    """计算文件SHA-256；失败返回空字符串并记录日志。"""
     try:
         digest = hashlib.sha256()
         with path.open("rb") as handle:
@@ -118,7 +93,6 @@ def _sha256_file(path: Path) -> str:
 
 
 def _load_manifest(path: Any) -> dict[str, Any]:
-    """加载实验清单JSON并执行最小结构检查。"""
     try:
         manifest_path = Path(str(path or "")).expanduser()
         if not manifest_path.is_file():
@@ -164,7 +138,6 @@ def _load_failure_summary(
     path: Any,
     manifest: dict[str, Any] | None,
 ) -> dict[str, Any]:
-    """读取失败账本最新状态，并按条件、错误码和稳定类别显式汇总。"""
     try:
         failure_path = Path(str(path or "")).expanduser()
         if not failure_path.is_file():
@@ -301,7 +274,6 @@ def _load_failure_summary(
 
 
 def _normalize_json_value(value: Any) -> str:
-    """把嵌套值转换为可比较的稳定JSON文本。"""
     try:
         return json.dumps(
             value,
@@ -315,7 +287,6 @@ def _normalize_json_value(value: Any) -> str:
 
 
 def _question_signature(record: dict[str, Any]) -> str:
-    """生成同一题跨条件应保持一致的脱敏元数据签名。"""
     try:
         return _normalize_json_value(
             {
@@ -332,7 +303,6 @@ def _question_signature(record: dict[str, Any]) -> str:
 
 
 def _is_type_sensitive(record: dict[str, Any]) -> bool:
-    """按数据集验收器的冻结规则判断类型敏感题。"""
     try:
         gold = record.get("gold") if isinstance(record.get("gold"), dict) else {}
         preferred_chain = gold.get("preferred_tool_chain")
@@ -351,7 +321,6 @@ def _control_value_set(
     records: list[dict[str, Any]],
     field: str,
 ) -> set[str]:
-    """收集Trace context中的稳定控制变量集合。"""
     try:
         return {
             _normalize_json_value(item.get("context", {}).get(field))
@@ -366,7 +335,6 @@ def _manifest_consistency_issues(
     records: list[dict[str, Any]],
     manifest: dict[str, Any] | None,
 ) -> list[dict[str, Any]]:
-    """检查Manifest与Trace控制变量是否一致。"""
     try:
         if manifest is None:
             return [
@@ -461,7 +429,6 @@ def _audit_records(
     records: Any,
     manifest: dict[str, Any] | None,
 ) -> dict[str, Any]:
-    """验证Trace、重复键、控制变量和题目元数据一致性。"""
     try:
         if not isinstance(records, list) or not records:
             return _error_result(
@@ -612,7 +579,6 @@ def holm_adjust(
     alpha: float = 0.05,
     planned_family_size: int | None = None,
 ) -> dict[str, Any]:
-    """对预注册假设族执行Holm校正；缺失检验保留null并计入计划族大小。"""
     try:
         if not isinstance(hypotheses, list) or not hypotheses:
             return _error_result(
@@ -685,7 +651,6 @@ def _empty_primary_hypothesis(
     specification: dict[str, Any],
     reason: str = "没有满足预注册条件的有效配对",
 ) -> dict[str, Any]:
-    """构造无可用配对时的主要假设记录。"""
     try:
         return {
             **specification,
@@ -706,7 +671,6 @@ def _extract_primary_hypotheses(
     type_sensitive_comparison: dict[str, Any],
     repair_eligible_comparison: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
-    """从类型敏感题和repair-eligible题的单轮比较中提取H1–H3。"""
     try:
         extracted: list[dict[str, Any]] = []
         ts_comparisons = (
@@ -785,7 +749,6 @@ def _compute_repeat_sections(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """按repeat分别计算条件指标、配对比较和主要假设族。"""
     try:
         sections: dict[str, Any] = {}
         for repeat_index in repeat_indices:
@@ -872,7 +835,6 @@ def _compute_repeat_sections(
 
 
 def _extract_record_metric(record: dict[str, Any], metric: str) -> float | None:
-    """从单条Trace提取题目级聚合所需数值。"""
     try:
         if metric == "final_answer_accuracy":
             value = record.get("evaluation", {}).get("final_answer_correct")
@@ -902,7 +864,6 @@ def _question_level_metric_comparison(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """同题内先对配对repeat求均值，再按题目bootstrap。"""
     try:
         if treatment_condition not in {"B1", "B2"}:
             return _error_result(
@@ -1014,7 +975,6 @@ def _compute_question_level_sections(
     n_resamples: int,
     seed: int,
 ) -> dict[str, Any]:
-    """计算总体和类型敏感题的跨重复题目级效应。"""
     try:
         sections: dict[str, Any] = {}
         populations = {
@@ -1069,7 +1029,6 @@ def analyze_biotooleval_records(
     n_resamples: int = DEFAULT_BOOTSTRAP_RESAMPLES,
     seed: int = DEFAULT_ANALYSIS_SEED,
 ) -> dict[str, Any]:
-    """分析完整B0–B2 Trace并返回可序列化报告。"""
     try:
         if not isinstance(n_resamples, int) or n_resamples < 100:
             return _error_result(
@@ -1194,7 +1153,6 @@ def analyze_biotooleval_records(
 
 
 def _format_number(value: Any, digits: int = 4) -> str:
-    """把数值安全格式化为Markdown单元格文本。"""
     try:
         if value is None:
             return "NA"
@@ -1209,7 +1167,6 @@ def _format_number(value: Any, digits: int = 4) -> str:
 
 
 def _format_ci(value: Any) -> str:
-    """格式化95%置信区间。"""
     try:
         if not isinstance(value, list) or len(value) != 2:
             return "NA"
@@ -1220,7 +1177,6 @@ def _format_ci(value: Any) -> str:
 
 
 def _metric_rate(condition_result: dict[str, Any], metric: str) -> str:
-    """读取单条件指标的rate用于Markdown表格。"""
     try:
         value = condition_result.get("metrics", {}).get(metric, {}).get("rate")
         return _format_number(value)
@@ -1230,7 +1186,6 @@ def _metric_rate(condition_result: dict[str, Any], metric: str) -> str:
 
 
 def render_analysis_markdown(analysis: Any) -> dict[str, Any]:
-    """把结构化分析结果渲染为可审计Markdown摘要。"""
     try:
         if not isinstance(analysis, dict) or analysis.get("status") != "success":
             return _error_result(
@@ -1387,7 +1342,6 @@ def render_analysis_markdown(analysis: Any) -> dict[str, Any]:
 
 
 def _atomic_write_text(path: Path, content: str, *, overwrite: bool) -> dict[str, Any]:
-    """以UTF-8原子写入分析产物，默认拒绝覆盖。"""
     temporary_path: Path | None = None
     try:
         if path.exists() and not overwrite:
@@ -1423,7 +1377,6 @@ def write_analysis_artifacts(
     markdown_path: Any,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """写出结构化JSON和人类可读Markdown报告。"""
     try:
         if not isinstance(analysis, dict) or analysis.get("status") != "success":
             return _error_result(
@@ -1494,7 +1447,6 @@ def analyze_trace_file(
     seed: int = DEFAULT_ANALYSIS_SEED,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """加载Trace与Manifest、执行分析并导出两个报告文件。"""
     try:
         trace = Path(str(trace_path or "")).expanduser()
         loaded = load_experiment_traces(trace)
@@ -1579,7 +1531,6 @@ def analyze_trace_file(
 
 
 def _build_cli_parser() -> argparse.ArgumentParser:
-    """构建BioToolEval分析命令行参数。"""
     try:
         parser = argparse.ArgumentParser(
             description="分析BioToolEval B0/B1/B2实验Trace"
@@ -1605,7 +1556,6 @@ def _build_cli_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """命令行入口；只打印脱敏摘要。"""
     try:
         parser = _build_cli_parser()
         args = parser.parse_args(argv)

@@ -1,17 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent 类型化运行时数据对象池（Artifact Pool）。
-
-修改记录：
-- 2026-07-26：新增v0.3a真实数据对象保存、按类型与来源精确取值、
-  工具输出原子注册和脱敏元数据快照。
-
-设计边界：
-1. 对象池保存真实运行值，但普通日志和snapshot绝不写出序列或完整文件路径；
-2. 每个(source_id, type_name)只允许一个对象，禁止执行器猜测同类型多对象；
-3. 工具只有返回status=success且所有声明输出均可提取时才原子写入；
-4. 输出字段绑定只读取BIOLOGY_TOOLS_DESC，不维护第二份工具清单。
-"""
+"""Request-local storage and binding of typed artifacts."""
 
 from __future__ import annotations
 
@@ -36,7 +24,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """返回对象池统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -56,7 +43,7 @@ def _error_result(
 
 
 def _normalize_tool_result(tool_result: Any) -> dict[str, Any]:
-    """把Runner返回的JSON字符串或字典规范化为字典。"""
+    """Parse a runner result into a dictionary."""
     try:
         if isinstance(tool_result, dict):
             return copy.deepcopy(tool_result)
@@ -70,7 +57,7 @@ def _normalize_tool_result(tool_result: Any) -> dict[str, Any]:
 
 
 def _extract_bound_value(result: dict[str, Any], path: Any) -> Any:
-    """按照注册表中的点分路径提取输出；`$`表示完整结果。"""
+    """Read a registry field path; $ selects the whole result."""
     try:
         if path == "$":
             return copy.deepcopy(result)
@@ -88,7 +75,7 @@ def _extract_bound_value(result: dict[str, Any], path: Any) -> Any:
 
 
 def _value_size(value: Any) -> int | None:
-    """只返回值规模，不返回真实内容。"""
+    """Return value size without exposing its content."""
     try:
         if isinstance(value, (str, bytes, list, tuple, set, dict)):
             return len(value)
@@ -99,7 +86,7 @@ def _value_size(value: Any) -> int | None:
 
 @dataclass(frozen=True)
 class Artifact:
-    """对象池中的一个真实数据对象。"""
+    """A typed value with its source and producing tool."""
 
     artifact_id: str
     type_name: str
@@ -108,7 +95,7 @@ class Artifact:
     producer_tool: str | None = None
 
     def to_metadata(self) -> dict[str, Any]:
-        """生成不包含真实值的审计元数据。"""
+        """Return metadata without the artifact value."""
         try:
             return {
                 "artifact_id": self.artifact_id,
@@ -127,7 +114,7 @@ class Artifact:
 
 
 class ArtifactPool:
-    """按数据类型和来源保存真实运行值的请求级对象池。"""
+    """Request-local artifacts indexed by type and source."""
 
     def __init__(self) -> None:
         try:
@@ -139,7 +126,6 @@ class ArtifactPool:
             self._next_id = 1
 
     def _find(self, type_name: str, source_id: str) -> list[Artifact]:
-        """查找同一类型和来源的对象。"""
         try:
             return [
                 artifact
@@ -159,7 +145,7 @@ class ArtifactPool:
         *,
         producer_tool: Any = None,
     ) -> dict[str, Any]:
-        """注册单个对象；同类型同来源重复时失败。"""
+        """Register one value; reject duplicate type/source pairs."""
         try:
             normalized_type = type_name.strip() if isinstance(type_name, str) else ""
             normalized_source = source_id.strip() if isinstance(source_id, str) else ""
@@ -220,7 +206,7 @@ class ArtifactPool:
             )
 
     def register_initial(self, initial_artifacts: Any) -> dict[str, Any]:
-        """原子注册用户输入提供的初始类型和值。"""
+        """Register the initial inputs atomically."""
         try:
             if not isinstance(initial_artifacts, dict) or not initial_artifacts:
                 return _error_result(
@@ -282,7 +268,7 @@ class ArtifactPool:
             )
 
     def resolve(self, type_name: Any, source_id: Any) -> dict[str, Any]:
-        """按结构化计划中的类型和来源精确取得一个真实对象。"""
+        """Resolve exactly one artifact by type and source."""
         try:
             normalized_type = type_name.strip() if isinstance(type_name, str) else ""
             normalized_source = source_id.strip() if isinstance(source_id, str) else ""
@@ -324,7 +310,7 @@ class ArtifactPool:
             )
 
     def resolve_step_inputs(self, step: Any) -> dict[str, Any]:
-        """根据Plan Step的input_from映射取得全部真实输入。"""
+        """Resolve all inputs using the step source bindings."""
         try:
             if not isinstance(step, dict):
                 return _error_result(
@@ -367,7 +353,7 @@ class ArtifactPool:
         expected_output_types: Any,
         tool_result: Any,
     ) -> dict[str, Any]:
-        """根据唯一注册表绑定原子写入一个成功工具的全部输出。"""
+        """Atomically register all declared outputs of a successful tool."""
         try:
             normalized_step = step_id.strip() if isinstance(step_id, str) else ""
             normalized_tool = tool_name.strip() if isinstance(tool_name, str) else ""
@@ -495,7 +481,7 @@ class ArtifactPool:
             )
 
     def snapshot(self) -> dict[str, Any]:
-        """返回只含元数据的对象池快照，供日志和论文统计使用。"""
+        """Return artifact metadata without raw values."""
         try:
             metadata = [artifact.to_metadata() for artifact in self._artifacts]
             if any(item.get("status") == "error" for item in metadata):

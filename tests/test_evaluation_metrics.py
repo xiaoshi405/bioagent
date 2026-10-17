@@ -1,16 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3c实验指标和B0/B1/B2配对比较测试。
-
-修改记录：
-- 2026-09-05：覆盖Actionable Rejection的条件分母，确保未标注和非安全
-  拒绝不会被当成可操作性错误。
-- 2026-08-27：覆盖E1-E2正交条件的配对统计与v1.1 Trace校验。
-- 2026-08-10：补充安全拒绝、假拒绝、Type-III、行为感知成功和真实修复
-  机会的反例测试。
-- 2026-07-28：覆盖工具链匹配、null标签分母、reject题分母边界、
-  修复精度、配对bootstrap与重复配对键拒绝。
-"""
+"""Tests for evaluation metrics."""
 
 import copy
 import unittest
@@ -50,7 +39,6 @@ def _trace(
     result_hallucination=False,
     latency_ms=1000.0,
 ):
-    """构造并局部修改一条Schema合法的合成Trace。"""
     try:
         question = _question_item()
         question["id"] = question_id
@@ -123,7 +111,6 @@ def _trace(
 
 
 class ToolChainMetricTests(unittest.TestCase):
-    """验证工具链集合匹配不会忽略重复工具或顺序约束。"""
 
     def test_order_insensitive_chain_accepts_reordered_tools(self):
         gold = {
@@ -155,7 +142,6 @@ class ToolChainMetricTests(unittest.TestCase):
 
 
 class ConditionMetricTests(unittest.TestCase):
-    """验证各指标使用预先定义的正确分母。"""
 
     def test_null_answer_label_is_excluded_and_coverage_reported(self):
         records = [
@@ -346,7 +332,6 @@ class ConditionMetricTests(unittest.TestCase):
         self.assertIsNone(actionable["coverage"])
 
     def test_actionable_rejection_excludes_unlabeled_and_unsafe_records(self):
-        """Actionable分母只包含已有bool标签的安全拒绝。"""
         safe_labeled = _trace(
             "bte_910",
             "B1",
@@ -511,7 +496,6 @@ class ConditionMetricTests(unittest.TestCase):
 
 
 class PairedComparisonTests(unittest.TestCase):
-    """验证同题配对和确定性bootstrap。"""
 
     def test_paired_bootstrap_reports_expected_difference(self):
         result = paired_bootstrap_difference(

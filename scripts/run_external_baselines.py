@@ -1,8 +1,4 @@
-"""Development-only external-method canary and native 20-tool preflight.
-
-No Test loading, no BioAgent modifications, no success-based resampling.
-Run with python -m scripts.run_external_baselines --help.
-"""
+"""Development-only external-method canary and native 20-tool preflight."""
 from __future__ import annotations
 
 import argparse

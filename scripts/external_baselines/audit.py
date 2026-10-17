@@ -1,9 +1,4 @@
-"""Passive, offline Dev diagnostics. Never fed back to the agent.
-
-These checks are not a frozen semantic final-answer scorer. They distinguish
-tool execution, identity evidence and response behavior without assuming that
-an agent's own 'answered' flag proves scientific success.
-"""
+"""Passive, offline Dev diagnostics. Never fed back to the agent."""
 from __future__ import annotations
 
 import hashlib

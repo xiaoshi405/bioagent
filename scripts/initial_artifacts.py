@@ -1,25 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3b 初始类型化数据对象构建器。
-
-修改记录：
-- 2026-09-02：标准序列校验统一移除允许的空白并规范化大小写，避免合法
-  短序列在结构化请求边界中被误拒绝；非法字符仍精确保留。
-- 2026-08-12：显式短序列定位后统一进入标准字符校验；非法内容错误增加
-  可执行修改建议，同时保留错误码、非法字符与长度证据。
-- 2026-08-09：增加请求级蛋白质序列与单记录FASTA内容校验；非法字符、
-  空记录和多记录FASTA在类型规划前返回可审计错误，不再只依赖工具层拒绝。
-- 2026-07-26：新增从用户原始问题和上传文件中一次性构建初始Artifact；
-  支持氨基酸序列、单记录Protein FASTA、PDB文件和显式PDB链ID。
-- 2026-08-14：按FASTA记录数区分单记录与多记录文件；只在显式
-  record_id语义下注册单ID或ID pair，并在规划前校验ID存在性。
-
-设计原则：
-1. 只识别确定性候选，不把整段自然语言猜成氨基酸序列；
-2. 同一类型出现多个上传文件时拒绝自动选择，避免数据来源混淆；
-3. 名义类型与内容合法性分层检查，非法内容不得注册成可执行Artifact；
-4. 返回的安全摘要不包含原始序列和完整文件路径。
-"""
+"""Build initial artifacts from a request and its files."""
 
 from __future__ import annotations
 
@@ -59,7 +39,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造初始对象识别层的统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -87,7 +66,6 @@ def _error_result(
 
 
 def _collect_typed_files(file_path_list: Any) -> dict[str, Any]:
-    """校验上传文件并按受支持类型收集绝对路径。"""
     try:
         if file_path_list is None:
             candidates: list[Any] = []
@@ -161,7 +139,6 @@ def _collect_typed_files(file_path_list: Any) -> dict[str, Any]:
 
 
 def _safe_artifact_metadata(type_name: str, value: Any) -> dict[str, Any]:
-    """生成不含真实序列和完整路径的初始对象摘要。"""
     try:
         metadata = {
             "type_name": type_name,
@@ -197,7 +174,7 @@ def _safe_artifact_metadata(type_name: str, value: Any) -> dict[str, Any]:
 
 
 def _validate_amino_acid_sequence(sequence: Any) -> dict[str, Any]:
-    """校验蛋白质序列内容，只返回长度和非法字符等非敏感证据。"""
+    """Validate sequence content without returning the raw sequence."""
     try:
         if not isinstance(sequence, str) or not sequence.strip():
             return _error_result(
@@ -239,7 +216,6 @@ def _validate_amino_acid_sequence(sequence: Any) -> dict[str, Any]:
 
 
 def _validate_single_protein_fasta(file_path: Any) -> dict[str, Any]:
-    """校验FASTA恰含一条合法蛋白质记录，不返回序列原文。"""
     try:
         inspection = _inspect_protein_fasta(file_path)
         if inspection.get("status") != "success":
@@ -268,7 +244,7 @@ def _validate_single_protein_fasta(file_path: Any) -> dict[str, Any]:
 
 
 def _inspect_protein_fasta(file_path: Any) -> dict[str, Any]:
-    """一次读取FASTA并校验全部记录、唯一ID和配置化记录数上限。"""
+    """Check records, unique IDs and the configured record limit."""
     try:
         path = Path(str(file_path or "")).expanduser()
         if not path.is_file():
@@ -354,7 +330,7 @@ def build_initial_artifacts(
     question: Any,
     file_path_list: Any,
 ) -> dict[str, Any]:
-    """从原始问题和上传文件构建请求级初始Artifact字典。"""
+    """Build request-local artifacts from the question and uploaded files."""
     try:
         if not isinstance(question, str):
             return _error_result(

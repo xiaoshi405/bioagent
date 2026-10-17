@@ -14,4 +14,4 @@ also loaded directly.
 
 Process, model, protein-tool and Windows compatibility adapters live separately
 in `scripts/external_baselines/`. Their scope and differences are documented in
-`docs/EXTERNAL_BASELINES_ADAPTATION_LEDGER_ZH.md`.
+[baseline documentation](../../docs/BASELINES.md).

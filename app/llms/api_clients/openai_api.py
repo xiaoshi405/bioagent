@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
-"""OpenAI兼容的异步LLM客户端。
-
-修改记录：
-- 2026-09-08：百炼 DeepSeek-V4 混合思考模型显式继承统一思考开关，
-  避免第二模型在默认思考模式下运行而破坏跨模型实验公平性。
-- 2026-08-30：新增返回脱敏Token用量的聊天入口，供固定一次调用
-  的LLM重规划baseline记账；旧入口保持只返回文本。
-- 2026-07-18：支持固定Qwen模型的思考模式、温度和超时配置；记录Token用量；
-  修复自定义System Prompt被覆盖的问题，并补充统一异常处理。
-"""
+"""Async client for OpenAI-compatible model APIs."""
 
 import httpx
 
@@ -22,7 +13,6 @@ THINKING_TOGGLE_MODEL_PREFIXES = ("qwen", "deepseek-v4-")
 
 
 def make_simple_dialogs(text, system_prompt=""):
-    """构造标准Chat Completions消息，并保留调用方提供的System Prompt。"""
     try:
         if not isinstance(text, str) or not text.strip():
             raise ValueError("LLM输入文本不能为空")
@@ -40,7 +30,6 @@ def make_simple_dialogs(text, system_prompt=""):
 
 
 async def make_async_request(url, api_key, payload, timeout_seconds=60.0):
-    """发送异步HTTP请求，设置超时且不在日志中暴露API Key。"""
     try:
         if not url or not isinstance(url, str):
             raise ValueError("LLM API地址不能为空")
@@ -85,7 +74,6 @@ async def make_async_request(url, api_key, payload, timeout_seconds=60.0):
 
 
 def get_api_url(model):
-    """根据模型名称选择OpenAI兼容API地址。"""
     try:
         if not isinstance(model, str) or not model.strip():
             raise ValueError("模型名称不能为空")
@@ -99,7 +87,6 @@ def get_api_url(model):
 
 
 def supports_explicit_thinking_toggle(model: str) -> bool:
-    """判断百炼模型是否支持通过请求体显式控制混合思考模式。"""
     try:
         normalized = str(model or "").strip().lower()
         return bool(normalized) and normalized.startswith(
@@ -111,7 +98,6 @@ def supports_explicit_thinking_toggle(model: str) -> bool:
 
 
 def _log_token_usage(model, response):
-    """兼容不同OpenAI响应字段并记录输入、输出、思考及总Token。"""
     try:
         usage = response.get("usage") or {}
         input_tokens = usage.get("input_tokens", usage.get("prompt_tokens", 0))
@@ -140,7 +126,6 @@ def _log_token_usage(model, response):
 
 
 async def make_async_chat(text, model, system_prompt="") -> str:
-    """调用Chat Completions接口并返回最终文本内容。"""
     result = await make_async_chat_with_metadata(
         text,
         model,
@@ -156,11 +141,6 @@ async def make_async_chat_with_metadata(
     *,
     max_output_tokens=None,
 ) -> dict:
-    """调用Chat Completions并返回文本与脱敏用量。
-
-    本函数不保存Prompt或响应原文；调用方只应把数值用量和
-    不可逆哈希写入公开实验Trace。
-    """
     try:
         config = Config()
         selected_model = (model or config.MODEL_NAME).strip()
@@ -244,7 +224,6 @@ async def make_async_chat_with_metadata(
 
 
 async def make_async_embedding(text, model) -> list:
-    """调用OpenAI兼容Embedding接口。"""
     try:
         config = Config()
         url = f"{config.OPENAI_API_BASE.rstrip('/')}/embeddings"

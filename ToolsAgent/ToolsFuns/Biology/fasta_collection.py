@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-多记录Protein FASTA的集合解析与显式记录选择工具。
-
-修改记录：
-- 2026-08-14：新增多记录FASTA到序列集合、序列集合到单条序列的两级
-  确定性工具，为Topology v2-lite提供真实可消费的中间类型。
-"""
+"""Parse FASTA collections and select explicit records."""
 
 from __future__ import annotations
 
@@ -22,7 +16,7 @@ logger = get_logger("FASTACollection", "fasta_collection.log")
 
 
 def parse_multi_protein_fasta(file_path: Any) -> dict[str, Any]:
-    """把至少两条记录的Protein FASTA解析为具名序列集合。"""
+    """Read at least two FASTA records into a named collection."""
     try:
         parsed = read_protein_fasta_records(file_path)
         if parsed.get("status") != "success":
@@ -71,7 +65,7 @@ def parse_multi_protein_fasta(file_path: Any) -> dict[str, Any]:
 
 
 def _validate_collection(collection: Any) -> dict[str, Any]:
-    """校验序列集合的最小结构契约，不接受隐式类型转换。"""
+    """Check collection structure without implicit type conversion."""
     try:
         if not isinstance(collection, dict):
             return error_result(
@@ -105,7 +99,7 @@ def _validate_collection(collection: Any) -> dict[str, Any]:
 
 
 def select_fasta_record(collection: Any, record_id: Any) -> dict[str, Any]:
-    """按用户显式提供的精确record_id选择一条序列，禁止近似匹配。"""
+    """Select the exact requested record ID; do not use approximate matching."""
     try:
         collection_result = _validate_collection(collection)
         if collection_result.get("status") != "success":
@@ -159,5 +153,5 @@ def select_fasta_record(collection: Any, record_id: Any) -> dict[str, Any]:
 
 
 def validate_sequence_collection(collection: Any) -> dict[str, Any]:
-    """向同域模块公开只读集合契约校验结果。"""
+    """Validate a sequence collection without changing it."""
     return _validate_collection(collection)

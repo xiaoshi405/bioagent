@@ -1,8 +1,4 @@
-"""ReAct mechanism adaptation: one action, real observation, next decision.
-
-Source: ysymyth/ReAct, commit 6bdb3a1fd38b8188fc7ba4102969fe483df8fdc9.
-This is a zero-shot protein-tool adaptation, not the original QA experiment.
-"""
+"""ReAct mechanism adaptation: one action, real observation, next decision."""
 from __future__ import annotations
 
 import asyncio

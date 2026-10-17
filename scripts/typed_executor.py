@@ -1,21 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent 结构化计划运行时执行适配器。
-
-修改记录：
-- 2026-07-26：新增v0.3a独立执行闭环，按照input_from从Artifact Pool
-  取真实对象、调用工具、原子注册输出，并在任一步失败时阻断下游执行。
-- 2026-07-26：v0.3b通过typed_planning_runtime接入可选主链路。
-- 2026-09-04：增加请求级工具值参数通道；Artifact绑定与ANM数值参数分离，
-  防止类型化执行把用户显式参数替换为接口默认值。
-- 2026-09-04：仅在上下文含显式参数或参数错误时扩展Runner
-  调用契约，保留无参数自定义Runner的向后兼容性。
-
-当前边界：
-1. 本模块既可独立执行，也可在类型规划开关开启时由主链路调用；
-2. 只处理注册表中已声明的类型，不推断ANM数值参数等值域约束；
-3. 执行轨迹只保存对象ID和类型，真实序列只存在请求级内存与工具结果中。
-"""
+"""Execute structured plans using the artifact pool."""
 
 from __future__ import annotations
 
@@ -44,7 +28,6 @@ def _runtime_error(
     tool_results: list[dict[str, Any]] | None = None,
     artifact_pool: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """生成可统计的运行时统一错误结构。"""
     try:
         return {
             "status": "error",
@@ -69,7 +52,6 @@ def _runtime_error(
 
 
 def _normalize_runner_result(result: Any) -> dict[str, Any]:
-    """把Runner返回的字典或JSON字符串规范化为字典。"""
     try:
         if isinstance(result, dict):
             return copy.deepcopy(result)
@@ -83,7 +65,7 @@ def _normalize_runner_result(result: Any) -> dict[str, Any]:
 
 
 def validate_runtime_plan(structured_plan: Any) -> dict[str, Any]:
-    """在真实执行前校验Plan Step顺序和唯一注册表契约。"""
+    """Check step order and registry contracts before execution."""
     try:
         if not isinstance(structured_plan, list) or not structured_plan:
             return _runtime_error(
@@ -185,7 +167,7 @@ async def execute_structured_plan(
     runner: ToolRunner | None = None,
     tool_parameters: Any = None,
 ) -> dict[str, Any]:
-    """使用Artifact Pool执行结构化计划，并返回可审计轨迹。"""
+    """Execute bound steps and record the artifact trace."""
     executed_steps: list[dict[str, Any]] = []
     tool_results: list[dict[str, Any]] = []
     pool = ArtifactPool()

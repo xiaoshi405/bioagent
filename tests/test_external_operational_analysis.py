@@ -1,6 +1,9 @@
 """Endpoint tests: status tags, errors, recovery and direct Python ambiguity."""
 import unittest
-from scripts.analyze_external_operational import score_execution, finish_endpoints
+from pathlib import Path
+import tempfile
+from scripts.analyze_external_operational import score_execution, finish_endpoints, report
+from scripts.external_baselines.statistics import rates
 
 
 def call(index, status='success', args=None):
@@ -14,6 +17,23 @@ def row(method='ReAct', status='answered', **extra):
 
 
 class OperationalEndpoints(unittest.TestCase):
+    def test_report_uses_supplied_results_without_old_counts_or_writing_notes(self):
+        summary = {'created_at': 'test timestamp', 'snapshot_states': {'recorded': 3},
+                   'execution_review_queue_units': 1, 'groups': [{
+                       'model': 'fixture-model', 'method': 'fixture-method',
+                       'expected_behavior_outcome': rates([True, False, None]),
+                       'execute_task_completion': rates([True, False]),
+                       'safe_rejection': rates([None])}]}
+        with tempfile.TemporaryDirectory() as folder:
+            report(Path(folder), summary)
+            text = (Path(folder) / 'REPORT.md').read_text(encoding='utf-8')
+        self.assertIn('fixture-model|fixture-method', text)
+        self.assertIn('1/2 (50.00%)', text)
+        self.assertIn('1 success / 1 failure / 1 unknown', text)
+        self.assertNotIn('59/75', text)
+        self.assertNotIn('拟新增', text)
+        self.assertIn('reviewer provenance', text)
+
     def test_answer_delivery_without_execution_does_not_complete(self):
         self.assertIs(score_execution(row(), [])['completed_execution'], False)
 

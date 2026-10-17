@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Controlled Repair Track v2 回归测试。
-
-修改记录：
-- 2026-08-30：覆盖30个配对机会、6个非同构家族、E2/E3真实本地闭环、
-  家族级指标、Trace脱敏、no-overwrite及错误执行不计为恢复。
-"""
+"""Tests for controlled repair v2."""
 
 import asyncio
 import copy
@@ -37,7 +31,6 @@ TRACE_SCHEMA = DATASET_DIR / "controlled_repair_trace_schema_v2.json"
 
 
 def _test_config(results_dir: Path) -> SimpleNamespace:
-    """构造只写临时目录、显式绑定v2资产的测试配置。"""
     return SimpleNamespace(
         CONTROLLED_REPAIR_V2_DATASET_PATH=str(DATASET_PATH),
         CONTROLLED_REPAIR_V2_DATASET_SCHEMA_PATH=str(DATASET_SCHEMA),
@@ -48,7 +41,6 @@ def _test_config(results_dir: Path) -> SimpleNamespace:
 
 
 class ControlledRepairV2DatasetTests(unittest.TestCase):
-    """验证v2分母和拓扑家族是预先冻结、均衡且可物化的。"""
 
     def test_dataset_has_thirty_cases_across_six_balanced_families(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -145,7 +137,6 @@ class ControlledRepairV2DatasetTests(unittest.TestCase):
 
 
 class ControlledRepairV2ExperimentTests(unittest.TestCase):
-    """验证E2只阻断、E3按Gold修复并执行，且证据按家族报告。"""
 
     def test_complete_run_produces_sixty_safe_traces_and_family_metrics(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -276,7 +267,6 @@ class ControlledRepairV2ExperimentTests(unittest.TestCase):
 
 
 class ControlledRepairV2MetricTests(unittest.TestCase):
-    """验证家族缺失时宏平均不可估计，而不是静默当作零或忽略。"""
 
     def test_missing_family_is_not_estimable(self):
         metrics = build_v2_metrics(

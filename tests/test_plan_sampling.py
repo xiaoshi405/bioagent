@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioToolEval 冻结计划采样与私有账本测试。
-
-修改记录：
-- 2026-08-15：覆盖异常分类、确定性样本ID、公开Trace脱敏、成功/失败
-  计划账本以及重复冻结计划拒绝。
-"""
+"""Tests for plan sampling."""
 
 import json
 import tempfile
@@ -25,7 +19,6 @@ from scripts.plan_sampling import (
 
 
 def _frozen_plan(question_id: str = "q1") -> dict:
-    """构造不依赖外部服务的最小合法冻结计划。"""
     raw_response = '["compute_gravy"]'
     response_sha256 = sha256_text(raw_response)
     return {
@@ -77,7 +70,6 @@ def _frozen_plan(question_id: str = "q1") -> dict:
 
 
 class PlanSamplingTests(unittest.IsolatedAsyncioTestCase):
-    """验证网络故障和模型内容结果不会混为同一种重试。"""
 
     def test_exception_classification_separates_infrastructure(self):
         self.assertEqual(

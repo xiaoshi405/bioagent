@@ -1,19 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3b 初始Artifact构建测试。
-
-修改记录：
-- 2026-09-02：覆盖结构化代码块、UniProt accession消歧、内部空白规范化
-  与Swiss-Prot文件语境，防止合法Dev输入在规划前损坏。
-- 2026-08-12：增加显式短非法序列、短合法肽、普通英文、PDB ID、chain ID
-  与长蛋白序列回归矩阵，验证候选定位和内容校验职责分离。
-- 2026-08-09：覆盖中文前置链ID、非法直接序列、多记录与非法FASTA的
-  请求级拒绝，验证内容校验与名义类型检查分层工作。
-- 2026-07-26：覆盖直接序列、非法序列候选、FASTA/PDB文件、显式链ID、
-  多文件歧义拒绝和脱敏摘要。
-- 2026-08-14：多记录FASTA改为独立初始类型，并覆盖显式单record_id、
-  record_id pair、缺失ID告警和不存在ID的精确拒绝。
-"""
+"""Tests for initial artifacts."""
 
 import json
 import tempfile
@@ -44,7 +30,6 @@ TEST_SEQUENCE = "MKWVTFISLLLLFSSAYSRGVFRR"
 
 
 class InitialArtifactTests(unittest.TestCase):
-    """验证请求开始时只构造确定、可审计的真实数据对象。"""
 
     def test_direct_sequence_becomes_initial_artifact(self):
         result = build_initial_artifacts(

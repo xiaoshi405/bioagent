@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-单记录 Protein FASTA 本地解析测试。
-
-修改记录：
-- 2026-07-24：覆盖合法解析、多记录拒绝、非法字符、路径边界和Runner文件选择。
-- 2026-08-14：断言统一FASTA错误码、非法字符证据和多记录迁移建议。
-"""
+"""Tests for fasta analysis."""
 
 import tempfile
 import unittest
@@ -19,7 +13,6 @@ from app.tools.tool_runner import select_fasta_file
 
 
 class ProteinFASTAAnalysisTests(unittest.TestCase):
-    """验证Protein FASTA解析严格而确定，不静默猜测记录或清洗字符。"""
 
     def setUp(self):
         try:
@@ -39,7 +32,6 @@ class ProteinFASTAAnalysisTests(unittest.TestCase):
             pass
 
     def _write(self, name: str, content: str) -> Path:
-        """在项目受控上传目录中创建临时FASTA测试文件。"""
         try:
             path = self.temp_path / name
             path.write_text(content, encoding="utf-8")

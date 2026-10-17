@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3a结构化计划运行时执行测试。
-
-修改记录：
-- 2026-07-26：覆盖fan-out真实对象复用、FASTA/PDB桥接、精确请求体、
-  工具失败阻断、输出缺失阻断和非法来源顺序拒绝。
-- 2026-09-04：覆盖ANM显式值参数在typed payload与执行器中的保真传递。
-"""
+"""Tests for typed executor."""
 
 import asyncio
 import copy
@@ -39,7 +32,6 @@ TEST_SEQUENCE = "MKWVTFISLLLLFSSAYSRGVFRR"
 
 
 def _structured(tool_path, input_types):
-    """构造测试所需的已验证结构化计划。"""
     result = build_structured_plan(tool_path, input_types)
     if result.get("valid") is not True:
         raise AssertionError(f"测试结构化计划构造失败: {result}")
@@ -47,7 +39,6 @@ def _structured(tool_path, input_types):
 
 
 class TypedPayloadTests(unittest.TestCase):
-    """验证typed_inputs不会再被自然语言正则二次解释。"""
 
     def test_sequence_payload_preserves_invalid_candidate_exactly(self):
         candidate = "MKWVTFISLL123X"
@@ -153,7 +144,6 @@ class TypedPayloadTests(unittest.TestCase):
 
 
 class TypedExecutorTests(unittest.IsolatedAsyncioTestCase):
-    """验证真实对象按照input_from流动，且失败不会污染下游。"""
 
     async def test_fan_out_reuses_same_initial_sequence(self):
         plan = _structured(

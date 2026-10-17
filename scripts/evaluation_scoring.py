@@ -1,20 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent v0.3e确定性自动评分、评分审计和条件盲化人工复核。
-
-修改记录：
-- 2026-08-09：人工盲审队列增加原始计划、初始对象类型和非敏感内容证据，
-  使original_plan_executable可在不知道B0/B1/B2条件时独立裁决。
-- 2026-07-30：新增数值/布尔Gold容差评分、类型与执行标签推导、manual-required
-  三态边界、HMAC盲化复核队列、评分审计和人工标签回填。
-
-研究边界：
-1. 自动评分只覆盖可以由结构化Gold和运行Trace确定的事实；
-2. 缺少证据、字段冲突或需要语义理解时返回null，不用启发式强行猜测；
-3. Type-III在工具成功时可确定为false，工具失败时进入人工复核；
-4. 公开Trace不保存问题和完整回答，原文只进入.gitignore下的私有盲评队列；
-5. 人工标签回填只接受布尔值，并保留原始Trace不覆盖。
-"""
+"""Score traces and manage blinded review labels."""
 
 from __future__ import annotations
 
@@ -67,7 +52,6 @@ def build_blind_plan_evidence(
     question_text: Any = None,
     agent_result: Any = None,
 ) -> dict[str, Any]:
-    """构造不暴露题号、实验条件和原始序列的初始计划复核证据。"""
     try:
         if not isinstance(trace, dict):
             return {
@@ -188,7 +172,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造评分模块统一错误结构。"""
     try:
         issue = {"code": code, "message": message}
         if isinstance(details, dict):
@@ -208,7 +191,6 @@ def _error_result(
 
 
 def _normalize_key(value: Any) -> str:
-    """把字段名规范为可比较的ASCII字母数字键。"""
     try:
         return re.sub(r"[^a-z0-9]", "", str(value or "").lower())
     except Exception as exc:
@@ -217,7 +199,6 @@ def _normalize_key(value: Any) -> str:
 
 
 def _answer_text(agent_result: Any) -> str:
-    """读取Agent最终回答，兼容answer和response字段。"""
     try:
         if not isinstance(agent_result, dict):
             return ""
@@ -231,7 +212,6 @@ def _answer_text(agent_result: Any) -> str:
 
 
 def _extract_json_objects(text: Any) -> list[dict[str, Any]]:
-    """从拼接的工具输出和自然语言中提取所有完整JSON对象。"""
     try:
         content = text if isinstance(text, str) else ""
         decoder = json.JSONDecoder()
@@ -256,11 +236,9 @@ def _extract_json_objects(text: Any) -> list[dict[str, Any]]:
 
 
 def _collect_observed_fields(value: Any) -> dict[str, list[Any]]:
-    """递归收集JSON叶节点；同名字段保留全部候选以检测冲突。"""
     observed: dict[str, list[Any]] = {}
     try:
         def visit(current: Any, key: Any = "") -> None:
-            """递归遍历JSON值。"""
             try:
                 if isinstance(current, dict):
                     for child_key, child_value in current.items():
@@ -289,7 +267,6 @@ def _collect_observed_fields(value: Any) -> dict[str, list[Any]]:
 def _merge_observed_objects(
     objects: list[dict[str, Any]],
 ) -> dict[str, list[Any]]:
-    """合并多个工具JSON对象的叶节点。"""
     try:
         merged: dict[str, list[Any]] = {}
         for item in objects:
@@ -303,7 +280,6 @@ def _merge_observed_objects(
 
 
 def _tolerance_for_field(tolerance: Any, field_name: str) -> float:
-    """读取单字段绝对容差；未提供时数值默认要求近似精确。"""
     try:
         if isinstance(tolerance, (int, float)) and not isinstance(
             tolerance,
@@ -337,7 +313,6 @@ def _compare_scalar_candidates(
     *,
     tolerance: float,
 ) -> dict[str, Any]:
-    """比较一个Gold叶节点；冲突候选返回manual_required。"""
     try:
         if not candidates:
             return {
@@ -413,7 +388,6 @@ def _score_final_answer(
     question_item: dict[str, Any],
     agent_result: dict[str, Any],
 ) -> dict[str, Any]:
-    """保守评分最终回答；无法完整验证时保持null。"""
     try:
         gold = question_item.get("gold") or {}
         answer = _answer_text(agent_result)
@@ -492,7 +466,6 @@ def score_experiment_trace(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """根据Gold、Agent原响应和脱敏Trace生成五类三态标签。"""
     try:
         if not all(
             isinstance(value, dict)
@@ -646,7 +619,6 @@ def apply_scoring_to_trace(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """把评分标签写入Trace副本并重新执行Schema校验。"""
     try:
         if not isinstance(trace, dict) or not isinstance(
             scoring_result,
@@ -681,7 +653,6 @@ def apply_scoring_to_trace(
 
 
 def _execution_key_text(trace: dict[str, Any]) -> str:
-    """生成评分审计内部唯一键。"""
     try:
         context = trace.get("context") or {}
         return "|".join(
@@ -698,7 +669,6 @@ def _execution_key_text(trace: dict[str, Any]) -> str:
 
 
 def _review_id(execution_key: str, blinding_key: str) -> str:
-    """使用HMAC生成不暴露实验条件的复核编号。"""
     try:
         digest = hmac.new(
             blinding_key.encode("utf-8"),
@@ -712,7 +682,6 @@ def _review_id(execution_key: str, blinding_key: str) -> str:
 
 
 def _read_jsonl_records(path: Path, key_field: str) -> dict[str, Any]:
-    """读取可原子重写的JSONL索引；文件不存在视为空。"""
     try:
         if not path.exists():
             return {"status": "success", "records": {}}
@@ -755,7 +724,6 @@ def _atomic_write_jsonl(
     path: Path,
     records: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """原子重写JSONL，防止中断留下半条盲评记录。"""
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         temp_path = path.with_suffix(path.suffix + ".tmp")
@@ -787,7 +755,6 @@ def persist_scoring_bundle(
     review_map_path: Any,
     review_template_path: Any,
 ) -> dict[str, Any]:
-    """幂等保存脱敏审计、私有盲评队列、映射和人工标签模板。"""
     try:
         if not all(
             isinstance(value, dict)
@@ -961,7 +928,6 @@ def apply_manual_review_labels(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """把已裁决的盲评布尔标签回填到新的Trace文件，绝不覆盖原始Trace。"""
     try:
         cfg = config if config is not None else Config()
         source_path = Path(str(trace_path or "")).resolve()

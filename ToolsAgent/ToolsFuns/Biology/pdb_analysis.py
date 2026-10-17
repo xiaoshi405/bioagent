@@ -1,13 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-PDB 蛋白质结构本地分析工具。
-
-修改记录：
-- 2026-07-20：新增 PDB 结构摘要、按链序列提取和纯 NumPy Cα-ANM；
-  使用 Bio.PDB 离线解析，不依赖 ProDy、MDAnalysis、DSSP 或外部网络。
-- 2026-07-24：新增显式链选择工具；多链提取结果保持为链序列映射，
-  只有用户提供 chain_id 后才返回可供序列工具消费的单条序列。
-"""
+"""Local PDB structure and chain analysis."""
 
 from pathlib import Path
 from typing import Any, Optional
@@ -31,7 +23,6 @@ MODIFIED_RESIDUE_MAP = {"MSE": "M", "SEC": "U", "PYL": "O"}
 
 
 def _error(message: str) -> dict[str, Any]:
-    """构造统一错误结果，避免解析异常传播到 Agent 主进程。"""
     try:
         return {"status": "error", "message": str(message)}
     except Exception as exc:
@@ -39,7 +30,7 @@ def _error(message: str) -> dict[str, Any]:
 
 
 def _resolve_pdb_path(file_path: str) -> tuple[Optional[Path], Optional[dict[str, Any]]]:
-    """校验 PDB 路径、扩展名、项目目录边界和文件大小。"""
+    """Check the PDB path, project boundary, extension and size limit."""
     try:
         if not isinstance(file_path, str) or not file_path.strip():
             return None, _error("PDB文件路径不能为空")
@@ -72,7 +63,7 @@ def _resolve_pdb_path(file_path: str) -> tuple[Optional[Path], Optional[dict[str
 
 
 def _load_structure(file_path: str):
-    """解析 PDB 并返回结构、绝对路径和错误结果。"""
+    """Load a PDB structure or return a structured error."""
     try:
         path, error = _resolve_pdb_path(file_path)
         if error or path is None:
@@ -89,7 +80,7 @@ def _load_structure(file_path: str):
 
 
 def _residue_to_letter(residue) -> str:
-    """将标准或常见修饰残基转换成单字母代码。"""
+    """Map standard and supported modified residues to one-letter codes."""
     try:
         residue_name = str(residue.get_resname()).strip().upper()
         if residue_name in MODIFIED_RESIDUE_MAP:
@@ -101,7 +92,7 @@ def _residue_to_letter(residue) -> str:
 
 
 def _protein_residues(chain) -> list:
-    """提取链中的标准及常见修饰氨基酸残基。"""
+    """Return standard and supported modified amino acid residues."""
     try:
         return [residue for residue in chain.get_residues() if is_aa(residue, standard=False)]
     except Exception as exc:
@@ -112,7 +103,7 @@ def _protein_residues(chain) -> list:
 def _parse_secondary_structure_annotations(
     path: Path, protein_residue_keys: set[tuple[str, int]]
 ) -> dict[str, Any]:
-    """读取 PDB HELIX/SHEET 记录，统计已注释二级结构残基。"""
+    """Read HELIX and SHEET annotations from a PDB file."""
     try:
         helix_keys: set[tuple[str, int]] = set()
         sheet_keys: set[tuple[str, int]] = set()
@@ -145,7 +136,7 @@ def _parse_secondary_structure_annotations(
                     if key in protein_residue_keys:
                         sheet_keys.add(key)
 
-        # 极少数异常文件可能重复标注；统计时优先保留 HELIX，避免重复计数。
+        # Prefer HELIX when annotations overlap to avoid double counting.
         sheet_keys -= helix_keys
         total = len(protein_residue_keys)
         other_count = max(0, total - len(helix_keys) - len(sheet_keys))
@@ -172,7 +163,7 @@ def _parse_secondary_structure_annotations(
 
 
 def extract_pdb_sequences(file_path: str) -> dict[str, Any]:
-    """从 PDB 第一模型中按链提取蛋白质单字母序列。"""
+    """Extract chain sequences from the first PDB model."""
     try:
         structure, path, error = _load_structure(file_path)
         if error or structure is None or path is None:
@@ -212,7 +203,7 @@ def extract_pdb_sequences(file_path: str) -> dict[str, Any]:
 
 
 def select_pdb_chain(file_path: str, chain_id: str) -> dict[str, Any]:
-    """从PDB链序列映射中按用户指定的链ID返回唯一一条氨基酸序列。"""
+    """Return the sequence of the explicitly requested chain."""
     try:
         if not isinstance(chain_id, str) or not chain_id.strip():
             return _error("PDB链选择必须提供非空chain_id")
@@ -270,7 +261,7 @@ def select_pdb_chain(file_path: str, chain_id: str) -> dict[str, Any]:
 
 
 def analyze_pdb_structure(file_path: str) -> dict[str, Any]:
-    """统计 PDB 链、残基、原子、配体、水和基础几何特征。"""
+    """Summarize chains, residues, atoms, ligands and geometry."""
     try:
         structure, path, error = _load_structure(file_path)
         if error or structure is None or path is None:
@@ -361,7 +352,7 @@ def calculate_protein_anm(
     cutoff: float = 12.0,
     chain_id: Optional[str] = None,
 ) -> dict[str, Any]:
-    """基于单条链的 Cα 原子构建各向异性网络模型并返回最低频非零模态。"""
+    """Compute the lowest nonzero ANM modes from one chain of C-alpha atoms."""
     try:
         if not isinstance(n_modes, int) or not 1 <= n_modes <= 20:
             return _error("n_modes必须是1到20之间的整数")
@@ -392,7 +383,7 @@ def calculate_protein_anm(
                 return _error(f"链 {requested_chain} 中没有可用于ANM的Cα原子")
             return _error("PDB文件中没有可用于ANM的Cα原子")
 
-        # 未指定链时选取残基最多的链，避免把多聚体全部塞入稠密矩阵。
+        # Default to the longest chain to keep the dense ANM matrix bounded.
         selected_chain, ca_atoms = max(candidates, key=lambda item: len(item[1]))
         residue_count = len(ca_atoms)
         if residue_count < 4:

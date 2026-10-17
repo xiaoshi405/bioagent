@@ -1,10 +1,4 @@
-"""
-LLM规划结果提取工具。
-
-修改记录：
-- 2026-07-25：强化Plan Chain类型校验；只接受非空字符串工具名列表，
-  防止标量、嵌套对象或空工具名进入v0.2结构化计划层。
-"""
+"""Parse tool plans and answer fields from model responses."""
 
 from typing import List, Dict, Optional, Tuple, Any
 import json

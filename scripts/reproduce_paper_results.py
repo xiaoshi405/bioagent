@@ -71,7 +71,7 @@ def main():
     report={'status':'PASS','planned_units':4500,'recorded_units':recorded,'historical_missing':4500-recorded,'summary_cells_verified':len(actual),'framework_repeat_plot_cells_verified':checks,'online_model_calls':0,'new_experimental_outcomes':0}
     if not args.no_plots:
         folder=ROOT/'reproduction/plotting';sys.path.insert(0,str(folder))
-        spec=importlib.util.spec_from_file_location('release_plot',folder/'fig_results_selected_style.py');plot=importlib.util.module_from_spec(spec);spec.loader.exec_module(plot)
+        spec=importlib.util.spec_from_file_location('release_plot',folder/'results.py');plot=importlib.util.module_from_spec(spec);spec.loader.exec_module(plot)
         plot.OUT=out;plot.BLUE,plot.ORANGE='#7C9BB6','#D98C85';plot.COLORS=('#7C9BB6','#81B5A4','#A99BC1','#C8B47A','#D98C85')
         def export(fig,axes,titles,stem):
             for suffix in ['pdf','png','svg']:fig.savefig(out/(stem+'.'+suffix),dpi=600)

@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3b 类型约束规划主链路协调测试。
-
-修改记录：
-- 2026-09-05：覆盖空计划拒绝对非法序列诊断和能力缺口的
-  结构化透传，禁止回退为不可行动的泛化文案。
-- 2026-08-27：覆盖E1仅启用Artifact Pool绑定、但不执行类型门禁或修复。
-- 2026-08-15：覆盖重复无效记录选择剪枝的运行时闭环、安全证明透传与脱敏。
-- 2026-08-12：覆盖显式短非法序列从初始校验到运行时可操作反馈的透传。
-- 2026-08-09：覆盖缺失PDB链标识和多记录FASTA的可操作错误解释。
-- 2026-08-08：覆盖初始Artifact失败时B1/B2 repair开关仍进入安全轨迹。
-- 2026-07-26：覆盖配置旁路、直接序列fan-out、FASTA保守修复、
-  修复关闭时阻断、工具失败阻断及安全轨迹脱敏。
-"""
+"""Tests for typed planning runtime."""
 
 import copy
 import json
@@ -75,7 +62,6 @@ class RepairConfig:
 
 
 class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
-    """验证v0.3b协调层不依赖KG和真实HTTP即可回归。"""
 
     async def test_disabled_config_bypasses_without_running_tool(self):
         calls = []
@@ -244,7 +230,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(calls, [])
 
     async def test_runtime_only_condition_does_not_preempt_with_type_gate(self):
-        """E1应进入Artifact Pool后自然失败，而不是在类型检查阶段拒绝。"""
         calls = []
 
         async def fake_runner(**kwargs):
@@ -267,7 +252,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(calls, [])
 
     async def test_missing_pdb_chain_id_returns_actionable_diagnostic(self):
-        """缺少用户意图时应指出chain_id，而不是只返回泛化类型错误。"""
         calls = []
 
         async def fake_runner(**kwargs):
@@ -298,7 +282,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(calls, [])
 
     async def test_multirecord_fasta_requests_explicit_record(self):
-        """多记录FASTA应说明选择边界并给出用户可执行的下一步。"""
         result = await run_typed_planning(
             ["select_fasta_record", "compute_gravy"],
             "请报告目标记录的GRAVY值",
@@ -321,7 +304,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         )
 
     async def test_short_invalid_sequence_returns_actionable_diagnostic(self):
-        """显式短序列应报告非法字符和可执行修改动作，且不得调用工具。"""
         calls = []
 
         async def fake_runner(**kwargs):
@@ -352,7 +334,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(calls, [])
 
     async def test_empty_plan_rejection_preserves_invalid_characters(self):
-        """空计划分支必须保留非法字符和修改建议。"""
         typed_result = await run_typed_planning(
             [],
             "请分析序列 MKWVTFISLL123X 的pI和分子量",
@@ -375,7 +356,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn("系统未调用任何工具", rejection["final_message"])
 
     async def test_no_artifact_rejection_explains_input_and_capability_gap(self):
-        """无输入且能力不匹配时应同时说明两类阻断原因。"""
         typed_result = await run_typed_planning(
             [],
             (
@@ -402,7 +382,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         )
 
     def test_empty_plan_rejection_fallback_is_defensive(self):
-        """诊断对象异常时仍应返回标准错误而不是抛出异常。"""
         rejection = build_actionable_empty_plan_rejection(object())
 
         self.assertIn(rejection["status"], {"success", "error"})
@@ -437,7 +416,6 @@ class TypedPlanningRuntimeTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(result["completed"])
 
     async def test_initial_artifact_failure_preserves_repair_flag(self):
-        """即使尚未进入规划，B2安全轨迹也必须保留实验条件。"""
         result = await run_typed_planning(
             ["compute_pI_mw"],
             "这不是蛋白质序列，也没有上传支持的文件。",

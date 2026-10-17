@@ -1,8 +1,4 @@
-"""Method-independent offline scoring; no Gold or decisions reach an agent.
-
-Structured execution evidence and semantic reply review are separate. None is
-unresolved, never a failure imputation. Python actions are preserved for review.
-"""
+"""Method-independent offline scoring; no Gold or decisions reach an agent."""
 from __future__ import annotations
 
 import copy

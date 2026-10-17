@@ -1,26 +1,14 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Apr  5 16:08:56 2026
-@author: huawei
-
-修改记录：
-- 2026-07-17：增加统一序列校验和异常兜底；pI/Mw 改为 Biopython 本地计算，
-  避免正式链路依赖 Expasy 网络页面。
-- 2026-07-19：新增 GRAVY、二级结构倾向、氨基酸组成、不稳定性指数、
-  消光系数和毒性相似性检测六个离线原子工具。
-"""
-#生物工具算法文件
+"""Local protein sequence analysis tools."""
 from functools import wraps
 import re
 import traceback
 import logging
-# 引入 Biopython 做本地兜底计算
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
 logger = logging.getLogger(__name__)
 
-# Biopython 内置的 Kyte-Doolittle 疏水性指数表（protein_scale 调用时传入）
-# 参考: Kyte & Doolittle, J. Mol. Biol. 1982, 157, 105-132
+# Kyte & Doolittle, J. Mol. Biol. 1982, 157, 105-132.
 KD_SCALE = ProteinAnalysis("").kd_scale if hasattr(ProteinAnalysis(""), 'kd_scale') else {
     'A':  1.8, 'R': -4.5, 'N': -3.5, 'D': -3.5, 'C':  2.5,
     'Q': -3.5, 'E': -3.5, 'G': -0.4, 'H': -3.2, 'I':  4.5,
@@ -28,14 +16,14 @@ KD_SCALE = ProteinAnalysis("").kd_scale if hasattr(ProteinAnalysis(""), 'kd_scal
     'S': -0.8, 'T': -0.7, 'W': -0.9, 'Y': -1.3, 'V':  4.2,
 }
 
-# 信号肽 (-3,-1) 规则：切割位点处允许的小侧链/中性氨基酸
+# Small neutral residues allowed at cleavage positions -3 and -1.
 _SMALL_NEUTRAL = set("AGSTVC")
 _VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWY")
 _AMINO_ACID_ORDER = "ACDEFGHIKLMNPQRSTVWY"
 
 
 def _normalize_sequence(sequence):
-    """规范化并校验蛋白质序列，仅接受20种标准氨基酸字母。"""
+    """Normalize whitespace and case; accept the 20 standard amino acids."""
     try:
         if not isinstance(sequence, str):
             return None, {"status": "error", "message": "序列必须是字符串"}
@@ -58,7 +46,7 @@ def _normalize_sequence(sequence):
 
 
 def _defensive_tool(func):
-    """为生物工具统一增加输入校验和异常兜底，防止工具异常导致主进程崩溃。"""
+    """Validate sequence input and return structured tool errors."""
     @wraps(func)
     def wrapper(sequence):
         try:
@@ -75,10 +63,7 @@ def _defensive_tool(func):
 
 @_defensive_tool
 def compute_pI_mw(sequence: str):
-    """
-    计算等电点 (pI) 和分子量 (Mw)
-    使用 Biopython ProteinAnalysis 在本地确定性计算，不依赖外部网络。
-    """
+    """Compute pI and molecular weight locally with Biopython."""
     try:
         analyser = ProteinAnalysis(sequence)
         pI = round(analyser.isoelectric_point(), 2)
@@ -98,7 +83,7 @@ def compute_pI_mw(sequence: str):
 
 @_defensive_tool
 def compute_gravy(sequence: str):
-    """使用 Kyte-Doolittle 标度计算蛋白质平均疏水性（GRAVY）。"""
+    """Compute GRAVY on the Kyte-Doolittle scale."""
     try:
         gravy = round(ProteinAnalysis(sequence).gravy(), 3)
         return {
@@ -114,7 +99,7 @@ def compute_gravy(sequence: str):
 
 @_defensive_tool
 def compute_secondary_structure_fraction(sequence: str):
-    """计算由氨基酸组成推导的螺旋、转角和折叠残基倾向比例。"""
+    """Estimate helix, turn and sheet propensities from residue composition."""
     try:
         helix, turn, sheet = ProteinAnalysis(sequence).secondary_structure_fraction()
         return {
@@ -136,7 +121,7 @@ def compute_secondary_structure_fraction(sequence: str):
 
 @_defensive_tool
 def compute_amino_acid_composition(sequence: str):
-    """统计20种标准氨基酸的计数和百分比。"""
+    """Count the 20 standard amino acids and their percentages."""
     try:
         raw_counts = ProteinAnalysis(sequence).count_amino_acids()
         counts = {amino_acid: int(raw_counts.get(amino_acid, 0))
@@ -160,7 +145,7 @@ def compute_amino_acid_composition(sequence: str):
 
 @_defensive_tool
 def compute_instability_index(sequence: str):
-    """计算蛋白质不稳定性指数，并按40这一经验阈值给出稳定性判断。"""
+    """Compute the instability index; use 40 as the empirical cutoff."""
     try:
         instability_index = round(ProteinAnalysis(sequence).instability_index(), 2)
         result = {
@@ -181,7 +166,7 @@ def compute_instability_index(sequence: str):
 
 @_defensive_tool
 def compute_extinction_coefficient(sequence: str):
-    """计算280 nm处还原态和氧化态蛋白质摩尔消光系数。"""
+    """Compute reduced and oxidized molar extinction coefficients at 280 nm."""
     try:
         reduced, oxidized = ProteinAnalysis(sequence).molar_extinction_coefficient()
         return {
@@ -200,7 +185,7 @@ def compute_extinction_coefficient(sequence: str):
 
 @_defensive_tool
 def check_protein_toxicity(sequence: str):
-    """使用本地毒性蛋白数据库和 Smith-Waterman 比对检测高相似序列。"""
+    """Screen against the local toxicity database using Smith-Waterman alignment."""
     try:
         from app.tools.safety.toxicity_checker import check_protein_toxicity_bio
 
@@ -215,50 +200,40 @@ def check_protein_toxicity(sequence: str):
 
 @_defensive_tool
 def predict_signalpeptide(sequence: str):
-    """
-    信号肽预测 — 基于 von Heijne 三区域模型与 (-3,-1) 切割位点规则
-
-    信号肽由三个区域组成:
-      n-区 (1-5 aa): N 端，携带正电荷 (Arg/Lys)
-      h-区 (7-15 aa): 疏水核心，Kyte-Doolittle 平均疏水值需显著 > 0
-      c-区 (3-7 aa): 切割位点区域，遵循 (-3,-1) 规则
-    """
+    """Screen for an N-terminal signal peptide using hydrophobicity and the (-3,-1) rule."""
     if len(sequence) < 20:
         return {"status": "success", "has_signal_peptide": False,
                 "confidence": "N/A", "note": "序列过短 (<20 aa)，无法分析"}
 
-    # --- Step 1: N 端扫描范围 (信号肽一般 15-30 aa，最长不超过 70) ---
+    # Scan the N-terminal signal peptide region.
     scan = sequence[:min(70, len(sequence))]
 
-    # --- Step 2: 用 Biopython protein_scale() 计算 h-region 疏水曲线，窗口 8 残基 ---
+    # Use an 8-residue hydrophobicity window.
     h_window = 8
-    # protein_scale 返回长度为 len(seq)-window+1 的列表，每个值对应以该位置为中心的窗口均值
     h_scores = ProteinAnalysis(scan).protein_scale(KD_SCALE, h_window)
-    # 从位置 1 开始（跳过 n-region 的第 0 个氨基酸）找最高疏水性中心
     best_h_start = max(range(1, len(h_scores)), key=lambda i: h_scores[i], default=0)
     best_h_score = h_scores[best_h_start]
     best_h_end = best_h_start + h_window
 
-    # --- Step 3: 搜索 (-3,-1) 切割位点 ---
+    # Check candidate cleavage sites against the (-3,-1) rule.
     cleavage_site = None
     best_cs_score = 0
     for pos in range(best_h_end + 2, min(best_h_end + 15, len(sequence))):
         cs = 0
-        if sequence[pos - 2] in _SMALL_NEUTRAL:   # -3 位
+        if sequence[pos - 2] in _SMALL_NEUTRAL:
             cs += 2
-        if sequence[pos] in _SMALL_NEUTRAL:        # -1 位
+        if sequence[pos] in _SMALL_NEUTRAL:
             cs += 2
-        if sequence[pos - 1] != 'P':               # -2 位排除 Pro
+        if sequence[pos - 1] != 'P':  # Exclude proline at position -2.
             cs += 1
         if cs > best_cs_score:
             best_cs_score = cs
             cleavage_site = pos + 1  # 1-indexed
 
-    # --- Step 4: n-region 正电荷检查 ---
+    # Check N-region positive charges.
     n_region = sequence[:best_h_start] if best_h_start > 0 else sequence[:3]
     n_charge = n_region.count('R') + n_region.count('K')
 
-    # --- Step 5: 综合评分 (满分 8) ---
     total = 0
     evidence = []
 
@@ -296,12 +271,7 @@ def predict_signalpeptide(sequence: str):
 
 @_defensive_tool
 def predict_transmembrane(sequence: str):
-    """
-    跨膜区预测 — Kyte-Doolittle 疏水性滑动窗口分析
-
-    参考: Kyte & Doolittle, J. Mol. Biol. (1982) 157, 105-132
-    窗口: 19 残基 | 阈值: 平均 KD > 1.6 | 最小跨膜长度: 15 残基
-    """
+    """Screen transmembrane regions using a 19-residue Kyte-Doolittle window."""
     METHOD = "Kyte-Doolittle hydropathy (Biopython protein_scale), window=19, threshold=1.6"
     if len(sequence) < 20:
         return {"status": "success", "transmembrane_regions": [], "count": 0,
@@ -310,8 +280,6 @@ def predict_transmembrane(sequence: str):
     window, threshold = 19, 1.6
     half = window // 2
 
-    # Step 1: 直接调用 Biopython protein_scale() 得到全序列疏水性曲线
-    # 返回长度为 len(seq)-window+1 的列表，索引 i 对应原序列第 i+half 位
     scores = ProteinAnalysis(sequence).protein_scale(KD_SCALE, window)
     above = [i + half for i, s in enumerate(scores) if s > threshold]
 
@@ -319,7 +287,7 @@ def predict_transmembrane(sequence: str):
         return {"status": "success", "transmembrane_regions": [], "count": 0,
                 "topology": "可能为水溶性蛋白", "method": METHOD}
 
-    # Step 2: 合并相邻超阈值位置为连续区域 (允许 ≤5 残基间隔)
+    # Merge nearby peaks, allowing gaps of up to five residues.
     regions = []
     start = end = above[0]
     for pos in above[1:]:
@@ -330,8 +298,7 @@ def predict_transmembrane(sequence: str):
             start = end = pos
     regions.append((start, end))
 
-    # Step 3: 扩展至窗口覆盖范围，过滤 < 15 残基的区域
-    # 平均疏水性直接从 Biopython 曲线读取，无需重算
+    # Expand peaks to their window bounds; require at least 15 residues.
     valid = []
     for s, e in regions:
         a_start = max(0, s - half)
@@ -339,7 +306,6 @@ def predict_transmembrane(sequence: str):
         length = a_end - a_start + 1
         if length >= 15:
             seg = sequence[a_start:a_end + 1]
-            # 用 Biopython 算该片段的平均疏水值
             avg_kd = round(ProteinAnalysis(seg).protein_scale(KD_SCALE, min(len(seg), window))[len(seg)//2 - (min(len(seg),window)//2)], 2) \
                      if len(seg) >= window else round(sum(scores[max(0,a_start-half):a_end-half+1]) / max(1, a_end-a_start), 2)
             valid.append({
@@ -348,7 +314,6 @@ def predict_transmembrane(sequence: str):
                 "avg_hydropathy": avg_kd, "type": "跨膜螺旋"
             })
 
-    # Step 4: 拓扑推断
     n = len(valid)
     topo = ("可能为水溶性蛋白" if n == 0 else
             "单次跨膜蛋白 (I型或II型)" if n == 1 else
@@ -361,13 +326,7 @@ def predict_transmembrane(sequence: str):
 
 @_defensive_tool
 def predict_solubility(sequence: str):
-    """
-    蛋白溶解度预测 — 基于 GRAVY、不稳定性指数、等电点与带电残基比例的多参数评估
-
-    评分体系 (满分 100):
-      基础分 50 + GRAVY贡献(±20) + 稳定性贡献(±15) + pI贡献(±10)
-      + 带电残基比例贡献(+10) + 长度贡献(±5)
-    """
+    """Estimate solubility from GRAVY, instability, pI and charged residue content."""
     if len(sequence) < 10:
         return {"status": "error", "message": "序列过短 (<10 aa)，无法分析"}
 
@@ -378,12 +337,10 @@ def predict_solubility(sequence: str):
         pI = round(pa.isoelectric_point(), 2)
         mw = round(pa.molecular_weight(), 2)
 
-        # 带电残基比例 (D, E, K, R, H)
         aa_cnt = pa.count_amino_acids()
         charged = sum(aa_cnt.get(aa, 0) for aa in "DEKRH")
         charged_frac = round(charged / len(sequence), 3)
 
-        # --- 综合评分 ---
         score = 50
         if   gravy < -0.5: score += 20
         elif gravy < 0:    score += 10
@@ -434,7 +391,7 @@ def predict_solubility(sequence: str):
 
 @_defensive_tool
 def protein_analysis(sequence: str):
-    """ 一站式蛋白分析 """
+    """Run the combined sequence analyses."""
     return {
         "status": "success",
         "basic_info": compute_pI_mw(sequence),

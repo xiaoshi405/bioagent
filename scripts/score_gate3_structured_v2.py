@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""Versioned, conservative structured-evidence scorer for Gate3 Test-150.
-
-This post-processor never mutates the frozen raw traces or deterministic-v1.1
-artifacts.  It compares the nested expected result with JSON evidence already
-present in each captured answer, writes a derived trace, and creates a small
-blinded, stratified human-audit queue.
-"""
+"""Versioned, conservative structured-evidence scorer for Gate3 Test-150."""
 
 from __future__ import annotations
 

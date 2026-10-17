@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-v0.3c实验Trace构建、Schema校验和JSONL持久化测试。
-
-修改记录：
-- 2026-08-30：新增S1/L1独立v1.2 Trace证据的条件一致性覆盖。
-- 2026-08-27：覆盖E0-E3正交开关和E1类型门禁旁路Trace一致性。
-- 2026-08-15：验证公开Trace保留固定字段剪枝证明，同时丢弃自由文本理由和输入内容。
-- 2026-08-12：验证证据完整的规划前未注册工具拒绝可在B1/B2中不产生
-  类型轨迹，同时继续拦截缺少门禁证据的条件轨迹不匹配。
-- 2026-08-09：验证Trace优先使用运行时初始类型和内容问题码，避免离线评分
-  按数据集声明重新推断类型上下文。
-- 2026-07-28：覆盖B0/B1/B2配置、未验收gold拒绝、离线类型复核、
-  敏感字段排除及JSONL往返。
-"""
+"""Tests for evaluation trace."""
 
 import json
 import tempfile
@@ -32,7 +19,6 @@ TEST_SEQUENCE = "MKWVTFISLLLLFSSAYSRGVFRR"
 
 
 def _question_item():
-    """构造符合BioToolEval v1.1的最小已验收题目。"""
     try:
         return {
             "id": "bte_001",
@@ -64,7 +50,6 @@ def _question_item():
 
 
 def _agent_result():
-    """构造不依赖真实LLM和HTTP的Agent观测。"""
     try:
         return {
             "response": (
@@ -95,7 +80,6 @@ def _agent_result():
 
 
 def _context():
-    """构造固定实验上下文。"""
     try:
         return {
             "run_id": "dev-qwen-b0-r0",
@@ -113,7 +97,6 @@ def _context():
 
 
 def _preplan_rejection_result():
-    """构造三个实验条件共享的规划前未注册工具拒绝观测。"""
     try:
         result = _agent_result()
         result["reasoning"]["plan_chain"] = []
@@ -137,7 +120,6 @@ def _preplan_rejection_result():
 
 
 class ExperimentConditionTests(unittest.TestCase):
-    """验证三组消融开关不会被运行脚本自由改写。"""
 
     def test_b0_b1_b2_switches_are_fixed(self):
         b0 = get_experiment_condition("B0")
@@ -203,7 +185,6 @@ class ExperimentConditionTests(unittest.TestCase):
 
 
 class ExperimentTraceTests(unittest.TestCase):
-    """验证逐题Trace只记录可复核元数据。"""
 
     def test_build_trace_posthoc_validates_baseline_plan(self):
         result = build_experiment_trace(
@@ -280,7 +261,6 @@ class ExperimentTraceTests(unittest.TestCase):
         )
 
     def test_verified_preplan_rejection_is_valid_for_b1_and_b2(self):
-        """共同前置门禁未进入类型层，不应伪造typed_planning轨迹。"""
         for condition in ("B1", "B2"):
             with self.subTest(condition=condition):
                 result = build_experiment_trace(
@@ -299,7 +279,6 @@ class ExperimentTraceTests(unittest.TestCase):
                 )
 
     def test_unverified_preplan_rejection_still_fails_closed(self):
-        """仅有reject字样但缺少未知工具证据时仍拒绝B1伪轨迹。"""
         agent_result = _preplan_rejection_result()
         agent_result["reasoning"]["request_guard"]["unknown_tools"] = []
 

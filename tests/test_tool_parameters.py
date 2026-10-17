@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""请求级工具值参数回归测试。
-
-修改记录：
-- 2026-09-04：覆盖ANM显式参数提取、契约校验、接口作用域与默认值保留。
-- 2026-09-04：覆盖同一参数的多值冲突，禁止静默选值或回退默认值。
-"""
+"""Tests for tool parameters."""
 
 import json
 import unittest
@@ -28,7 +23,6 @@ PDB_FIXTURE = PROJECT_ROOT / "tests" / "fixtures" / "pdb" / "1CRN.pdb"
 
 
 class ToolParameterContextTests(unittest.TestCase):
-    """验证参数来自用户文本且只绑定到注册接口。"""
 
     def test_extracts_chinese_anm_parameters_and_preserves_chain_case(self):
         context = build_tool_parameter_context(
@@ -132,7 +126,6 @@ class ToolParameterContextTests(unittest.TestCase):
 
 
 class ToolParameterRunnerTests(unittest.IsolatedAsyncioTestCase):
-    """验证普通与类型化执行形成完全相同的显式ANM请求参数。"""
 
     async def test_baseline_and_typed_paths_share_anm_parameters(self):
         payloads = []

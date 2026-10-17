@@ -1,18 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent Controlled Repair Track v1 离线运行器。
-
-修改记录：
-- 2026-08-13：新增冻结数据集校验、B1/B2 配对执行、脱敏 Trace、manifest、
-  失败账本与 no-overwrite/no-retry 约束，用于独立估计确定性类型修复器的贡献。
-
-设计边界：
-1. 直接注入冻结的非法工具计划，不调用 LLM Planner；
-2. B1 只检查并在执行前阻断，B2 只允许唯一注册桥接后执行；
-3. 每个实验单元最多运行一次，失败只记账，不自动重试；
-4. Trace 不保存序列正文、文件绝对路径或工具完整返回值；
-5. 输出文件禁止覆盖，避免污染或改写既有实验记录。
-"""
+"""Run the version 1 controlled repair suite."""
 
 from __future__ import annotations
 
@@ -33,7 +20,6 @@ from typing import Any, Awaitable, Callable
 
 from jsonschema import Draft202012Validator
 
-# 允许从任意当前目录直接执行本脚本，同时保持模块导入方式与测试一致。
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
@@ -87,7 +73,6 @@ def _error_result(
     *,
     details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """构造不会泄露输入正文的统一错误结构。"""
     try:
         return {
             "status": "error",
@@ -111,7 +96,6 @@ def _error_result(
 
 
 def _sha256_file(path: Path) -> str:
-    """流式计算文件 SHA-256，避免把大型结构文件一次性载入内存。"""
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
@@ -120,7 +104,6 @@ def _sha256_file(path: Path) -> str:
 
 
 def _load_json_validator(path: Path, label: str) -> dict[str, Any]:
-    """加载并自校验 JSON Schema，返回统一结果。"""
     try:
         if not path.is_file():
             return _error_result(f"{label} Schema 不存在", "SCHEMA_NOT_FOUND")
@@ -146,7 +129,6 @@ def _validation_error(
     code: str,
     label: str,
 ) -> dict[str, Any] | None:
-    """返回首个稳定排序的 Schema 错误，成功时返回 None。"""
     errors = sorted(
         validator.iter_errors(instance),
         key=lambda item: tuple(str(part) for part in item.absolute_path),
@@ -168,7 +150,6 @@ def load_controlled_repair_dataset(
     *,
     config: Any = None,
 ) -> dict[str, Any]:
-    """加载、校验并验证所有 fixture 指纹，不读取任何未声明数据集。"""
     try:
         cfg = config if config is not None else Config()
         path = Path(
@@ -282,7 +263,6 @@ async def local_controlled_runner(
     file_path_list: list[str],
     typed_inputs: dict[str, Any],
 ) -> dict[str, Any]:
-    """只调用本地确定性 Biology 函数，不访问网络或 LLM。"""
     del tool_args, file_path_list
     try:
         if tool_name == "parse_protein_fasta":
@@ -310,7 +290,6 @@ async def local_controlled_runner(
 
 
 def _build_initial_result(case: dict[str, Any]) -> dict[str, Any]:
-    """用最小明确语义构造初始 Artifact，不把 fixture 内容写入 Trace。"""
     if case.get("family") == "fasta_to_sequence":
         question = "受控修复输入：单记录蛋白质 FASTA。"
     else:
@@ -320,7 +299,6 @@ def _build_initial_result(case: dict[str, Any]) -> dict[str, Any]:
 
 
 def _issue_codes(value: Any) -> list[str]:
-    """从检查器问题列表中提取去重且稳定排序的错误码。"""
     if not isinstance(value, list):
         return []
     return sorted(
@@ -333,7 +311,6 @@ def _issue_codes(value: Any) -> list[str]:
 
 
 def _execution_summary(execution: dict[str, Any]) -> dict[str, Any]:
-    """把执行结果压缩成不含生物数据正文的计数摘要。"""
     executed_steps = execution.get("executed_steps") or []
     tool_results = execution.get("tool_results") or []
     attempted = len(tool_results)
@@ -368,7 +345,6 @@ async def run_controlled_unit(
     trace_validator: Draft202012Validator,
     runner: ControlledRunner = local_controlled_runner,
 ) -> dict[str, Any]:
-    """执行一个 B1/B2 实验单元；B1 的无执行是设计规定而非运行失败。"""
     started_at = time.perf_counter()
     if condition not in _CONDITIONS:
         return _error_result("实验条件必须是 B1 或 B2", "INVALID_CONDITION")
@@ -495,7 +471,6 @@ async def run_controlled_unit(
 
 
 def _git_commit(project_root: Path) -> str:
-    """读取当前提交；失败时返回可通过 Schema 的明确占位短哈希。"""
     try:
         value = subprocess.check_output(
             ["git", "rev-parse", "HEAD"],
@@ -511,7 +486,6 @@ def _git_commit(project_root: Path) -> str:
 
 
 def _rate(numerator: int, denominator: int) -> dict[str, Any]:
-    """生成含可估计状态的比例指标，零分母不伪造为 0。"""
     return {
         "estimability_status": "estimable" if denominator > 0 else "not_estimable",
         "numerator": int(numerator),
@@ -525,7 +499,6 @@ def _build_metrics(
     *,
     planned_pairs: int,
 ) -> dict[str, Any]:
-    """按 case/repeat 配对统计恢复率与修复精度。"""
     pairs: dict[tuple[str, int], dict[str, dict[str, Any]]] = {}
     for trace in traces:
         key = (trace["case_id"], trace["repeat_index"])
@@ -555,13 +528,12 @@ def _build_metrics(
 
 
 def _write_jsonl_atomic(path: Path, records: list[dict[str, Any]]) -> None:
-    """在同目录原子写入 JSONL；调用方必须先完成 no-overwrite 检查。"""
     temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     try:
         with temporary.open("x", encoding="utf-8", newline="\n") as handle:
             for record in records:
                 handle.write(json.dumps(record, ensure_ascii=False) + "\n")
-        # hard-link 创建在目标已存在时会原子失败，因此并发运行也不能覆盖旧 Trace。
+        # Hard-link creation prevents concurrent trace overwrites.
         os.link(temporary, path)
     finally:
         if temporary.exists():
@@ -569,13 +541,12 @@ def _write_jsonl_atomic(path: Path, records: list[dict[str, Any]]) -> None:
 
 
 def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
-    """在同目录原子写入格式化 JSON；不覆盖已存在正式文件。"""
     temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     try:
         with temporary.open("x", encoding="utf-8", newline="\n") as handle:
             json.dump(value, handle, ensure_ascii=False, indent=2)
             handle.write("\n")
-        # 与 JSONL 使用同一 no-overwrite 原语，避免检查与写入之间的竞态覆盖。
+        # Use the same atomic no-overwrite operation as JSONL.
         os.link(temporary, path)
     finally:
         if temporary.exists():
@@ -592,7 +563,6 @@ async def run_controlled_repair_experiment(
     git_commit: Any = None,
     runner: ControlledRunner = local_controlled_runner,
 ) -> dict[str, Any]:
-    """运行完整配对实验并一次性写出 Trace、manifest 与失败账本。"""
     try:
         cfg = config if config is not None else Config()
         normalized_id = str(experiment_id or "").strip()
@@ -763,7 +733,6 @@ async def run_controlled_repair_experiment(
 
 
 def _parse_args() -> argparse.Namespace:
-    """解析命令行参数，所有输出位置仍受 no-overwrite 规则保护。"""
     parser = argparse.ArgumentParser(description="运行 Controlled Repair Track v1")
     parser.add_argument("--experiment-id", required=True)
     parser.add_argument("--dataset", default=None)
@@ -773,7 +742,6 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    """命令行入口；失败时返回非零码，但不让异常击穿主进程。"""
     try:
         args = _parse_args()
         result = asyncio.run(

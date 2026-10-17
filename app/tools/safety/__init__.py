@@ -1,2 +1,1 @@
-# from .toxicity_checker import extract_smiles_or_sequences, check_toxicity_by_type
 from .utils import extract_smiles_or_sequences

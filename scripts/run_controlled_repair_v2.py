@@ -1,17 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-BioAgent Controlled Repair Track v2 离线批量运行器。
-
-修改记录：
-- 2026-08-30：新增E2/E3配对调度、30–40机会门禁、6家族分层指标、
-  家族宏平均、失败账本和原子no-overwrite输出；不调用LLM、不读取Test集。
-
-设计边界：
-1. 同一冻结非法计划在E2阻断、E3确定性修复后执行；
-2. case是重复观测单位，机制家族才是拓扑泛化单位，二者分别报告；
-3. 每个单元最多执行一次，基础设施或工具失败只进入失败账本；
-4. v1数据、Schema和历史Trace保持只读，v2写入独立目录。
-"""
+"""Run the version 2 controlled repair suite."""
 
 from __future__ import annotations
 
@@ -58,7 +46,6 @@ def _paired_metrics(
     *,
     planned_pairs: int,
 ) -> dict[str, Any]:
-    """按case/repeat配对统计覆盖率、恢复率与修复精度。"""
     pairs: dict[tuple[str, int], dict[str, dict[str, Any]]] = {}
     for trace in traces:
         key = (str(trace["case_id"]), int(trace["repeat_index"]))
@@ -95,7 +82,6 @@ def build_v2_metrics(
     *,
     planned_family_pairs: dict[str, int],
 ) -> dict[str, Any]:
-    """同时报告题目级与家族级结果，避免同构case数量主导结论。"""
     planned_pairs = sum(planned_family_pairs.values())
     overall = _paired_metrics(traces, planned_pairs=planned_pairs)
     by_family: dict[str, dict[str, Any]] = {}
@@ -142,7 +128,6 @@ async def run_controlled_repair_v2_experiment(
     git_commit: Any = None,
     runner: ControlledV2Runner = local_controlled_v2_runner,
 ) -> dict[str, Any]:
-    """执行完整v2配对实验；异常隔离到单元，正式输出永不覆盖。"""
     try:
         cfg = config if config is not None else Config()
         normalized_id = str(experiment_id or "").strip()
@@ -333,7 +318,6 @@ async def run_controlled_repair_v2_experiment(
 
 
 def _parse_args() -> argparse.Namespace:
-    """解析v2命令行参数；输出仍受no-overwrite保护。"""
     parser = argparse.ArgumentParser(description="运行Controlled Repair Track v2")
     parser.add_argument("--experiment-id", required=True)
     parser.add_argument("--dataset", default=None)
@@ -343,7 +327,6 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    """防御性CLI入口，任何失败都返回结构化JSON与非零退出码。"""
     try:
         args = _parse_args()
         result = asyncio.run(
